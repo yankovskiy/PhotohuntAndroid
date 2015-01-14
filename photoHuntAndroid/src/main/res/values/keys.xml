@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="pref_isLogin">pref_isLogin</string>
+        <string name="pref_userId">pref_userId</string>
+        <string name="pref_password">pref_password</string>
+        <string name="pref_filename">prefs</string>
+    </resources>

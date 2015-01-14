@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="8dp"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/detail_contest_list_item_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gray_bg" >
+
+        <TextView
+            android:id="@+id/detail_contest_list_item_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="8dp"
+            android:drawableLeft="@drawable/ic_action_edit_person" />
+
+        <TextView
+            android:id="@+id/detail_contest_list_item_vote_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:drawableLeft="@drawable/ic_action_edit_good" />
+
+        <TextView
+            android:id="@+id/detail_contest_list_item_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/detail_contest_list_item_author"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:drawableLeft="@drawable/ic_action_edit_subject" />
+
+        <ImageView
+            android:id="@+id/detail_contest_list_item_vote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/detail_contest_list_item_vote_count"
+            android:layout_margin="8dp"
+            android:background="@drawable/grey_button"
+            android:padding="5dp"
+            android:src="@drawable/ic_action_good" />
+    </RelativeLayout>
+
+</LinearLayout>

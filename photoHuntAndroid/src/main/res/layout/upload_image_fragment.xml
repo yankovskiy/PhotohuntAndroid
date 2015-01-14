@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/loading_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone" >
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/hide_when_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <EditText
+            android:id="@+id/upload_new_subject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_padding"
+            android:layout_marginTop="@dimen/default_padding"
+            android:layout_toLeftOf="@+id/upload_subject_help"
+            android:ems="10"
+            android:hint="@string/new_subject" />
+
+        <ImageView
+            android:id="@+id/upload_subject_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/upload_new_subject"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/default_padding"
+            android:src="@drawable/ic_action_help" />
+
+        <ImageView
+            android:id="@+id/upload_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/upload_new_subject"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="8dp" >
+        </ImageView>
+    </RelativeLayout>
+
+</LinearLayout>
