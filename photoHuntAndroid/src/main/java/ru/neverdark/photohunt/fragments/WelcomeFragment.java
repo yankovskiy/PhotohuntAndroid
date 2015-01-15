@@ -13,7 +13,7 @@ import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.photohunt.dialogs.RulesDialog;
 import ru.neverdark.photohunt.dialogs.RulesDialog.OnAcceptRulesListener;
-import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
+import ru.neverdark.photohunt.utils.ButtonBGOnTouchListener;
 
 public class WelcomeFragment extends UfoFragment {
 
@@ -73,13 +73,16 @@ public class WelcomeFragment extends UfoFragment {
     public void bindObjects() {
         mRegisterUser = (TextView) mView.findViewById(R.id.welcome_register);
         mLoginUser = (TextView) mView.findViewById(R.id.welcome_enter);
+
+        mRegisterUser.setText(getString(R.string.register).toUpperCase());
+        mLoginUser.setText(getString(R.string.enter).toUpperCase());
     }
 
     @Override
     public void setListeners() {
         mRegisterUser.setOnClickListener(new ClickListener());
         mLoginUser.setOnClickListener(new ClickListener());
-        mRegisterUser.setOnTouchListener(new ButtonOnTouchListener());
-        mLoginUser.setOnTouchListener(new ButtonOnTouchListener());
+        mRegisterUser.setOnTouchListener(new ButtonBGOnTouchListener());
+        mLoginUser.setOnTouchListener(new ButtonBGOnTouchListener());
     }
 }
