@@ -43,7 +43,7 @@ public class ProfileFragment extends UfoFragment {
     private User mUserData;
 
     private void updateProfileInfo(User user) {
-        String balance = String.format(Locale.US, "%s: %d", getString(R.string.balance), user.balance);
+        String balance = String.format(Locale.US, "%s: %d", getString(R.string.rating_count), user.balance);
         String email = Settings.getUserId(mContext);
         String votes = String.format(Locale.US, "%s: %d", getString(R.string.vote_count), user.vote_count);
         mCardUserId.setText(email);
@@ -98,7 +98,7 @@ public class ProfileFragment extends UfoFragment {
     }
 
     private void getProfile() {
-        if (mIsDataLoaded == false) {
+        if (!mIsDataLoaded) {
             String user = Settings.getUserId(mContext);
             String password = Settings.getPassword(mContext);
             try {
@@ -282,7 +282,7 @@ public class ProfileFragment extends UfoFragment {
                 String userId = Settings.getUserId(mContext);
                 String password = Settings.getPassword(mContext);
 
-                if (mIsDataLoaded == false || userId.length() == 0 || password.length() == 0) {
+                if (!mIsDataLoaded || userId.length() == 0 || password.length() == 0) {
                     throw new ToastException(R.string.error_not_authorized);
                 }
 

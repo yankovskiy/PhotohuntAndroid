@@ -33,7 +33,6 @@
     <string name="error_wrong_password">Неверное имя пользователя или пароль</string>
     <string name="profile">Профиль</string>
     <string name="edit_button">ИЗМЕНИТЬ</string>
-    <string name="balance">Баланс</string>
     <string name="error_not_authorized">Ошибка авторизации</string>
     <string name="loading_info">Загрузка информации</string>
     <string name="profile_updated">Профиль успешно обновлен</string>

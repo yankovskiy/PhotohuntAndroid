@@ -43,7 +43,7 @@ public class UserInfoDialog extends UfoDialogFragment {
     
     private void prepareDataForShow() {
         String user = String.format(Locale.US, "%s: %s", getString(R.string.displayname), mUserInfo.display_name);
-        String balance = String.format(Locale.US, "%s: %d", getString(R.string.balance), mUserInfo.balance);
+        String balance = String.format(Locale.US, "%s: %d", getString(R.string.rating_count), mUserInfo.balance);
         mDisplayName.setText(user);
         mBalance.setText(balance);
     }
