@@ -3,7 +3,7 @@ package ru.neverdark.photohunt;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.adapters.MenuAdapter;
-import ru.neverdark.photohunt.dialogs.FeedbackDialog;
+import ru.neverdark.photohunt.dialogs.SocialNetDialog;
 import ru.neverdark.photohunt.dialogs.RulesDialog;
 import ru.neverdark.photohunt.fragments.BriefContestFragment;
 import ru.neverdark.photohunt.fragments.ProfileFragment;
@@ -18,9 +18,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
@@ -34,6 +32,7 @@ import android.widget.ListView;
  */
 public class MainActivity extends UfoFragmentActivity {
     private Context mContext;
+
     /**
      * Обработчик кликов по выдвигающимуся меню
      */
@@ -47,27 +46,30 @@ public class MainActivity extends UfoFragmentActivity {
             UfoFragment fragment = null;
 
             switch (item.getId()) {
-            case R.string.contest:
-                fragment = new BriefContestFragment();
-                break;
-            case R.string.stats:
-                fragment = new StatsFragment();
-                break;
-            case R.string.profile:
-                fragment = new ProfileFragment();
-                break;
-            case R.string.rating:
-                fragment = new RatingFragment();
-                break;
-            case R.string.rules:
-                showRules();
-                break;
-            case R.string.rate:
-                gotoMarket();
-                break;
-            case R.string.feedback:
-                showFeedback();
-                break;
+                case R.string.contest:
+                    fragment = new BriefContestFragment();
+                    break;
+                case R.string.stats:
+                    fragment = new StatsFragment();
+                    break;
+                case R.string.profile:
+                    fragment = new ProfileFragment();
+                    break;
+                case R.string.rating:
+                    fragment = new RatingFragment();
+                    break;
+                case R.string.rules:
+                    showRules();
+                    break;
+                case R.string.rate:
+                    gotoMarket();
+                    break;
+                case R.string.in_social:
+                    showSocialDialog();
+                    break;
+                case R.string.feedback:
+                    sendMail();
+                    break;
             }
 
             mDrawerLayout.closeDrawer(mLeftMenu);
@@ -76,12 +78,20 @@ public class MainActivity extends UfoFragmentActivity {
                 setTitle(item.getMenuLabel());
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.main_container, fragment).commit();
-            } 
+            }
         }
 
-        private void showFeedback() {
-            FeedbackDialog dialog = FeedbackDialog.getInstance(mContext);
-            dialog.show(getSupportFragmentManager(), FeedbackDialog.DIALOG_ID);
+        private void sendMail() {
+            Intent mailIntent = new Intent(Intent.ACTION_SEND);
+            mailIntent.setType("plain/text");
+            mailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.author_email)});
+            mailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+            startActivity(Intent.createChooser(mailIntent, getString(R.string.choose_email_app)));
+        }
+
+        private void showSocialDialog() {
+            SocialNetDialog dialog = SocialNetDialog.getInstance(mContext);
+            dialog.show(getSupportFragmentManager(), SocialNetDialog.DIALOG_ID);
         }
 
         private void showRules() {
@@ -102,7 +112,6 @@ public class MainActivity extends UfoFragmentActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftMenu;
     private CharSequence mTitle;
-    private CharSequence mDrawerTitle;
 
     @Override
     public void bindObjects() {
@@ -110,25 +119,7 @@ public class MainActivity extends UfoFragmentActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftMenu = (ListView) findViewById(R.id.left_menu);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.drawable.ic_drawer);/* {
-            
-        }
-        
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer,
-                R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(mTitle);
-            }
-
-            @Override
-            public void onDrawerOpened(View view) {
-                super.onDrawerOpened(view);
-                getSupportActionBar().setTitle(mDrawerTitle);
-            }
-        };*/
-
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.drawable.ic_drawer);
     }
 
     /**
@@ -136,7 +127,7 @@ public class MainActivity extends UfoFragmentActivity {
      */
     private void createLeftMenu() {
         MenuAdapter menuAdapter = new MenuAdapter(mContext, R.layout.menu_item);
-        
+
         UfoMenuItem contestItem = new UfoMenuItem(mContext, R.drawable.ic_contest, R.string.contest);
         UfoMenuItem statsItem = new UfoMenuItem(mContext, R.drawable.ic_stats, R.string.stats);
         UfoMenuItem profileItem = new UfoMenuItem(mContext, R.drawable.ic_action_person, R.string.profile);
@@ -144,11 +135,13 @@ public class MainActivity extends UfoFragmentActivity {
         UfoMenuItem aboutItem = new UfoMenuItem(mContext, R.drawable.ic_action_about, R.string.rules);
         UfoMenuItem rateItem = new UfoMenuItem(mContext, R.drawable.ic_action_good, R.string.rate);
         UfoMenuItem feedbackItem = new UfoMenuItem(mContext, R.drawable.ic_action_email, R.string.feedback);
-        
+        UfoMenuItem socialItem = new UfoMenuItem(mContext, R.drawable.ic_action_social, R.string.in_social);
+
         menuAdapter.add(contestItem);
         menuAdapter.add(statsItem);
         menuAdapter.add(profileItem);
         menuAdapter.add(ratingItem);
+        menuAdapter.add(socialItem);
         menuAdapter.add(aboutItem);
         menuAdapter.add(rateItem);
         menuAdapter.add(feedbackItem);
@@ -166,11 +159,11 @@ public class MainActivity extends UfoFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = getTitle();
         bindObjects();
         setListeners();
         createLeftMenu();
-        
+
         UfoFragment fragment = null;
 
         if (Settings.isLogin(mContext)) {
@@ -180,7 +173,7 @@ public class MainActivity extends UfoFragmentActivity {
         } else {
             fragment = new WelcomeFragment();
         }
-        
+
         getSupportFragmentManager().beginTransaction().add(R.id.main_container, fragment).commit();
     }
 
@@ -199,13 +192,13 @@ public class MainActivity extends UfoFragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
+            case android.R.id.home:
 
-            if (mDrawerLayout.isDrawerOpen(mLeftMenu)) {
-                mDrawerLayout.closeDrawer(mLeftMenu);
-            } else {
-                mDrawerLayout.openDrawer(mLeftMenu);
-            }
+                if (mDrawerLayout.isDrawerOpen(mLeftMenu)) {
+                    mDrawerLayout.closeDrawer(mLeftMenu);
+                } else {
+                    mDrawerLayout.openDrawer(mLeftMenu);
+                }
 
         }
 
