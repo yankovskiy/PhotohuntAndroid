@@ -100,6 +100,7 @@ public class StatsFragment extends UfoFragment {
                 record.setCloseDate(contest.close_date);
                 record.setReward(contest.rewards);
                 record.setWorks(contest.works);
+                record.setStatus(contest.status);
 
                 Log.variable("Author", contest.display_name);
                 Log.variable("Id", String.valueOf(contest.id));
@@ -107,6 +108,7 @@ public class StatsFragment extends UfoFragment {
                 Log.variable("Close date", contest.close_date);
                 Log.variable("Reward", String.valueOf(contest.rewards));
                 Log.variable("Works", String.valueOf(contest.works));
+                Log.variable("Status", String.valueOf(contest.status));
 
                 List<ChildRecord> records = childs.get(date);
                 if (records == null) {
