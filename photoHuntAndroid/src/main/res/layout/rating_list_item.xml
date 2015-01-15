@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:orientation="horizontal"
-    android:paddingBottom="8dp" >
+    android:layout_height="72dp"
+    android:gravity="center_vertical">
 
     <TextView
-        android:layout_gravity="center_vertical"
-        android:id="@+id/rating_list_item_author"
-        android:layout_width="0dp"
-        android:textSize="16sp"
+        android:id="@+id/rating_position"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="3" />
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:textSize="48sp"
+        android:textStyle="bold" />
 
-    <TextView
-        android:layout_gravity="center_vertical"
-        android:textSize="16sp"
-        android:id="@+id/rating_list_item_balance"
-        android:layout_width="0dp"
+    <RelativeLayout
+        android:layout_toRightOf="@+id/rating_position"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="32dp">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/rating_list_item_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/rating_list_item_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rating_list_item_author"
+            android:gravity="center_vertical"
+            android:textSize="14sp" />
+    </RelativeLayout>
+</RelativeLayout>

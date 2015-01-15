@@ -20,6 +20,7 @@ public class RatingAdapter extends ArrayAdapter<User> {
     private static class RowHolder {
         private TextView mAuthor;
         private TextView mBalance;
+        private TextView mPosition;
     }
     
     public RatingAdapter(Context context, int resource, List<User> objects) {
@@ -48,16 +49,18 @@ public class RatingAdapter extends ArrayAdapter<User> {
             holder = new RowHolder();
             holder.mAuthor = (TextView) row.findViewById(R.id.rating_list_item_author);
             holder.mBalance = (TextView) row.findViewById(R.id.rating_list_item_balance);
+            holder.mPosition = (TextView) row.findViewById(R.id.rating_position);
             row.setTag(holder);
         } else {
             holder = (RowHolder) row.getTag();
         }
         
         User user = getItem(position);
-        String author = String.format(Locale.US, "%d. %s", position + 1, user.display_name);
-        String balance = String.format(Locale.US, "%d", user.balance);
-        holder.mAuthor.setText(author);
+        String userPosition = String.format(Locale.US, "%d", position + 1);
+        String balance = String.format(Locale.US, "%s: %d", mContext.getString(R.string.rating_count), user.balance);
+        holder.mAuthor.setText(user.display_name);
         holder.mBalance.setText(balance);
+        holder.mPosition.setText(userPosition);
         return row;
     }
     

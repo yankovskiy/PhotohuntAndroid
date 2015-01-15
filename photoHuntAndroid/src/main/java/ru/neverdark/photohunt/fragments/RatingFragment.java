@@ -87,7 +87,8 @@ public class RatingFragment extends UfoFragment {
 
     @Override
     public void setListeners() {
-        mRatingList.setOnItemClickListener(new RatingItemClickListener());
+        // TODO: вернуть отображения диалога с пользователем
+        //mRatingList.setOnItemClickListener(new RatingItemClickListener());
     }
     
     @Override
@@ -103,7 +104,7 @@ public class RatingFragment extends UfoFragment {
     public void onResume() {
         super.onResume();
         
-        if (mIsLoaded == false) {
+        if (!mIsLoaded) {
             String user = Settings.getUserId(mContext);
             String pass = Settings.getPassword(mContext);
             RestService service = new RestService(user, pass);

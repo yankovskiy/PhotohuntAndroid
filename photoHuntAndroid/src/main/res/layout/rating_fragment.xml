@@ -2,13 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/rating_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/gray_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:text="@string/top10"
+        android:textColor="@color/material_grey_50"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <RelativeLayout
         android:id="@+id/loading_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" >
+        android:gravity="center">
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
@@ -20,50 +33,13 @@
     <RelativeLayout
         android:id="@+id/hide_when_loading"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <RelativeLayout
-            android:id="@+id/rating_list_header"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/gray_bg"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/rating_list_header_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="8dp"
-                android:drawableLeft="@drawable/ic_action_edit_person"
-                android:text="@string/author"
-                android:textColor="#fff"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/rating_list_header_balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="8dp"
-                android:drawableLeft="@drawable/ic_action_edit_coins"
-                android:text="@string/balance"
-                android:textColor="#fff"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
+        android:layout_height="match_parent">
 
         <ListView
-            android:layout_below="@+id/rating_list_header"
             android:id="@+id/rating_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-        </ListView>
+            android:layout_height="match_parent"
+            android:background="@color/light_grey" />
     </RelativeLayout>
 
 </LinearLayout>
