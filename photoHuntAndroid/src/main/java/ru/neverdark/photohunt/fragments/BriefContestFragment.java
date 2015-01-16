@@ -15,8 +15,6 @@ import ru.neverdark.abs.UfoFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +35,7 @@ public class BriefContestFragment extends UfoFragment {
                 DetailContestFragment fragment = new DetailContestFragment(mContestId);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_container, fragment);
+                transaction.addToBackStack(null);
                 transaction.commit();
             }
         }
@@ -155,7 +154,7 @@ public class BriefContestFragment extends UfoFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mIsDataLoaded == false) {
+        if (!mIsDataLoaded) {
             String user = Settings.getUserId(mContext);
             String pass = Settings.getPassword(mContext);
             

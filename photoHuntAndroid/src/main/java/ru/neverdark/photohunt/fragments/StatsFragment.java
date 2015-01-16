@@ -39,6 +39,7 @@ public class StatsFragment extends UfoFragment {
             FragmentTransaction transaction = getActivity().getSupportFragmentManager()
                     .beginTransaction();
             transaction.replace(R.id.main_container, fragment);
+            transaction.addToBackStack(null);
             transaction.commit();
             return false;
         }
@@ -164,7 +165,7 @@ public class StatsFragment extends UfoFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mIsDataLoaded == false) {
+        if (!mIsDataLoaded) {
             String user = Settings.getUserId(mContext);
             String pass = Settings.getPassword(mContext);
 
