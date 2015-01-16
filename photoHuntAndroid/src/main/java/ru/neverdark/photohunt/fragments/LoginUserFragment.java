@@ -23,6 +23,7 @@ import ru.neverdark.photohunt.dialogs.ResetPasswordDialog;
 import ru.neverdark.photohunt.dialogs.UProgressDialog;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.RestService.User;
+import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.ToastException;
@@ -136,6 +137,7 @@ public class LoginUserFragment extends UfoFragment {
     @Override
     public void setListeners() {
         mLostPassword.setOnClickListener(new ClickListener());
+        mLostPassword.setOnTouchListener(new ButtonOnTouchListener());
     }
     
     @Override

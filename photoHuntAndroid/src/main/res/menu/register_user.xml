@@ -2,9 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/register_user_done"
         android:icon="@drawable/ic_action_accept"
-        android:showAsAction="ifRoom|collapseActionView"
+        app:showAsAction="ifRoom|collapseActionView"
         android:title="@string/register">
     </item>
 

@@ -11,7 +11,7 @@
     <string name="email">Email</string>
     <string name="displayname">Отображаемое имя</string>
     <string name="password">Пароль</string>
-    <string name="lost_password">Забыли пароль?</string>
+    <string name="lost_password">ЗАБЫЛИ ПАРОЛЬ?</string>
     <string name="registering">Регистрация&#8230;</string>
     <string name="please_wait">Пожалуйста подождите&#8230;</string>
     <string name="error_user_already_exists">Пользователь с таким email уже есть</string>
