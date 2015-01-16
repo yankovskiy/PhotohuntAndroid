@@ -190,6 +190,15 @@ public class MainActivity extends UfoFragmentActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(mLeftMenu)) {
+            mDrawerLayout.closeDrawer(mLeftMenu);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
