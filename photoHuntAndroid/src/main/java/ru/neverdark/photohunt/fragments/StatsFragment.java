@@ -8,6 +8,7 @@ import java.util.Map;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.StatsAdapter;
 import ru.neverdark.photohunt.adapters.StatsAdapter.ChildRecord;
@@ -36,6 +38,10 @@ public class StatsFragment extends UfoFragment {
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                 int childPosition, long id) {
             DetailContestFragment fragment = new DetailContestFragment(id);
+            ActionBarDrawerToggle toggle = ((UfoFragmentActivity) getActivity()).getDrawerToggle();
+            fragment.setDrawerToggle(toggle);
+            fragment.setChangeNavi(true);
+            fragment.setBackHandle(true);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager()
                     .beginTransaction();
             transaction.replace(R.id.main_container, fragment);

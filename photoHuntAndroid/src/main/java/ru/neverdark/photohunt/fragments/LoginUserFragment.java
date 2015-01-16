@@ -108,6 +108,20 @@ public class LoginUserFragment extends UfoFragment {
     }
 
     @Override
+    public void onDestroy() {
+        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
+    @Override
     public void bindObjects() {
         mLostPassword = (TextView) mView.findViewById(R.id.login_lost_password);
         mUserId = (EditText) mView.findViewById(R.id.login_userid);

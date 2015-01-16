@@ -17,7 +17,16 @@
 package ru.neverdark.abs;
 
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 
 public abstract class UfoFragmentActivity extends ActionBarActivity implements CommonApi {
+    private ActionBarDrawerToggle mDrawerToggle;
 
+    public ActionBarDrawerToggle getDrawerToggle() {
+        return mDrawerToggle;
+    }
+
+    public void setDrawerToggle(ActionBarDrawerToggle toggle) {
+        mDrawerToggle = toggle;
+    }
 }

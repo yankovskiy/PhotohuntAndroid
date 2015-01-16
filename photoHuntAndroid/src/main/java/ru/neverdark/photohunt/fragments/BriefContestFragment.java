@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
@@ -15,6 +16,7 @@ import ru.neverdark.abs.UfoFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +35,10 @@ public class BriefContestFragment extends UfoFragment {
         public void onClick(View view) {
             if (mContestId != -1) {
                 DetailContestFragment fragment = new DetailContestFragment(mContestId);
+                ActionBarDrawerToggle toggle = ((UfoFragmentActivity) getActivity()).getDrawerToggle();
+                fragment.setDrawerToggle(toggle);
+                fragment.setChangeNavi(true);
+                fragment.setBackHandle(true);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_container, fragment);
                 transaction.addToBackStack(null);

@@ -3,11 +3,14 @@ package ru.neverdark.photohunt.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
@@ -21,7 +24,11 @@ public class WelcomeFragment extends UfoFragment {
 
         @Override
         public void onAcceptRulesHandler() {
+            ActionBarDrawerToggle toggle = ((UfoFragmentActivity) getActivity()).getDrawerToggle();
             UfoFragment fragment = new RegisterUserFragment();
+            fragment.setDrawerToggle(toggle);
+            fragment.setBackHandle(true);
+            fragment.setChangeNavi(true);
             openFragment(fragment);
         }
         
@@ -33,7 +40,11 @@ public class WelcomeFragment extends UfoFragment {
         public void onClick(View v) {
             switch (v.getId()) {
             case R.id.welcome_enter:
+                ActionBarDrawerToggle toggle = ((UfoFragmentActivity) getActivity()).getDrawerToggle();
                 UfoFragment fragment = new LoginUserFragment();
+                fragment.setDrawerToggle(toggle);
+                fragment.setBackHandle(true);
+                fragment.setChangeNavi(true);
                 openFragment(fragment);
                 break;
             case R.id.welcome_register:

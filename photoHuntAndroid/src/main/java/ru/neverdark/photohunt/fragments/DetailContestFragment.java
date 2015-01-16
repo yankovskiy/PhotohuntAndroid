@@ -140,6 +140,9 @@ public class DetailContestFragment extends UfoFragment {
                 
                 Log.variable("uri", selectedImageUri.getPath());
                 UploadImageFragment fragment = new UploadImageFragment(selectedImageUri, mContestId);
+                fragment.setDrawerToggle(getDrawerToggle());
+                fragment.setChangeNavi(true);
+                fragment.setBackHandle(true);
                 fragment.setFileName(outputFileUri.getPath());
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_container, fragment);

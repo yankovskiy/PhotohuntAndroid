@@ -32,6 +32,7 @@ import android.widget.ListView;
  */
 public class MainActivity extends UfoFragmentActivity {
     private Context mContext;
+    private boolean mIsBackToContest;
 
     /**
      * Обработчик кликов по выдвигающимуся меню
@@ -41,21 +42,26 @@ public class MainActivity extends UfoFragmentActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            mLeftMenu.setItemChecked(position, true);
+            //mLeftMenu.setItemChecked(position, true);
             UfoMenuItem item = (UfoMenuItem) mLeftMenu.getAdapter().getItem(position);
             UfoFragment fragment = null;
+
+            mIsBackToContest = false;
 
             switch (item.getId()) {
                 case R.string.contest:
                     fragment = new BriefContestFragment();
                     break;
                 case R.string.stats:
+                    mIsBackToContest = true;
                     fragment = new StatsFragment();
                     break;
                 case R.string.profile:
+                    mIsBackToContest = true;
                     fragment = new ProfileFragment();
                     break;
                 case R.string.rating:
+                    mIsBackToContest = true;
                     fragment = new RatingFragment();
                     break;
                 case R.string.rules:
@@ -109,7 +115,6 @@ public class MainActivity extends UfoFragmentActivity {
     }
 
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftMenu;
     private CharSequence mTitle;
 
@@ -119,7 +124,7 @@ public class MainActivity extends UfoFragmentActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftMenu = (ListView) findViewById(R.id.left_menu);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.drawable.ic_drawer);
+        setDrawerToggle(new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.drawable.ic_drawer));
     }
 
     /**
@@ -180,19 +185,29 @@ public class MainActivity extends UfoFragmentActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+        getDrawerToggle().syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(mLeftMenu)) {
             mDrawerLayout.closeDrawer(mLeftMenu);
+        } else if (mIsBackToContest) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() == 0) {
+                BriefContestFragment fragment = new BriefContestFragment();
+                setTitle(R.string.contest);
+                fragmentManager.beginTransaction().replace(R.id.main_container, fragment).commit();
+                mIsBackToContest = false;
+            } else {
+                fragmentManager.popBackStack();
+            }
         } else {
             super.onBackPressed();
         }
@@ -202,13 +217,13 @@ public class MainActivity extends UfoFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-
-                if (mDrawerLayout.isDrawerOpen(mLeftMenu)) {
-                    mDrawerLayout.closeDrawer(mLeftMenu);
-                } else {
-                    mDrawerLayout.openDrawer(mLeftMenu);
+                if (getDrawerToggle().isDrawerIndicatorEnabled()) {
+                    if (mDrawerLayout.isDrawerOpen(mLeftMenu)) {
+                        mDrawerLayout.closeDrawer(mLeftMenu);
+                    } else {
+                        mDrawerLayout.openDrawer(mLeftMenu);
+                    }
                 }
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -217,12 +232,6 @@ public class MainActivity extends UfoFragmentActivity {
     @Override
     public void setListeners() {
         mLeftMenu.setOnItemClickListener(new LeftMenuItemClickListener());
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
+        mDrawerLayout.setDrawerListener(getDrawerToggle());
     }
 }

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.dialogs.UProgressDialog;
 import ru.neverdark.photohunt.rest.RestService;
@@ -67,11 +68,25 @@ public class RegisterUserFragment extends UfoFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
         mView = inflater.inflate(R.layout.register_user_fragment, container, false);
         mContext = mView.getContext();
-
         bindObjects();
         setHasOptionsMenu(true);
         return mView;
     }
+
+    @Override
+    public void onDestroy() {
+        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
 
     @Override
     public void bindObjects() {
