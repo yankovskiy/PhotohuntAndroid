@@ -28,6 +28,8 @@ import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.ToastException;
 
 public class LoginUserFragment extends UfoFragment {
+    private boolean mIsLogin = false;
+
     private class GetUserHandler implements Callback<User> {
         private UProgressDialog mDialog;
         
@@ -73,6 +75,7 @@ public class LoginUserFragment extends UfoFragment {
             transaction.commit();
             ((UfoFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             ((UfoFragmentActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+            mIsLogin = true;
         }
 
     }
@@ -109,8 +112,10 @@ public class LoginUserFragment extends UfoFragment {
 
     @Override
     public void onDestroy() {
-        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+        if(!mIsLogin) {
+            ((UfoFragmentActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            ((UfoFragmentActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+        }
         super.onDestroy();
     }
 
