@@ -23,6 +23,7 @@ import ru.neverdark.photohunt.utils.ToastException;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -51,6 +52,7 @@ import android.widget.TextView;
  * Фрагмент содержащий детальную информацию о проводимом конкурсе Должен
  * реализовывать отображение всех работ, голосование, загрузку своей работыs
  */
+@SuppressLint("ValidFragment")
 public class DetailContestFragment extends UfoFragment {
     private RelativeLayout mDetailContestBottom;
 
@@ -63,7 +65,6 @@ public class DetailContestFragment extends UfoFragment {
                 updateRemainingVotes(mRemainingVotes);
             }
         }
-
     }
 
     private int mRemainingVotes = 0;

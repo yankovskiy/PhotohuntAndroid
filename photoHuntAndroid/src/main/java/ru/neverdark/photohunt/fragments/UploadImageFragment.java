@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -31,9 +32,11 @@ import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ImageOnTouchListener;
+import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
 
+@SuppressLint("ValidFragment")
 public class UploadImageFragment extends UfoFragment {
     private class OnImageHelpClickListener implements OnClickListener {
 
@@ -116,7 +119,13 @@ public class UploadImageFragment extends UfoFragment {
     private void loadImage() {
         try {
             Bitmap bitmap = Common.resizeBitmap(MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), mUri), 1024);
-            mImage.setImageBitmap(bitmap);
+
+            int pixels = (int) (mContext.getResources().getDisplayMetrics().density * 32);
+            Log.variable("pixels", String.valueOf(pixels));
+            int width = mContext.getResources().getDisplayMetrics().widthPixels - pixels;
+            Log.variable("width", String.valueOf(width));
+
+            mImage.setImageBitmap(Common.resizeBitmap(MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), mUri), width));
             File file = new File(mFileName);
             mOutputFileUri = Uri.fromFile(file);
             OutputStream outStream = new FileOutputStream(file);
