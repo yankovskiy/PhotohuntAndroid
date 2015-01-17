@@ -22,10 +22,11 @@
         android:layout_height="match_parent" >
 
         <RelativeLayout
-            android:layout_marginBottom="5dp"
             android:id="@+id/detail_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
+            android:paddingLeft="16dp"
+            android:gravity="center_vertical"
             android:background="@drawable/gray_bg" >
 
             <TextView
@@ -33,24 +34,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_centerInParent="true"
+                android:textColor="@color/material_grey_50"
+                android:drawableLeft="@drawable/ic_action_edit_subject_white"
+                android:drawablePadding="8dp"
+                android:textSize="16sp"
                 android:layout_marginBottom="8dp"
-                android:drawableLeft="@drawable/ic_action_subject"
-                android:textColor="#fff"
-                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/detail_contest_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_below="@+id/detail_contest_subject"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="8dp"
-                android:drawableLeft="@drawable/ic_action_edit_person"
-                android:textColor="#fff"
-                android:textSize="16sp" />
+                android:textColor="@color/material_grey_50"
+                android:drawableLeft="@drawable/ic_action_edit_person_white"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/detail_contest_close_date"
@@ -58,10 +58,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/detail_contest_subject"
-                android:layout_marginRight="8dp"
-                android:drawableLeft="@drawable/ic_action_edit_time"
-                android:textColor="#fff"
-                android:textSize="16sp" />
+                android:layout_marginRight="16dp"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:drawableLeft="@drawable/ic_action_edit_time_white"
+                android:textColor="@color/material_grey_50"
+                android:textSize="14sp" />
         </RelativeLayout>
 
         <ListView
@@ -69,27 +71,24 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/detail_contest_bottom"
-            android:layout_below="@+id/detail_header" >
+            android:layout_below="@+id/detail_header"
+            android:divider="@null">
         </ListView>
 
-        <LinearLayout
+        <RelativeLayout
+            android:background="@color/material_blue_grey_500"
             android:id="@+id/detail_contest_bottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:orientation="vertical"
-            android:padding="8dp" >
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true">
 
             <ImageView
                 android:id="@+id/detail_contest_camera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/grey_button"
-                android:padding="5dp"
+                android:layout_centerInParent="true"
                 android:src="@drawable/ic_action_camera" />
-        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 
 </RelativeLayout>

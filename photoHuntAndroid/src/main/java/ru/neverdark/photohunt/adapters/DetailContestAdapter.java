@@ -26,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class DetailContestAdapter extends ArrayAdapter<Image> {
@@ -107,6 +108,9 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         private TextView mAuthor;
         private TextView mSubject;
         private ImageView mVote;
+        private View mImageDelemiter;
+        private View mDataDelemiter;
+        private RelativeLayout mContestData;
     }
 
     public DetailContestAdapter(Context context, ContestDetail contestDetail) {
@@ -139,6 +143,9 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
             holder.mAuthor = (TextView) row.findViewById(R.id.detail_contest_list_item_author);
             holder.mSubject = (TextView) row.findViewById(R.id.detail_contest_list_item_subject);
             holder.mVote = (ImageView) row.findViewById(R.id.detail_contest_list_item_vote);
+            holder.mContestData = (RelativeLayout) row.findViewById(R.id.detail_contest_data);
+            holder.mDataDelemiter = row.findViewById(R.id.detail_contest_data_delimiter);
+            holder.mImageDelemiter = row.findViewById(R.id.detail_contest_image_delimiter);
             row.setTag(holder);
         } else {
             holder = (RowHolder) row.getTag();
@@ -159,12 +166,20 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
             voteCount = String.format(Locale.US, "%d", image.vote_count);
             author = image.display_name;
             subject = image.subject;
+            setDataBlockVisible(holder, true);
         } else {
             voteCount = hidden;
             author = hidden;
             subject = hidden;
+            setDataBlockVisible(holder, false);
         }
-        
+
+        if (mContest.status == Contest.STATUS_VOTES) {
+            setVoteBlockVisible(holder, true);
+        } else {
+            setVoteBlockVisible(holder, false);
+        }
+
         holder.mVoteCount.setText(voteCount);
         holder.mAuthor.setText(author);
         holder.mSubject.setText(subject);
@@ -177,6 +192,26 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
                 .into(holder.mImage);
 
         return row;
+    }
+
+    private void setDataBlockVisible(RowHolder holder, boolean isVisible) {
+        if (isVisible) {
+            holder.mContestData.setVisibility(View.VISIBLE);
+            holder.mImageDelemiter.setVisibility(View.VISIBLE);
+        } else {
+            holder.mContestData.setVisibility(View.GONE);
+            holder.mImageDelemiter.setVisibility(View.GONE);
+        }
+    }
+
+    private void setVoteBlockVisible(RowHolder holder, boolean isVisible) {
+        if (isVisible) {
+            holder.mDataDelemiter.setVisibility(View.VISIBLE);
+            holder.mVote.setVisibility(View.VISIBLE);
+        } else {
+            holder.mDataDelemiter.setVisibility(View.GONE);
+            holder.mVote.setVisibility(View.GONE);
+        }
     }
 
     @Override

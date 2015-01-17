@@ -22,6 +22,7 @@ import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -43,6 +44,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
@@ -50,6 +52,8 @@ import android.widget.TextView;
  * реализовывать отображение всех работ, голосование, загрузку своей работыs
  */
 public class DetailContestFragment extends UfoFragment {
+    private RelativeLayout mDetailContestBottom;
+
     private class VoteHandler implements VoteListener {
 
         @Override
@@ -64,6 +68,7 @@ public class DetailContestFragment extends UfoFragment {
 
     private int mRemainingVotes = 0;
     private static final int PICTURE_REQUEST_CODE = 1;
+
     private class ChoosePictureHandler implements OnClickListener {
 
         @Override
@@ -73,71 +78,59 @@ public class DetailContestFragment extends UfoFragment {
             final String fname = Common.getUniqueImageFilename();
             final File sdImageMainDirectory = new File(root, fname);
             outputFileUri = Uri.fromFile(sdImageMainDirectory);
-                // Camera.
-                final List<Intent> cameraIntents = new ArrayList<Intent>();
-                final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                final PackageManager packageManager = mContext.getPackageManager();
-                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-                for(ResolveInfo res : listCam) {
-                    final String packageName = res.activityInfo.packageName;
-                    final Intent intent = new Intent(captureIntent);
-                    intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                    intent.setPackage(packageName);
+            // Camera.
+            final List<Intent> cameraIntents = new ArrayList<Intent>();
+            final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            final PackageManager packageManager = mContext.getPackageManager();
+            final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+            for (ResolveInfo res : listCam) {
+                final String packageName = res.activityInfo.packageName;
+                final Intent intent = new Intent(captureIntent);
+                intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                intent.setPackage(packageName);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                    cameraIntents.add(intent);
-                }
-                
-                // Filesystem.
-                final Intent galleryIntent = new Intent();
-                galleryIntent.setType("image/*");
-                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                cameraIntents.add(intent);
+            }
 
-                // Chooser of filesystem options.
-                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+            // Filesystem.
+            final Intent galleryIntent = new Intent();
+            galleryIntent.setType("image/*");
+            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
 
-                // Add the camera options.
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+            // Chooser of filesystem options.
+            final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
 
-                startActivityForResult(chooserIntent, PICTURE_REQUEST_CODE);
+            // Add the camera options.
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+
+            startActivityForResult(chooserIntent, PICTURE_REQUEST_CODE);
         }
 
     }
-    
+
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if(resultCode == Activity.RESULT_OK)
-        {
-            if(requestCode == PICTURE_REQUEST_CODE)
-            {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PICTURE_REQUEST_CODE) {
                 final boolean isCamera;
-                if(data == null)
-                {
+                if (data == null) {
                     isCamera = true;
-                }
-                else
-                {
+                } else {
                     final String action = data.getAction();
-                    if(action == null)
-                    {
+                    if (action == null) {
                         isCamera = false;
-                    }
-                    else
-                    {
+                    } else {
                         isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     }
                 }
 
                 Uri selectedImageUri;
-                if(isCamera)
-                {
+                if (isCamera) {
                     selectedImageUri = outputFileUri;
-                }
-                else
-                {
+                } else {
                     selectedImageUri = data == null ? null : data.getData();
                 }
-                
+
                 Log.variable("uri", selectedImageUri.getPath());
                 UploadImageFragment fragment = new UploadImageFragment(selectedImageUri, mContestId);
                 fragment.setDrawerToggle(getDrawerToggle());
@@ -150,12 +143,12 @@ public class DetailContestFragment extends UfoFragment {
                 transaction.commit();
             }
         }
-        
+
         super.onActivityResult(requestCode, resultCode, data);
     }
-    
+
     private Uri outputFileUri;
-    
+
     private class GetContestDetailsHandler extends CallbackHandler<ContestDetail> {
 
         public GetContestDetailsHandler(View view) {
@@ -194,15 +187,17 @@ public class DetailContestFragment extends UfoFragment {
                 mSubject.setText(data.contest.subject);
                 mAuthor.setText(data.contest.display_name);
                 mCloseDate.setText(data.contest.close_date);
-                
+
                 if (data.images != null) {
                     initList(data);
                 }
-                
+
                 if (data.contest.status != Contest.STATUS_OPEN) {
-                    mCamera.setVisibility(View.GONE);
+                    mDetailContestBottom.setVisibility(View.GONE);
+                } else {
+                    mDetailContestBottom.setVisibility(View.VISIBLE);
                 }
-                
+
                 if (data.contest.status == Contest.STATUS_VOTES) {
                     updateRemainingVotes(data.votes);
                 }
@@ -220,9 +215,9 @@ public class DetailContestFragment extends UfoFragment {
     private void updateRemainingVotes(int newVotes) {
         mRemainingVotes = newVotes;
         String votes = String.format(Locale.US, "%s: %d", getString(R.string.remaining_votes), newVotes);
-        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setSubtitle(votes);
+        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(votes);
     }
-    
+
 
     private final long mContestId;
     private View mView;
@@ -258,19 +253,19 @@ public class DetailContestFragment extends UfoFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.detail_contest_refresh:
-            refresh();
-            break;
+            case R.id.detail_contest_refresh:
+                refresh();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
-    
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.detail_contest, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-    
+
     @Override
     public void bindObjects() {
         mContestList = (ListView) mView.findViewById(R.id.detail_contest_list);
@@ -278,6 +273,7 @@ public class DetailContestFragment extends UfoFragment {
         mCamera = (ImageView) mView.findViewById(R.id.detail_contest_camera);
         mAuthor = (TextView) mView.findViewById(R.id.detail_contest_author);
         mCloseDate = (TextView) mView.findViewById(R.id.detail_contest_close_date);
+        mDetailContestBottom = (RelativeLayout) mView.findViewById(R.id.detail_contest_bottom);
     }
 
     @Override
@@ -294,13 +290,13 @@ public class DetailContestFragment extends UfoFragment {
             refresh();
         }
     }
-    
+
     @Override
     public void onDestroy() {
-        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(null);
         super.onDestroy();
     }
-    
+
     private void refresh() {
         setHasOptionsMenu(false);
         String user = Settings.getUserId(mContext);
