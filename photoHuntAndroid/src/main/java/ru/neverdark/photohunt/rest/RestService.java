@@ -175,9 +175,11 @@ public class RestService {
     private final ContestApi mContestApi;
 
     public RestService() {
+        BasicInterceptor interceptor = new BasicInterceptor();
+
         mContestApi = new ContestApi();
         mUserApi = new UserApi();
-        mRestAdapter = new RestAdapter.Builder().setEndpoint(REST_URL).build();
+        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(interceptor).setEndpoint(REST_URL).build();
         mUserMgmt = mRestAdapter.create(UserMgmt.class);
         mContestMgmt = mRestAdapter.create(ContestMgmt.class);
     }

@@ -10,11 +10,14 @@ import ru.neverdark.photohunt.fragments.ProfileFragment;
 import ru.neverdark.photohunt.fragments.RatingFragment;
 import ru.neverdark.photohunt.fragments.StatsFragment;
 import ru.neverdark.photohunt.fragments.WelcomeFragment;
+import ru.neverdark.photohunt.utils.Log;
+import ru.neverdark.photohunt.utils.SingletonHelper;
 import ru.neverdark.photohunt.utils.UfoMenuItem;
 import ru.neverdark.photohunt.utils.Settings;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -163,6 +166,12 @@ public class MainActivity extends UfoFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        try {
+            SingletonHelper.getInstance().setVersion(getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.message("Could not determine version use");
+        }
 
         mTitle = getTitle();
         bindObjects();

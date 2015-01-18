@@ -3,16 +3,19 @@ package ru.neverdark.photohunt.rest;
 import android.util.Base64;
 import retrofit.RequestInterceptor;
 import ru.neverdark.photohunt.utils.Log;
+import ru.neverdark.photohunt.utils.SingletonHelper;
 
 /**
- * Перехватчик для http - авторизации
+ * Перехватчик для отправки http-заголовков (авторизация, версия)
  */
-public class AuthInterceptor implements RequestInterceptor {
+public class AuthInterceptor extends BasicInterceptor {
     private String mAuthValue;
     
     @Override
     public void intercept(RequestFacade requestFacade) {
         Log.enter();
+        super.intercept(requestFacade);
+
         if (mAuthValue != null && mAuthValue.length() > 0) {
             requestFacade.addHeader("Authorization", mAuthValue);
         }
