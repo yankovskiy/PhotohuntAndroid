@@ -17,6 +17,10 @@ import retrofit.mime.TypedOutput;
 import ru.neverdark.photohunt.utils.Log;
 
 public class RestService {
+    public static class ErrorData {
+        public String error;
+    }
+
     public static class Image {
         public long id;
         public long contest_id;

@@ -63,7 +63,9 @@ public class UploadImageFragment extends UfoFragment {
                     throw new ToastException(R.string.error_wrong_password);
                 }
 
-                throw new ToastException(R.string.error_unexpected_error);
+                RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+
+                throw new ToastException(err.error);
             } catch (ToastException e) {
                 e.show(mContext);
             }

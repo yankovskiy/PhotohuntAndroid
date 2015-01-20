@@ -35,7 +35,8 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
 
         @Override
         public void failure(RetrofitError error) {
-            Common.showMessage(mContext, R.string.already_voted);
+            RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+            Common.showMessage(mContext, err.error);
         }
 
         @Override
