@@ -163,8 +163,21 @@ public class ProfileFragment extends UfoFragment {
             ((UfoFragmentActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
 
             Common.showMessage(mContext, R.string.accaunt_removed);
+            if (mCallback != null) {
+                mCallback.deleteSuccess();
+            }
         }
 
+    }
+
+    public interface OnDeleteUser {
+        public void deleteSuccess();
+    }
+
+    private OnDeleteUser mCallback;
+
+    public void setCallback(OnDeleteUser callback) {
+        mCallback = callback;
     }
 
     private class OnConfirmHandler implements OnCallback, ConfirmDialog.OnPositiveClickListener {

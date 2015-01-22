@@ -62,6 +62,7 @@ public class MainActivity extends UfoFragmentActivity {
                 case R.string.profile:
                     mIsBackToContest = true;
                     fragment = new ProfileFragment();
+                    ((ProfileFragment)fragment).setCallback(new DeleteUserListener());
                     break;
                 case R.string.rating:
                     mIsBackToContest = true;
@@ -242,5 +243,13 @@ public class MainActivity extends UfoFragmentActivity {
     public void setListeners() {
         mLeftMenu.setOnItemClickListener(new LeftMenuItemClickListener());
         mDrawerLayout.setDrawerListener(getDrawerToggle());
+    }
+
+    private class DeleteUserListener implements ProfileFragment.OnDeleteUser {
+        @Override
+        public void deleteSuccess() {
+            // в случае удаления пользователя обработка нажатия кнопки back нужна стандартная
+            mIsBackToContest = false;
+        }
     }
 }
