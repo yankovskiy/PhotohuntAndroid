@@ -134,6 +134,7 @@ public class StatsFragment extends UfoFragment {
             mAdapter = new StatsAdapter(mContext, headers, childs);
             mContestList.setAdapter(mAdapter);
 
+            mContestList.expandGroup(0);    // expand top group
             super.success(data, response);
         }
 
