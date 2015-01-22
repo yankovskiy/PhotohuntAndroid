@@ -72,8 +72,8 @@ public class RestService {
             mContestMgmt.getContests(callback);
         }
 
-        public void getLastContest(Callback<Contest> callback) {
-            mContestMgmt.getLastContest(callback);
+        public void getOpenContests(Callback<List<Contest>> callback) {
+            mContestMgmt.getOpenContests(callback);
         }
 
         public void getContestDetails(long id, Callback<ContestDetail> callback) {
@@ -95,7 +95,7 @@ public class RestService {
         public void getContests(Callback<List<Contest>> callback);
 
         @GET("/contest")
-        public void getLastContest(Callback<Contest> callback);
+        public void getOpenContests(Callback<List<Contest>> callback);
 
         @GET("/contest/{id}")
         public void getContestDetails(@Path("id") long id, Callback<ContestDetail> callback);

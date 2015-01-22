@@ -13,7 +13,7 @@
         android:background="@drawable/gray_bg"
         android:gravity="center_vertical"
         android:paddingLeft="16dp"
-        android:text="@string/current_contest"
+        android:text="@string/current_contests"
         android:textColor="@color/material_grey_50"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -35,113 +35,14 @@
         android:id="@+id/hide_when_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/brief_contest_title"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="8dp">
+        android:layout_below="@+id/brief_contest_title">
 
-        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/card_view"
+        <ListView
+            android:id="@+id/brief_contest_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            card_view:cardBackgroundColor="@color/light_grey"
-            card_view:cardCornerRadius="4dp"
-            card_view:cardElevation="2dp">
+            android:layout_height="match_parent"
+            android:divider="@null" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/brief_contest_subject"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:background="@drawable/grey_header"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="8dp"
-                    android:textColor="@color/material_grey_50"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:id="@+id/brief_subject_delimiter"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/brief_contest_subject"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/material_grey_600" />
-
-                <TextView
-                    android:id="@+id/brief_contest_author"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/brief_subject_delimiter"
-                    android:layout_marginLeft="16dp"
-                    android:drawableLeft="@drawable/ic_action_edit_person"
-                    android:drawablePadding="8dp"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/brief_contest_reward"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/brief_contest_author"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
-                    android:drawableLeft="@drawable/ic_action_edit_coins"
-                    android:drawablePadding="8dp"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/brief_contest_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/brief_contest_reward"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
-                    android:drawableLeft="@drawable/ic_action_edit_time"
-                    android:drawablePadding="8dp"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/brief_contest_works"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/brief_contest_close"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
-                    android:drawableLeft="@drawable/ic_action_edit_picture"
-                    android:drawablePadding="8dp"
-                    android:textSize="14sp" />
-
-                <View
-                    android:id="@+id/brief_button_delimiter"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/brief_contest_works"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/material_grey_600" />
-
-                <TextView
-                    android:id="@+id/brief_contest_enter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/brief_button_delimiter"
-                    android:layout_marginRight="16dp"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/material_teal_A500"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
     </RelativeLayout>
 
 </RelativeLayout>

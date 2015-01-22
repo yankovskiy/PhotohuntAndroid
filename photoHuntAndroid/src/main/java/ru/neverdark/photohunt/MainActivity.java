@@ -52,7 +52,7 @@ public class MainActivity extends UfoFragmentActivity {
             mIsBackToContest = false;
 
             switch (item.getId()) {
-                case R.string.contest:
+                case R.string.contests:
                     fragment = new BriefContestFragment();
                     break;
                 case R.string.stats:
@@ -137,7 +137,7 @@ public class MainActivity extends UfoFragmentActivity {
     private void createLeftMenu() {
         MenuAdapter menuAdapter = new MenuAdapter(mContext, R.layout.menu_item);
 
-        UfoMenuItem contestItem = new UfoMenuItem(mContext, R.drawable.ic_contest, R.string.contest);
+        UfoMenuItem contestItem = new UfoMenuItem(mContext, R.drawable.ic_contest, R.string.contests);
         UfoMenuItem statsItem = new UfoMenuItem(mContext, R.drawable.ic_stats, R.string.stats);
         UfoMenuItem profileItem = new UfoMenuItem(mContext, R.drawable.ic_action_person, R.string.profile);
         UfoMenuItem ratingItem = new UfoMenuItem(mContext, R.drawable.ic_action_group, R.string.rating);
@@ -212,7 +212,7 @@ public class MainActivity extends UfoFragmentActivity {
             FragmentManager fragmentManager = getSupportFragmentManager();
             if (fragmentManager.getBackStackEntryCount() == 0) {
                 BriefContestFragment fragment = new BriefContestFragment();
-                setTitle(R.string.contest);
+                setTitle(R.string.contests);
                 fragmentManager.beginTransaction().replace(R.id.main_container, fragment).commit();
                 mIsBackToContest = false;
             } else {

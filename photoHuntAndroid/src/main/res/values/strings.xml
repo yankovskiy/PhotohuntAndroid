@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Фотокросс</string>
-    <string name="contest">Конкурс</string>
+    <string name="contests">Конкурсы</string>
     <string name="stats">Статистика</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
@@ -55,7 +54,7 @@
     <string name="vote_success">Ваш голос принят</string>
     <string name="user_information">Информация о пользователе</string>
     <string name="rating">Рейтинг</string>
-    <string name="current_contest">Текущий конкурс</string>
+    <string name="current_contests">Текущие конкурсы</string>
     <string name="take_part">Принять участие</string>
     <string name="vote">Голосовать</string>
     <string name="view">Просмотреть</string>
