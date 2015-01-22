@@ -70,6 +70,7 @@ public class RegisterUserFragment extends UfoFragment {
         mContext = mView.getContext();
         bindObjects();
         setHasOptionsMenu(true);
+        getActivity().setTitle(R.string.app_name);
         return mView;
     }
 

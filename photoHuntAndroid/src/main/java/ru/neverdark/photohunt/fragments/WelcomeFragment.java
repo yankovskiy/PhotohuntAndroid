@@ -77,6 +77,7 @@ public class WelcomeFragment extends UfoFragment {
         
         bindObjects();
         setListeners();
+        getActivity().setTitle(R.string.app_name);
         return mView;
     }
 

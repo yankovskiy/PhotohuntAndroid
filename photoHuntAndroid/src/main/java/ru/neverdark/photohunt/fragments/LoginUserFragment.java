@@ -108,6 +108,7 @@ public class LoginUserFragment extends UfoFragment {
         bindObjects();
         setListeners();
         setHasOptionsMenu(true);
+        getActivity().setTitle(R.string.app_name);
         return mView;
     }
 
