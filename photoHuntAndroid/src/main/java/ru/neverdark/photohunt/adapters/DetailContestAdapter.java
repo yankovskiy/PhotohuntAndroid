@@ -187,7 +187,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         
         holder.mVote.setOnTouchListener(new ImageOnTouchListener());
         holder.mVote.setOnClickListener(new VoteClickListener(image));
-        String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.REST_URL, image.id);
+        String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.getRestUrl(), image.id);
 
         Picasso.with(mContext).load(url).transform(new Transform(holder)).tag(mContext)
                 .into(holder.mImage);

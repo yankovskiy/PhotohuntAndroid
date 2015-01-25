@@ -20,9 +20,9 @@ import java.io.IOException;
 
 import android.os.Environment;
 
+import ru.neverdark.photohunt.BuildConfig;
+
 public class Log {
-    /** true if DEBUG enabled or false if DEBUG disable */
-    public static final boolean DEBUG = true;
     /** true if write log to file or false in other case */
     private static final boolean WRITE_FILE = false;
 
@@ -32,7 +32,7 @@ public class Log {
      * @return enter time in milliseconds
      */
     public static long enter() {
-        if (DEBUG == true) {
+        if (BuildConfig.DEBUG) {
             log("Enter");
             return System.currentTimeMillis();
         }
@@ -42,12 +42,12 @@ public class Log {
     /**
      * Logs exit from function with worked time
      * 
-     * @param startTime
+     * @param enterTime
      *            time in milliseconds (enter time in function). If zero - no
      *            logging working time
      */
     public static void exit(long enterTime) {
-        if (DEBUG == true) {
+        if (BuildConfig.DEBUG) {
             log("Exit");
             if (enterTime != 0) {
                 long result = System.currentTimeMillis() - enterTime;
@@ -77,7 +77,7 @@ public class Log {
      *            message for logging
      */
     public static void message(String message) {
-        if (DEBUG == true) {
+        if (BuildConfig.DEBUG) {
             log(message);
         }
     }
@@ -88,7 +88,7 @@ public class Log {
      * messages from your devices
      */
     public static void saveLogcatToFile() {
-        if (DEBUG == true && WRITE_FILE == true) {
+        if (BuildConfig.DEBUG && WRITE_FILE) {
             String fileName = "logcat_" + System.currentTimeMillis() + ".txt";
             File outputFile = new File(
                     Environment.getExternalStorageDirectory(), fileName);
@@ -111,7 +111,7 @@ public class Log {
      *            value of the variable
      */
     public static void variable(String variable, String value) {
-        if (DEBUG == true) {
+        if (BuildConfig.DEBUG) {
             String message = variable + " = " + value;
             log(message);
         }

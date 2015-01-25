@@ -14,6 +14,7 @@ import retrofit.http.PUT;
 import retrofit.http.Part;
 import retrofit.http.Path;
 import retrofit.mime.TypedOutput;
+import ru.neverdark.photohunt.BuildConfig;
 import ru.neverdark.photohunt.utils.Log;
 
 public class RestService {
@@ -165,8 +166,16 @@ public class RestService {
         public void getRating(Callback<List<User>> callback);
     }
 
-    public final static String REST_URL = "http://192.168.1.3/api.tim-sw.com";
-    //public final static String REST_URL = "http://api.tim-sw.com";
+    private final static String DEBUG_REST_URL = "http://192.168.0.3/api.tim-sw.com";
+    private final static String RELEASE_REST_URL = "http://api.tim-sw.com";
+
+    public final static String getRestUrl() {
+        if (BuildConfig.DEBUG) {
+            return DEBUG_REST_URL;
+        } else {
+            return RELEASE_REST_URL;
+        }
+    }
 
     private final RestAdapter mRestAdapter;
 
@@ -183,7 +192,7 @@ public class RestService {
 
         mContestApi = new ContestApi();
         mUserApi = new UserApi();
-        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(interceptor).setEndpoint(REST_URL).build();
+        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(interceptor).setEndpoint(getRestUrl()).build();
         mUserMgmt = mRestAdapter.create(UserMgmt.class);
         mContestMgmt = mRestAdapter.create(ContestMgmt.class);
     }
@@ -194,7 +203,7 @@ public class RestService {
 
         mContestApi = new ContestApi();
         mUserApi = new UserApi();
-        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(auth).setEndpoint(REST_URL)
+        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(auth).setEndpoint(getRestUrl())
                 .build();
         mUserMgmt = mRestAdapter.create(UserMgmt.class);
         mContestMgmt = mRestAdapter.create(ContestMgmt.class);
