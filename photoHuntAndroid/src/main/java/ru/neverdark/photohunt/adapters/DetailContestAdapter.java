@@ -14,6 +14,7 @@ import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.RestService.Contest;
 import ru.neverdark.photohunt.rest.RestService.ContestDetail;
 import ru.neverdark.photohunt.rest.RestService.Image;
+import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ImageOnTouchListener;
 import ru.neverdark.photohunt.utils.Settings;
@@ -126,7 +127,12 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         holder.mSubject.setText(subject);
 
         holder.mVoteButton.setOnTouchListener(new ImageOnTouchListener());
-        holder.mVoteButton.setOnClickListener(new VoteClickListener(image));
+        holder.mVoteButton.setOnClickListener(new ClickListener(image));
+        holder.mEditButton.setOnTouchListener(new ButtonOnTouchListener());
+        holder.mRemoveButton.setOnTouchListener(new ButtonOnTouchListener());
+        holder.mEditButton.setOnClickListener(new ClickListener(image));
+        holder.mRemoveButton.setOnClickListener(new ClickListener(image));
+
         String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.getRestUrl(), image.id);
 
         Picasso.with(mContext).load(url).transform(new Transform(holder)).tag(mContext)
@@ -217,21 +223,34 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         }
     }
 
-    private class VoteClickListener implements OnClickListener {
+    private class ClickListener implements OnClickListener {
         private Image mImage;
 
-        public VoteClickListener(Image image) {
+        public ClickListener(Image image) {
             mImage = image;
         }
 
         @Override
-        public void onClick(View view) {
-            String user = Settings.getUserId(mContext);
-            String pass = Settings.getPassword(mContext);
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.detail_contest_list_item_vote:
+                    String user = Settings.getUserId(mContext);
+                    String pass = Settings.getPassword(mContext);
 
-            RestService service = new RestService(user, pass);
-            service.getContestApi().voteForContest(mImage.contest_id, mImage, new VoteHandler());
+                    RestService service = new RestService(user, pass);
+                    service.getContestApi().voteForContest(mImage.contest_id, mImage, new VoteHandler());
+                    break;
+                case R.id.detail_contest_edit:
+                    // TODO
+                    mImage.subject = "Тест";
+                    notifyDataSetChanged();
+                    break;
+                case R.id.detail_contest_remove:
+                    // TODO
+                    remove(mImage);
+                    notifyDataSetChanged();
+                    break;
+            }
         }
-
     }
 }
