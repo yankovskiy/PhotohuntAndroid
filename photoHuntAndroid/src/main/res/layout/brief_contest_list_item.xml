@@ -47,7 +47,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/brief_subject_delimiter"
                 android:layout_marginLeft="16dp"
-                android:drawableLeft="@drawable/ic_action_edit_person"
+                android:drawableLeft="@drawable/ic_account_box_grey600_24dp"
                 android:drawablePadding="8dp"
                 android:textSize="14sp" />
 
@@ -59,7 +59,7 @@
                 android:layout_below="@+id/brief_contest_author"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
-                android:drawableLeft="@drawable/ic_action_edit_coins"
+                android:drawableLeft="@drawable/ic_stars_grey600_24dp"
                 android:drawablePadding="8dp"
                 android:textSize="14sp" />
 
@@ -71,7 +71,7 @@
                 android:layout_below="@+id/brief_contest_reward"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
-                android:drawableLeft="@drawable/ic_action_edit_time"
+                android:drawableLeft="@drawable/ic_access_time_grey600_24dp"
                 android:drawablePadding="8dp"
                 android:textSize="14sp" />
 
@@ -83,7 +83,7 @@
                 android:layout_below="@+id/brief_contest_close"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
-                android:drawableLeft="@drawable/ic_action_edit_picture"
+                android:drawableLeft="@drawable/ic_crop_original_grey600_24dp"
                 android:drawablePadding="8dp"
                 android:textSize="14sp" />
 

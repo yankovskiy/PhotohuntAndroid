@@ -29,13 +29,14 @@ public class RestService {
         public String subject;
         public String display_name;
         public int vote_count;
+        public boolean is_editable;
 
         @Override
         public String toString() {
             return String
                     .format(Locale.US,
-                            "Image id = %d, contest_id = %d, user_id = %d, subject = %s, display_name = %s, vote_count = %d",
-                            id, contest_id, user_id, subject, display_name, vote_count);
+                            "Image id = %d, contest_id = %d, user_id = %d, subject = %s, display_name = %s, vote_count = %d, is_editable = %b",
+                            id, contest_id, user_id, subject, display_name, vote_count, is_editable);
         }
     }
 

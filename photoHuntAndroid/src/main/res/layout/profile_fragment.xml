@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:drawableLeft="@drawable/ic_action_edit_email"
+                android:drawableLeft="@drawable/ic_email_grey600_24dp"
                 android:drawablePadding="8dp"
                 android:textSize="14sp"
                 android:layout_below="@+id/profile_subject_delimiter" />
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_card_userid"
                 android:layout_marginLeft="16dp"
-                android:drawableLeft="@drawable/ic_action_edit_coins"
+                android:drawableLeft="@drawable/ic_stars_grey600_24dp"
                 android:drawablePadding="8dp"
                 android:layout_marginTop="8dp"
                 android:textSize="14sp" />
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_card_balance"
                 android:layout_marginLeft="16dp"
-                android:drawableLeft="@drawable/ic_action_edit_good"
+                android:drawableLeft="@drawable/ic_thumb_up_grey600_24dp"
                 android:drawablePadding="8dp"
                 android:textSize="14sp" />
 

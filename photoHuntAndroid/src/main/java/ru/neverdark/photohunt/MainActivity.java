@@ -137,14 +137,14 @@ public class MainActivity extends UfoFragmentActivity {
     private void createLeftMenu() {
         MenuAdapter menuAdapter = new MenuAdapter(mContext, R.layout.menu_item);
 
-        UfoMenuItem contestItem = new UfoMenuItem(mContext, R.drawable.ic_contest, R.string.contests);
-        UfoMenuItem statsItem = new UfoMenuItem(mContext, R.drawable.ic_stats, R.string.stats);
-        UfoMenuItem profileItem = new UfoMenuItem(mContext, R.drawable.ic_action_person, R.string.profile);
-        UfoMenuItem ratingItem = new UfoMenuItem(mContext, R.drawable.ic_action_group, R.string.rating);
-        UfoMenuItem aboutItem = new UfoMenuItem(mContext, R.drawable.ic_action_about, R.string.rules);
-        UfoMenuItem rateItem = new UfoMenuItem(mContext, R.drawable.ic_action_good, R.string.rate);
-        UfoMenuItem feedbackItem = new UfoMenuItem(mContext, R.drawable.ic_action_email, R.string.feedback);
-        UfoMenuItem socialItem = new UfoMenuItem(mContext, R.drawable.ic_action_social, R.string.in_social);
+        UfoMenuItem contestItem = new UfoMenuItem(mContext, R.drawable.ic_whatshot_grey600_24dp, R.string.contests);
+        UfoMenuItem statsItem = new UfoMenuItem(mContext, R.drawable.ic_poll_grey600_24dp, R.string.stats);
+        UfoMenuItem profileItem = new UfoMenuItem(mContext, R.drawable.ic_assignment_ind_grey600_24dp, R.string.profile);
+        UfoMenuItem ratingItem = new UfoMenuItem(mContext, R.drawable.ic_group_grey600_24dp, R.string.rating);
+        UfoMenuItem aboutItem = new UfoMenuItem(mContext, R.drawable.ic_info_outline_grey600_24dp, R.string.rules);
+        UfoMenuItem rateItem = new UfoMenuItem(mContext, R.drawable.ic_thumb_up_grey600_24dp, R.string.rate);
+        UfoMenuItem feedbackItem = new UfoMenuItem(mContext, R.drawable.ic_email_grey600_24dp, R.string.feedback);
+        UfoMenuItem socialItem = new UfoMenuItem(mContext, R.drawable.ic_group_work_grey600_24dp, R.string.in_social);
 
         menuAdapter.add(contestItem);
         menuAdapter.add(statsItem);

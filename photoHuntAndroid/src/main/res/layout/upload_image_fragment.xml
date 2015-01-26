@@ -36,7 +36,7 @@
                 android:layout_height="48dp"
                 android:layout_marginRight="16dp"
                 android:layout_toLeftOf="@+id/upload_subject_help"
-                android:drawableLeft="@drawable/ic_action_edit_subject"
+                android:drawableLeft="@drawable/ic_whatshot_grey600_18dp"
                 android:drawablePadding="8dp"
                 android:hint="@string/new_subject"
                 android:paddingBottom="16dp"
@@ -44,12 +44,13 @@
                 android:textSize="16sp" />
 
             <ImageView
+                android:padding="12dp"
                 android:id="@+id/upload_subject_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_action_help" />
+                android:src="@drawable/ic_help_grey600_24dp" />
         </RelativeLayout>
 
         <ImageView

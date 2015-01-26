@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:textColor="@color/material_grey_50"
-                android:drawableLeft="@drawable/ic_action_edit_subject_white"
+                android:drawableLeft="@drawable/ic_whatshot_white_24dp"
                 android:drawablePadding="8dp"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/detail_contest_subject"
                 android:textColor="@color/material_grey_50"
-                android:drawableLeft="@drawable/ic_action_edit_person_white"
+                android:drawableLeft="@drawable/ic_account_box_white_24dp"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:textSize="14sp" />
@@ -61,7 +61,7 @@
                 android:layout_marginRight="16dp"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
-                android:drawableLeft="@drawable/ic_action_edit_time_white"
+                android:drawableLeft="@drawable/ic_access_time_white_24dp"
                 android:textColor="@color/material_grey_50"
                 android:textSize="14sp" />
         </RelativeLayout>
@@ -87,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_action_camera" />
+                android:src="@drawable/ic_camera_alt_white_36dp" />
         </RelativeLayout>
     </RelativeLayout>
 

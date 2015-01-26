@@ -31,6 +31,141 @@ import android.widget.TextView;
 
 public class DetailContestAdapter extends ArrayAdapter<Image> {
 
+    private final List<Image> mObjects;
+    private final Context mContext;
+    private VoteListener mCallback;
+    private Contest mContest;
+    private int mResource;
+
+    public DetailContestAdapter(Context context, ContestDetail contestDetail) {
+        this(context, R.layout.detail_contest_list_item, contestDetail.images);
+        mContest = contestDetail.contest;
+    }
+
+    private DetailContestAdapter(Context context, int resource, List<Image> objects) {
+        super(context, resource, objects);
+        mObjects = objects;
+        mContext = context;
+        mResource = resource;
+    }
+
+    public void setCallback(VoteListener callback) {
+        mCallback = callback;
+    }
+
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        View row = convertView;
+
+        RowHolder holder = null;
+
+        if (row == null) {
+            LayoutInflater inflater = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            row = inflater.inflate(mResource, parent, false);
+
+            holder = new RowHolder();
+            holder.mImage = (ImageView) row.findViewById(R.id.detail_contest_list_item_image);
+            holder.mVoteCount = (TextView) row
+                    .findViewById(R.id.detail_contest_list_item_vote_count);
+            holder.mAuthor = (TextView) row.findViewById(R.id.detail_contest_list_item_author);
+            holder.mSubject = (TextView) row.findViewById(R.id.detail_contest_list_item_subject);
+            holder.mVoteButton = (ImageView) row.findViewById(R.id.detail_contest_list_item_vote);
+            holder.mContestData = (RelativeLayout) row.findViewById(R.id.detail_contest_data);
+            holder.mDataDelemiter = row.findViewById(R.id.detail_contest_data_delimiter);
+            holder.mImageDelemiter = row.findViewById(R.id.detail_contest_image_delimiter);
+            row.setTag(holder);
+        } else {
+            holder = (RowHolder) row.getTag();
+        }
+
+        if (mContest.status != Contest.STATUS_VOTES) {
+            holder.mVoteButton.setVisibility(View.GONE);
+        }
+
+        Image image = getItem(position);
+
+        String voteCount = null;
+        String author = null;
+        String subject = image.subject;
+
+        String hidden = mContext.getString(R.string.hidden);
+        if (mContest.status == Contest.STATUS_CLOSE) {
+            voteCount = String.format(Locale.US, "%d", image.vote_count);
+            author = image.display_name;
+            setDataBlockVisible(holder, true);
+        } else {
+            voteCount = hidden;
+            author = hidden;
+            setDataBlockVisible(holder, false);
+        }
+
+        if (subject == null) {
+            subject = hidden;
+        }
+
+        if (mContest.status == Contest.STATUS_VOTES) {
+            setVoteBlockVisible(holder, true);
+        } else {
+            setVoteBlockVisible(holder, false);
+        }
+
+        holder.mVoteCount.setText(voteCount);
+        holder.mAuthor.setText(author);
+        holder.mSubject.setText(subject);
+
+        holder.mVoteButton.setOnTouchListener(new ImageOnTouchListener());
+        holder.mVoteButton.setOnClickListener(new VoteClickListener(image));
+        String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.getRestUrl(), image.id);
+
+        Picasso.with(mContext).load(url).transform(new Transform(holder)).tag(mContext)
+                .into(holder.mImage);
+
+        return row;
+    }
+
+    private void setDataBlockVisible(RowHolder holder, boolean isVisible) {
+        if (isVisible) {
+            holder.mContestData.setVisibility(View.VISIBLE);
+            holder.mImageDelemiter.setVisibility(View.VISIBLE);
+        } else {
+            holder.mContestData.setVisibility(View.GONE);
+            holder.mImageDelemiter.setVisibility(View.GONE);
+        }
+    }
+
+    private void setVoteBlockVisible(RowHolder holder, boolean isVisible) {
+        if (isVisible) {
+            holder.mDataDelemiter.setVisibility(View.VISIBLE);
+            holder.mVoteButton.setVisibility(View.VISIBLE);
+        } else {
+            holder.mDataDelemiter.setVisibility(View.GONE);
+            holder.mVoteButton.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mObjects.get(position).id;
+    }
+
+    public interface VoteListener {
+        public void onVote();
+    }
+
+    private static class RowHolder {
+        private ImageView mRemoveButton;
+        private ImageView mEditButton;
+        private ImageView mImage;
+        private TextView mVoteCount;
+        private TextView mAuthor;
+        private TextView mSubject;
+        private ImageView mVoteButton;
+        private View mImageDelemiter;
+        private View mDataDelemiter;
+        private RelativeLayout mContestData;
+    }
+
     private class VoteHandler implements Callback<Void> {
 
         @Override
@@ -47,16 +182,6 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
             }
         }
 
-    }
-    
-    public interface VoteListener{
-        public void onVote();
-    }
-    
-    private VoteListener mCallback;
-    
-    public void setCallback(VoteListener callback) {
-        mCallback = callback;
     }
 
     private class Transform implements Transformation {
@@ -83,140 +208,18 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
     private class VoteClickListener implements OnClickListener {
         private Image mImage;
 
-        @Override
-        public void onClick(View view) {
-            String user = Settings.getUserId(mContext);
-            String pass = Settings.getPassword(mContext);
-            
-            RestService service = new RestService(user, pass);
-            service.getContestApi().voteForContest(mImage.contest_id, mImage, new VoteHandler());
-        }
-
         public VoteClickListener(Image image) {
             mImage = image;
         }
 
-    }
+        @Override
+        public void onClick(View view) {
+            String user = Settings.getUserId(mContext);
+            String pass = Settings.getPassword(mContext);
 
-    private final List<Image> mObjects;
-    private final Context mContext;
-    private Contest mContest;
-    private int mResource;
-
-    private static class RowHolder {
-        private ImageView mImage;
-        private TextView mVoteCount;
-        private TextView mAuthor;
-        private TextView mSubject;
-        private ImageView mVote;
-        private View mImageDelemiter;
-        private View mDataDelemiter;
-        private RelativeLayout mContestData;
-    }
-
-    public DetailContestAdapter(Context context, ContestDetail contestDetail) {
-        this(context, R.layout.detail_contest_list_item, contestDetail.images);
-        mContest = contestDetail.contest;
-    }
-
-    private DetailContestAdapter(Context context, int resource, List<Image> objects) {
-        super(context, resource, objects);
-        mObjects = objects;
-        mContext = context;
-        mResource = resource;
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-
-        RowHolder holder = null;
-
-        if (row == null) {
-            LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(mResource, parent, false);
-
-            holder = new RowHolder();
-            holder.mImage = (ImageView) row.findViewById(R.id.detail_contest_list_item_image);
-            holder.mVoteCount = (TextView) row
-                    .findViewById(R.id.detail_contest_list_item_vote_count);
-            holder.mAuthor = (TextView) row.findViewById(R.id.detail_contest_list_item_author);
-            holder.mSubject = (TextView) row.findViewById(R.id.detail_contest_list_item_subject);
-            holder.mVote = (ImageView) row.findViewById(R.id.detail_contest_list_item_vote);
-            holder.mContestData = (RelativeLayout) row.findViewById(R.id.detail_contest_data);
-            holder.mDataDelemiter = row.findViewById(R.id.detail_contest_data_delimiter);
-            holder.mImageDelemiter = row.findViewById(R.id.detail_contest_image_delimiter);
-            row.setTag(holder);
-        } else {
-            holder = (RowHolder) row.getTag();
+            RestService service = new RestService(user, pass);
+            service.getContestApi().voteForContest(mImage.contest_id, mImage, new VoteHandler());
         }
 
-        if (mContest.status != Contest.STATUS_VOTES) {
-            holder.mVote.setVisibility(View.GONE);
-        }
-        
-        Image image = getItem(position);
-
-        String voteCount = null;
-        String author = null;
-        String subject = null;
-        
-        String hidden = mContext.getString(R.string.hidden);
-        if (mContest.status == Contest.STATUS_CLOSE) {
-            voteCount = String.format(Locale.US, "%d", image.vote_count);
-            author = image.display_name;
-            subject = image.subject;
-            setDataBlockVisible(holder, true);
-        } else {
-            voteCount = hidden;
-            author = hidden;
-            subject = hidden;
-            setDataBlockVisible(holder, false);
-        }
-
-        if (mContest.status == Contest.STATUS_VOTES) {
-            setVoteBlockVisible(holder, true);
-        } else {
-            setVoteBlockVisible(holder, false);
-        }
-
-        holder.mVoteCount.setText(voteCount);
-        holder.mAuthor.setText(author);
-        holder.mSubject.setText(subject);
-        
-        holder.mVote.setOnTouchListener(new ImageOnTouchListener());
-        holder.mVote.setOnClickListener(new VoteClickListener(image));
-        String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.getRestUrl(), image.id);
-
-        Picasso.with(mContext).load(url).transform(new Transform(holder)).tag(mContext)
-                .into(holder.mImage);
-
-        return row;
-    }
-
-    private void setDataBlockVisible(RowHolder holder, boolean isVisible) {
-        if (isVisible) {
-            holder.mContestData.setVisibility(View.VISIBLE);
-            holder.mImageDelemiter.setVisibility(View.VISIBLE);
-        } else {
-            holder.mContestData.setVisibility(View.GONE);
-            holder.mImageDelemiter.setVisibility(View.GONE);
-        }
-    }
-
-    private void setVoteBlockVisible(RowHolder holder, boolean isVisible) {
-        if (isVisible) {
-            holder.mDataDelemiter.setVisibility(View.VISIBLE);
-            holder.mVote.setVisibility(View.VISIBLE);
-        } else {
-            holder.mDataDelemiter.setVisibility(View.GONE);
-            holder.mVote.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return mObjects.get(position).id;
     }
 }

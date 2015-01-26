@@ -147,9 +147,9 @@ public class StatsAdapter extends BaseExpandableListAdapter {
         holder.mWorks.setText(String.valueOf(record.getWorks()));
 
         if (record.getStatus() == RestService.Contest.STATUS_CLOSE) {
-            holder.mStatus.setImageResource(R.drawable.ic_action_edit_lock_close);
+            holder.mStatus.setImageResource(R.drawable.ic_lock_outline_grey600_24dp);
         } else {
-            holder.mStatus.setImageResource(R.drawable.ic_action_edit_lock_open);
+            holder.mStatus.setImageResource(R.drawable.ic_lock_open_grey600_24dp);
         }
 
         return row;
