@@ -74,13 +74,12 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
             holder.mContestData = (RelativeLayout) row.findViewById(R.id.detail_contest_data);
             holder.mDataDelemiter = row.findViewById(R.id.detail_contest_data_delimiter);
             holder.mImageDelemiter = row.findViewById(R.id.detail_contest_image_delimiter);
+            holder.mRemoveButton = (TextView) row.findViewById(R.id.detail_contest_remove);
+            holder.mEditButton = (TextView) row.findViewById(R.id.detail_contest_edit);
+            holder.mUserOps = (RelativeLayout) row.findViewById(R.id.detail_contest_user_ops);
             row.setTag(holder);
         } else {
             holder = (RowHolder) row.getTag();
-        }
-
-        if (mContest.status != Contest.STATUS_VOTES) {
-            holder.mVoteButton.setVisibility(View.GONE);
         }
 
         Image image = getItem(position);
@@ -90,6 +89,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         String subject = image.subject;
 
         String hidden = mContext.getString(R.string.hidden);
+
         if (mContest.status == Contest.STATUS_CLOSE) {
             voteCount = String.format(Locale.US, "%d", image.vote_count);
             author = image.display_name;
@@ -100,14 +100,25 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
             setDataBlockVisible(holder, false);
         }
 
+        // Этап голосования и не наша работа, отображаем блок голосования
+        if (mContest.status == Contest.STATUS_VOTES && subject == null) {
+            setVoteBlockVisible(holder, true);
+            holder.mVoteButton.setVisibility(View.VISIBLE);
+        } else {
+            holder.mVoteButton.setVisibility(View.GONE);
+            setVoteBlockVisible(holder, false);
+        }
+
         if (subject == null) {
             subject = hidden;
         }
 
-        if (mContest.status == Contest.STATUS_VOTES) {
-            setVoteBlockVisible(holder, true);
+        // Конкурс принимает работы и это наша работа
+        if (mContest.status == Contest.STATUS_OPEN && image.is_editable) {
+            holder.mDataDelemiter.setVisibility(View.VISIBLE);
+            holder.mUserOps.setVisibility(View.VISIBLE);
         } else {
-            setVoteBlockVisible(holder, false);
+            holder.mUserOps.setVisibility(View.GONE);
         }
 
         holder.mVoteCount.setText(voteCount);
@@ -127,7 +138,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
     private void setDataBlockVisible(RowHolder holder, boolean isVisible) {
         if (isVisible) {
             holder.mContestData.setVisibility(View.VISIBLE);
-            holder.mImageDelemiter.setVisibility(View.VISIBLE);
+            holder.mVoteButton.setVisibility(View.GONE);
         } else {
             holder.mContestData.setVisibility(View.GONE);
             holder.mImageDelemiter.setVisibility(View.GONE);
@@ -154,8 +165,8 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
     }
 
     private static class RowHolder {
-        private ImageView mRemoveButton;
-        private ImageView mEditButton;
+        private TextView mRemoveButton;
+        private TextView mEditButton;
         private ImageView mImage;
         private TextView mVoteCount;
         private TextView mAuthor;
@@ -164,6 +175,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         private View mImageDelemiter;
         private View mDataDelemiter;
         private RelativeLayout mContestData;
+        private RelativeLayout mUserOps;
     }
 
     private class VoteHandler implements Callback<Void> {
