@@ -9,7 +9,9 @@ import com.squareup.picasso.Transformation;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import ru.neverdark.abs.OnCallback;
 import ru.neverdark.photohunt.R;
+import ru.neverdark.photohunt.dialogs.ConfirmDialog;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.RestService.Contest;
 import ru.neverdark.photohunt.rest.RestService.ContestDetail;
@@ -34,7 +36,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
 
     private final List<Image> mObjects;
     private final Context mContext;
-    private VoteListener mCallback;
+    private CallbackListener mCallback;
     private Contest mContest;
     private int mResource;
 
@@ -50,7 +52,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         mResource = resource;
     }
 
-    public void setCallback(VoteListener callback) {
+    public void setCallback(CallbackListener callback) {
         mCallback = callback;
     }
 
@@ -166,8 +168,10 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         return mObjects.get(position).id;
     }
 
-    public interface VoteListener {
+    public interface CallbackListener {
         public void onVote();
+        public void onRemoveImage(Image image);
+        public void onEditImage(Image image);
     }
 
     private static class RowHolder {
@@ -224,6 +228,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
     }
 
     private class ClickListener implements OnClickListener {
+
         private Image mImage;
 
         public ClickListener(Image image) {
@@ -241,14 +246,14 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
                     service.getContestApi().voteForContest(mImage.contest_id, mImage, new VoteHandler());
                     break;
                 case R.id.detail_contest_edit:
-                    // TODO
-                    mImage.subject = "Тест";
-                    notifyDataSetChanged();
+                    if (mCallback != null) {
+                        mCallback.onEditImage(mImage);
+                    }
                     break;
                 case R.id.detail_contest_remove:
-                    // TODO
-                    remove(mImage);
-                    notifyDataSetChanged();
+                    if (mCallback != null) {
+                        mCallback.onRemoveImage(mImage);
+                    }
                     break;
             }
         }

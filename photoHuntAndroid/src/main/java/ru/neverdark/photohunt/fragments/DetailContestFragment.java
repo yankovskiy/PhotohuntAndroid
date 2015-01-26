@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import ru.neverdark.abs.OnCallback;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.DetailContestAdapter;
-import ru.neverdark.photohunt.adapters.DetailContestAdapter.VoteListener;
+import ru.neverdark.photohunt.dialogs.ConfirmDialog;
+import ru.neverdark.photohunt.dialogs.EditImageDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.RestService.Contest;
@@ -55,8 +58,9 @@ import android.widget.TextView;
 @SuppressLint("ValidFragment")
 public class DetailContestFragment extends UfoFragment {
     private RelativeLayout mDetailContestBottom;
+    private DetailContestAdapter mAdapter;
 
-    private class VoteHandler implements VoteListener {
+    private class VoteHandler implements DetailContestAdapter.CallbackListener {
 
         @Override
         public void onVote() {
@@ -64,6 +68,23 @@ public class DetailContestFragment extends UfoFragment {
                 mRemainingVotes--;
                 updateRemainingVotes(mRemainingVotes);
             }
+        }
+
+        @Override
+        public void onRemoveImage(RestService.Image image) {
+            ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
+            dialog.setMessages(R.string.delete_confirmation_title, R.string.image_delete_confirmation_message);
+            dialog.setCallback(new RemoveImageListener(image));
+            dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
+        }
+
+        @Override
+        public void onEditImage(RestService.Image image) {
+            Log.enter();
+            EditImageDialog dialog = EditImageDialog.getInstance(mContext);
+            dialog.setImage(image);
+            dialog.setCallback(new EditImageListener());
+            dialog.show(getFragmentManager(), EditImageDialog.DIALOG_ID);
         }
     }
 
@@ -207,9 +228,9 @@ public class DetailContestFragment extends UfoFragment {
         }
 
         private void initList(ContestDetail contestDetail) {
-            DetailContestAdapter adapter = new DetailContestAdapter(mContext, contestDetail);
-            adapter.setCallback(new VoteHandler());
-            mContestList.setAdapter(adapter);
+            mAdapter = new DetailContestAdapter(mContext, contestDetail);
+            mAdapter.setCallback(new VoteHandler());
+            mContestList.setAdapter(mAdapter);
         }
     }
 
@@ -306,5 +327,63 @@ public class DetailContestFragment extends UfoFragment {
         RestService service = new RestService(user, pass);
         service.getContestApi().getContestDetails(mContestId,
                 new GetContestDetailsHandler(mView));
+    }
+
+    private class RemoveImageListener implements OnCallback, ConfirmDialog.OnPositiveClickListener {
+        private final RestService.Image mImage;
+
+        public RemoveImageListener(RestService.Image image) {
+            mImage = image;
+        }
+
+        @Override
+        public void onPositiveClickHandler() {
+            String user = Settings.getUserId(mContext);
+            String pass = Settings.getPassword(mContext);
+            RestService service = new RestService(user, pass);
+            service.getContestApi().deleteImage(mImage.id, new RestRemoveImageListener());
+        }
+
+        private class RestRemoveImageListener implements Callback<Void> {
+            @Override
+            public void success(Void data, Response response) {
+                Common.showMessage(mContext, R.string.image_removed);
+                mAdapter.remove(mImage);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                RestService.ErrorData err = (RestService.ErrorData) retrofitError.getBodyAs(RestService.ErrorData.class);
+                Common.showMessage(mContext, err.error);
+            }
+        }
+    }
+
+    private class EditImageListener implements OnCallback, EditImageDialog.OnPositiveClickListener {
+        @Override
+        public void onPositiveClickHandler(RestService.Image image) {
+            Log.enter();
+            String user = Settings.getUserId(mContext);
+            String pass = Settings.getPassword(mContext);
+            Log.variable("image", image.toString());
+            RestService service = new RestService(user, pass);
+            service.getContestApi().updateImage(image.id, image, new RestEditImageListener());
+        }
+
+        private class RestEditImageListener implements Callback<Void> {
+            @Override
+            public void success(Void data, Response response) {
+                Common.showMessage(mContext, R.string.subject_changed);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                //Log.message(retrofitError.getMessage());
+                RestService.ErrorData err = (RestService.ErrorData) retrofitError.getBodyAs(RestService.ErrorData.class);
+                Common.showMessage(mContext, err.error);
+            }
+        }
     }
 }

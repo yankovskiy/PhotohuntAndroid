@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/default_padding">
+
+    <EditText
+        android:id="@+id/edit_image_subject"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:drawableLeft="@drawable/ic_whatshot_grey600_18dp"
+        android:drawablePadding="8dp"
+        android:hint="@string/new_subject"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:textSize="16sp" />
+
+</RelativeLayout>

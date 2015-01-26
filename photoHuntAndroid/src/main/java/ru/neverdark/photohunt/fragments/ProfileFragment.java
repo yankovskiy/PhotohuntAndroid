@@ -82,7 +82,7 @@ public class ProfileFragment extends UfoFragment {
     private void removeProfile() {
         ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
         dialog.setCallback(new OnConfirmHandler());
-        dialog.setMessages(R.string.delete_confirmation_title, R.string.delete_confirmation_message);
+        dialog.setMessages(R.string.delete_confirmation_title, R.string.profile_delete_confirmation_message);
         dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
     }
 

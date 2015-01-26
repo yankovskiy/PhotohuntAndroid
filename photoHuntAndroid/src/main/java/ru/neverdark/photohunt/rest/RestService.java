@@ -70,6 +70,14 @@ public class RestService {
     }
 
     public class ContestApi {
+        public void updateImage(long imageId, Image image, Callback<Void> callback) {
+            mContestMgmt.updateImage(imageId, image, callback);
+        }
+
+        public void deleteImage(long imageId, Callback<Void> callback) {
+            mContestMgmt.deleteImage(imageId, callback);
+        }
+
         public void getContests(Callback<List<Contest>> callback) {
             mContestMgmt.getContests(callback);
         }
@@ -93,6 +101,12 @@ public class RestService {
     }
 
     private interface ContestMgmt {
+        @DELETE("/image/{id}")
+        public void deleteImage(@Path("id") long imageId, Callback<Void> callback);
+
+        @PUT("/image/{id}")
+        public void updateImage(@Path("id") long imageId, @Body Image image, Callback<Void> callback);
+
         @GET("/contests")
         public void getContests(Callback<List<Contest>> callback);
 

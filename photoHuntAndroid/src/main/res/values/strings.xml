@@ -13,6 +13,7 @@
     <string name="lost_password">ЗАБЫЛИ ПАРОЛЬ?</string>
     <string name="registering">Регистрация&#8230;</string>
     <string name="please_wait">Пожалуйста подождите&#8230;</string>
+    <string name="image_removed">Изображение удалено</string>
     <string name="error_user_already_exists">Пользователь с таким email уже есть</string>
     <string name="error_network_problem">Проблема с сетью</string>
     <string name="error_unexpected_error">Непредвиденная ошибка</string>
@@ -39,7 +40,8 @@
     <string name="remove_button">УДАЛИТЬ</string>
     <string name="accaunt_removed">Аккаунт успешно удален</string>
     <string name="delete_confirmation_title">Подтверждение удаления</string>
-    <string name="delete_confirmation_message">Вы действительно хотите удалить ваш профиль?</string>
+    <string name="image_delete_confirmation_message">Вы действительно хотите удалить вашу фотографию?</string>
+    <string name="profile_delete_confirmation_message">Вы действительно хотите удалить ваш профиль?</string>
     <string name="deleting_profile">Удаление профиля</string>
     <string name="error_contest_not_found">Конкурсов не найдено</string>
     <string name="author">Автор </string>
@@ -80,4 +82,6 @@
     <string name="top10">Tоп 10</string>
     <string name="rating_count">Очков</string>
     <string name="in_social">Мы в соцсетях</string>
+    <string name="edit_image_subject_title">Редактирование заданной темы</string>
+    <string name="subject_changed">Тема изменена</string>
 </resources>
