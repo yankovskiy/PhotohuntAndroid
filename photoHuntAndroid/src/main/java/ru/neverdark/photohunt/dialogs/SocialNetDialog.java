@@ -86,7 +86,7 @@ public class SocialNetDialog extends UfoDialogFragment {
 
     @Override
     public void bindObjects() {
-        setDialogView(View.inflate(getContext(), R.layout.feedback_dialog, null));
+        setDialogView(View.inflate(getContext(), R.layout.social_network_dialog, null));
         mMenuList = (ListView) getDialogView().findViewById(R.id.feedback_menu);
     }
 
@@ -106,10 +106,10 @@ public class SocialNetDialog extends UfoDialogFragment {
     private void initList() {
         Context context = getContext();
         MenuAdapter adapter = new MenuAdapter(context, R.layout.menu_item);
-        UfoMenuItem gplus = new UfoMenuItem(context, R.drawable.gplus, R.string.google_plus);
-        UfoMenuItem fb = new UfoMenuItem(context, R.drawable.fb, R.string.facebook_group);
-        UfoMenuItem vk = new UfoMenuItem(context, R.drawable.vk, R.string.vk_group);
-        UfoMenuItem insta = new UfoMenuItem(context, R.drawable.insta, R.string.insta);
+        UfoMenuItem gplus = new UfoMenuItem(context, R.drawable.gplus_24dp, R.string.google_plus);
+        UfoMenuItem fb = new UfoMenuItem(context, R.drawable.fb_24dp, R.string.facebook_group);
+        UfoMenuItem vk = new UfoMenuItem(context, R.drawable.vk_24dp, R.string.vk_group);
+        UfoMenuItem insta = new UfoMenuItem(context, R.drawable.insta_24dp, R.string.insta);
 
         adapter.add(gplus);
         adapter.add(fb);

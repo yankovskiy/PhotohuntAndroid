@@ -61,9 +61,9 @@
     <string name="subject">Тема</string>
     <string name="works_count">Количество работ</string>
     <string name="rules">Правила сервиса</string>
-    <string name="google_plus">Сообщество Google+</string>
-    <string name="vk_group">Группа Вконтакте</string>
-    <string name="facebook_group">Группа Facebook</string>
+    <string name="google_plus">Google+</string>
+    <string name="vk_group">ВКонтакте</string>
+    <string name="facebook_group">Facebook</string>
     <string name="insta">Instagram</string>
     <string name="rate">Оценить приложение</string>
     <string name="feedback">Обратная связь</string>
