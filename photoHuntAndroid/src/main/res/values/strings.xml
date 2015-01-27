@@ -82,6 +82,6 @@
     <string name="top10">Tоп 10</string>
     <string name="rating_count">Очков</string>
     <string name="in_social">Мы в соцсетях</string>
-    <string name="edit_image_subject_title">Редактирование заданной темы</string>
+    <string name="edit_image_subject_title">Новая тема</string>
     <string name="subject_changed">Тема изменена</string>
 </resources>
