@@ -131,7 +131,6 @@ public class RestService {
         public String display_name;
         public String password;
         public int balance;
-        public int vote_count;
         public String hash;
     }
 

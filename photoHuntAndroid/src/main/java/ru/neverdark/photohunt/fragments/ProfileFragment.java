@@ -37,7 +37,6 @@ public class ProfileFragment extends UfoFragment {
     private TextView mDisplayName;
     private TextView mCardUserId;
     private TextView mCardBalance;
-    private TextView mCardVotes;
     private TextView mButtonEdit;
     private TextView mButtonRemove;
     private User mUserData;
@@ -45,11 +44,9 @@ public class ProfileFragment extends UfoFragment {
     private void updateProfileInfo(User user) {
         String balance = String.format(Locale.US, "%s: %d", getString(R.string.rating_count), user.balance);
         String email = Settings.getUserId(mContext);
-        String votes = String.format(Locale.US, "%s: %d", getString(R.string.vote_count), user.vote_count);
         mCardUserId.setText(email);
         mCardBalance.setText(balance);
         mDisplayName.setText(user.display_name);
-        mCardVotes.setText(votes);
     }
 
     @Override
@@ -57,7 +54,6 @@ public class ProfileFragment extends UfoFragment {
         mCardBalance = (TextView) mView.findViewById(R.id.profile_card_balance);
         mDisplayName = (TextView) mView.findViewById(R.id.profile_displayname);
         mCardUserId = (TextView) mView.findViewById(R.id.profile_card_userid);
-        mCardVotes = (TextView) mView.findViewById(R.id.profile_card_votes);
         mButtonEdit = (TextView) mView.findViewById(R.id.profile_button_edit);
         mButtonRemove = (TextView) mView.findViewById(R.id.profile_button_remove);
     }
