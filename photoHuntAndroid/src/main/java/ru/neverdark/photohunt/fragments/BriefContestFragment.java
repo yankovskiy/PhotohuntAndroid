@@ -114,10 +114,6 @@ public class BriefContestFragment extends UfoFragment {
         @Override
         public void enterToContest(long contestId) {
             DetailContestFragment fragment = new DetailContestFragment(contestId);
-            ActionBarDrawerToggle toggle = ((UfoFragmentActivity) getActivity()).getDrawerToggle();
-            fragment.setDrawerToggle(toggle);
-            fragment.setChangeNavi(true);
-            fragment.setBackHandle(true);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
             transaction.addToBackStack(null);

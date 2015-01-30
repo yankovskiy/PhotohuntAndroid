@@ -16,11 +16,13 @@
 
 package ru.neverdark.abs;
 
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 
 public abstract class UfoFragmentActivity extends ActionBarActivity implements CommonApi {
     private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerLayout mDrawerLayout;
 
     public ActionBarDrawerToggle getDrawerToggle() {
         return mDrawerToggle;
@@ -28,5 +30,13 @@ public abstract class UfoFragmentActivity extends ActionBarActivity implements C
 
     public void setDrawerToggle(ActionBarDrawerToggle toggle) {
         mDrawerToggle = toggle;
+    }
+
+    public DrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
+    }
+
+    public void setDrawerLayout(DrawerLayout drawerLayout) {
+        mDrawerLayout = drawerLayout;
     }
 }

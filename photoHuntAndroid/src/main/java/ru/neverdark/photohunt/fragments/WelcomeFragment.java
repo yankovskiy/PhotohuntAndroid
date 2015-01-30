@@ -3,6 +3,7 @@ package ru.neverdark.photohunt.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.photohunt.dialogs.RulesDialog;
 import ru.neverdark.photohunt.dialogs.RulesDialog.OnAcceptRulesListener;
 import ru.neverdark.photohunt.utils.ButtonBGOnTouchListener;
+import ru.neverdark.photohunt.utils.Log;
 
 public class WelcomeFragment extends UfoFragment {
 
@@ -24,11 +26,7 @@ public class WelcomeFragment extends UfoFragment {
 
         @Override
         public void onAcceptRulesHandler() {
-            ActionBarDrawerToggle toggle = ((UfoFragmentActivity) getActivity()).getDrawerToggle();
             UfoFragment fragment = new RegisterUserFragment();
-            fragment.setDrawerToggle(toggle);
-            fragment.setBackHandle(true);
-            fragment.setChangeNavi(true);
             openFragment(fragment);
         }
         
@@ -40,11 +38,7 @@ public class WelcomeFragment extends UfoFragment {
         public void onClick(View v) {
             switch (v.getId()) {
             case R.id.welcome_enter:
-                ActionBarDrawerToggle toggle = ((UfoFragmentActivity) getActivity()).getDrawerToggle();
                 UfoFragment fragment = new LoginUserFragment();
-                fragment.setDrawerToggle(toggle);
-                fragment.setBackHandle(true);
-                fragment.setChangeNavi(true);
                 openFragment(fragment);
                 break;
             case R.id.welcome_register:
@@ -96,5 +90,20 @@ public class WelcomeFragment extends UfoFragment {
         mLoginUser.setOnClickListener(new ClickListener());
         mRegisterUser.setOnTouchListener(new ButtonBGOnTouchListener());
         mLoginUser.setOnTouchListener(new ButtonBGOnTouchListener());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.enter();
+        ((UfoFragmentActivity)getActivity()).getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.enter();
+        ((UfoFragmentActivity)getActivity()).getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        ((UfoFragmentActivity)getActivity()).getDrawerToggle().setDrawerIndicatorEnabled(true);
+        super.onDestroy();
     }
 }

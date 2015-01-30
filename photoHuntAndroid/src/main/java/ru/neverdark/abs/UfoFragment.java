@@ -22,55 +22,5 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 
 public abstract class UfoFragment extends Fragment implements CommonApi{
-    private ActionBarDrawerToggle mDrawerToggle;
-    private boolean mIsBackHandle;
-    private boolean mIsChangeNavi;
 
-    public void setChangeNavi(boolean changeNavi) {
-        mIsChangeNavi = changeNavi;
-    }
-
-    public ActionBarDrawerToggle getDrawerToggle() {
-        return mDrawerToggle;
-    }
-
-    public void setDrawerToggle(ActionBarDrawerToggle drawerToggle) {
-        mDrawerToggle = drawerToggle;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mIsBackHandle) {
-            switch (item.getItemId()) {
-                case android.R.id.home:
-                    FragmentManager fm = getFragmentManager();
-                    if (fm.getBackStackEntryCount() > 0) {
-                        fm.popBackStack();
-                    }
-
-                    return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void setBackHandle(boolean isBackHandle) {
-        mIsBackHandle = isBackHandle;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mIsChangeNavi) {
-            mDrawerToggle.setDrawerIndicatorEnabled(false);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        if (mIsChangeNavi) {
-            mDrawerToggle.setDrawerIndicatorEnabled(true);
-        }
-        super.onDestroy();
-    }
 }

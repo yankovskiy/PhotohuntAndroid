@@ -38,10 +38,6 @@ public class StatsFragment extends UfoFragment {
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                 int childPosition, long id) {
             DetailContestFragment fragment = new DetailContestFragment(id);
-            ActionBarDrawerToggle toggle = ((UfoFragmentActivity) getActivity()).getDrawerToggle();
-            fragment.setDrawerToggle(toggle);
-            fragment.setChangeNavi(true);
-            fragment.setBackHandle(true);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager()
                     .beginTransaction();
             transaction.replace(R.id.main_container, fragment);

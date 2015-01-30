@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -82,7 +83,7 @@ public class MainActivity extends UfoFragmentActivity {
                     break;
             }
 
-            mDrawerLayout.closeDrawer(mLeftMenu);
+            getDrawerLayout().closeDrawer(mLeftMenu);
 
             if (fragment != null) {
                 setTitle(item.getMenuLabel());
@@ -118,17 +119,16 @@ public class MainActivity extends UfoFragmentActivity {
         }
     }
 
-    private DrawerLayout mDrawerLayout;
     private ListView mLeftMenu;
     private CharSequence mTitle;
 
     @Override
     public void bindObjects() {
         mContext = this;
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        setDrawerLayout((DrawerLayout) findViewById(R.id.drawer_layout));
         mLeftMenu = (ListView) findViewById(R.id.left_menu);
 
-        setDrawerToggle(new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.drawable.ic_drawer));
+        setDrawerToggle(new ActionBarDrawerToggle(this, getDrawerLayout(), R.drawable.ic_drawer, R.drawable.ic_drawer));
     }
 
     /**
@@ -190,6 +190,7 @@ public class MainActivity extends UfoFragmentActivity {
         }
 
         getSupportFragmentManager().beginTransaction().add(R.id.main_container, fragment).commit();
+        getSupportFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
     }
 
     @Override
@@ -206,8 +207,8 @@ public class MainActivity extends UfoFragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(mLeftMenu)) {
-            mDrawerLayout.closeDrawer(mLeftMenu);
+        if (getDrawerLayout().isDrawerOpen(mLeftMenu)) {
+            getDrawerLayout().closeDrawer(mLeftMenu);
         } else if (mIsBackToContest) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             if (fragmentManager.getBackStackEntryCount() == 0) {
@@ -228,12 +229,16 @@ public class MainActivity extends UfoFragmentActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (getDrawerToggle().isDrawerIndicatorEnabled()) {
-                    if (mDrawerLayout.isDrawerOpen(mLeftMenu)) {
-                        mDrawerLayout.closeDrawer(mLeftMenu);
+                    if (getDrawerLayout().isDrawerOpen(mLeftMenu)) {
+                        getDrawerLayout().closeDrawer(mLeftMenu);
                     } else {
-                        mDrawerLayout.openDrawer(mLeftMenu);
+                        getDrawerLayout().openDrawer(mLeftMenu);
                     }
+                } else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
                 }
+
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -242,7 +247,7 @@ public class MainActivity extends UfoFragmentActivity {
     @Override
     public void setListeners() {
         mLeftMenu.setOnItemClickListener(new LeftMenuItemClickListener());
-        mDrawerLayout.setDrawerListener(getDrawerToggle());
+        getDrawerLayout().setDrawerListener(getDrawerToggle());
     }
 
     private class DeleteUserListener implements ProfileFragment.OnDeleteUser {
@@ -250,6 +255,23 @@ public class MainActivity extends UfoFragmentActivity {
         public void deleteSuccess() {
             // в случае удаления пользователя обработка нажатия кнопки back нужна стандартная
             mIsBackToContest = false;
+        }
+    }
+
+    private class BackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
+        @Override
+        public void onBackStackChanged() {
+            Log.enter();
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                getDrawerToggle().setDrawerIndicatorEnabled(false);
+            } else {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+                if ((fragment instanceof WelcomeFragment) == false) {
+                    getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    getDrawerToggle().setDrawerIndicatorEnabled(true);
+                }
+            }
         }
     }
 }
