@@ -74,11 +74,22 @@
                 android:layout_marginTop="8dp"
                 android:textSize="14sp" />
 
+            <TextView
+                android:id="@+id/profile_insta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_card_balance"
+                android:layout_marginLeft="16dp"
+                android:drawableLeft="@drawable/ic_insta_grey600_24dp"
+                android:drawablePadding="8dp"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp" />
+
             <View
                 android:id="@+id/profile_button_delimiter"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/profile_card_balance"
+                android:layout_below="@+id/profile_insta"
                 android:layout_marginTop="16dp"
                 android:background="@color/material_grey_600" />
 

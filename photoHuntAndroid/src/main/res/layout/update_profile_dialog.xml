@@ -34,4 +34,17 @@
         android:inputType="textPassword"
         android:textSize="16sp" />
 
+    <EditText
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/update_profile_password"
+        android:id="@+id/update_profile_insta"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:drawableLeft="@drawable/ic_insta_grey600_18dp"
+        android:drawablePadding="8dp"
+        android:hint="@string/insta"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:textSize="16sp" />
+
 </RelativeLayout>

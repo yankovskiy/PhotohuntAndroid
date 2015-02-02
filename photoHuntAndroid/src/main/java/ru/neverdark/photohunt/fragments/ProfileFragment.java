@@ -35,6 +35,7 @@ public class ProfileFragment extends UfoFragment {
     private View mView;
     private boolean mIsDataLoaded = false;
     private TextView mDisplayName;
+    private TextView mCardInsta;
     private TextView mCardUserId;
     private TextView mCardBalance;
     private TextView mButtonEdit;
@@ -47,6 +48,7 @@ public class ProfileFragment extends UfoFragment {
         mCardUserId.setText(email);
         mCardBalance.setText(balance);
         mDisplayName.setText(user.display_name);
+        mCardInsta.setText(user.insta);
     }
 
     @Override
@@ -54,6 +56,7 @@ public class ProfileFragment extends UfoFragment {
         mCardBalance = (TextView) mView.findViewById(R.id.profile_card_balance);
         mDisplayName = (TextView) mView.findViewById(R.id.profile_displayname);
         mCardUserId = (TextView) mView.findViewById(R.id.profile_card_userid);
+        mCardInsta = (TextView) mView.findViewById(R.id.profile_insta);
         mButtonEdit = (TextView) mView.findViewById(R.id.profile_button_edit);
         mButtonRemove = (TextView) mView.findViewById(R.id.profile_button_remove);
     }
@@ -225,6 +228,7 @@ public class ProfileFragment extends UfoFragment {
             editor.putString(getString(R.string.pref_password), mUser.password);
             editor.commit();
             mDisplayName.setText(mUser.display_name);
+            mCardInsta.setText(mUser.insta);
             mUserData = mUser;
             Common.showMessage(mContext, R.string.profile_updated);
         }

@@ -132,6 +132,7 @@ public class RestService {
         public String password;
         public int balance;
         public String hash;
+        public String insta;
     }
 
     public class UserApi {

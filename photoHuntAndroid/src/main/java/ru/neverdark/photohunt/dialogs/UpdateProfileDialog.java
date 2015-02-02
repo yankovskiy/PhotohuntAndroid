@@ -17,6 +17,7 @@ public class UpdateProfileDialog extends UfoDialogFragment {
         setDialogView(View.inflate(getContext(), R.layout.update_profile_dialog, null));
         mDispayName = (EditText) getDialogView().findViewById(R.id.update_profile_displayname);
         mPassword = (EditText) getDialogView().findViewById(R.id.update_profile_password);
+        mInsta = (EditText) getDialogView().findViewById(R.id.update_profile_insta);
     }
 
     @Override
@@ -36,6 +37,7 @@ public class UpdateProfileDialog extends UfoDialogFragment {
         if (mUser != null) {
             mDispayName.setText(mUser.display_name);
             mPassword.setText(mUser.password);
+            mInsta.setText(mUser.insta);
         }
     }
 
@@ -55,6 +57,7 @@ public class UpdateProfileDialog extends UfoDialogFragment {
                 User user = new User();
                 user.display_name = mDispayName.getText().toString();
                 user.password = mPassword.getText().toString();
+                user.insta = mInsta.getText().toString();
                 mCallback.updateProfileListener(user);
             }
         }
@@ -64,6 +67,7 @@ public class UpdateProfileDialog extends UfoDialogFragment {
     private User mUser;
     private EditText mDispayName;
     private EditText mPassword;
+    private EditText mInsta;
 
     public void setUser(User user) {
         mUser = user;

@@ -192,8 +192,13 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
 
         @Override
         public void failure(RetrofitError error) {
-            RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
-            Common.showMessage(mContext, err.error);
+            // TODO: разобраться с причиной краша на HTC One X+ (4.2)
+            try {
+                RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+                Common.showMessage(mContext, err.error);
+            } catch (Exception e) {
+                Common.showMessage(mContext, error.getMessage());
+            }
         }
 
         @Override
