@@ -13,6 +13,7 @@ import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.DetailContestAdapter;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
 import ru.neverdark.photohunt.dialogs.EditImageDialog;
+import ru.neverdark.photohunt.dialogs.MessageDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.RestService.Contest;
@@ -36,6 +37,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
@@ -85,6 +87,13 @@ public class DetailContestFragment extends UfoFragment {
             dialog.setImage(image);
             dialog.setCallback(new EditImageListener());
             dialog.show(getFragmentManager(), EditImageDialog.DIALOG_ID);
+        }
+
+        @Override
+        public void showError(String message) {
+            MessageDialog dialog = MessageDialog.getInstance(mContext);
+            dialog.setMessages(getString(R.string.send_this_to_developer), message);
+            dialog.show(getFragmentManager(), MessageDialog.DIALOG_ID);
         }
     }
 

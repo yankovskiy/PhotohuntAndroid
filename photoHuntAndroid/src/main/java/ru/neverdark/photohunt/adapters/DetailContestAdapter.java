@@ -12,6 +12,7 @@ import retrofit.client.Response;
 import ru.neverdark.abs.OnCallback;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
+import ru.neverdark.photohunt.dialogs.MessageDialog;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.RestService.Contest;
 import ru.neverdark.photohunt.rest.RestService.ContestDetail;
@@ -172,6 +173,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         public void onVote();
         public void onRemoveImage(Image image);
         public void onEditImage(Image image);
+        public void showError(String message);
     }
 
     private static class RowHolder {
@@ -197,7 +199,9 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
                 RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
                 Common.showMessage(mContext, err.error);
             } catch (Exception e) {
-                Common.showMessage(mContext, error.getMessage());
+                if (mCallback != null) {
+                    mCallback.showError(error.getMessage());
+                }
             }
         }
 

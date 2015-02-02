@@ -84,4 +84,5 @@
     <string name="in_social">Мы в соцсетях</string>
     <string name="edit_image_subject_title">Новая тема</string>
     <string name="subject_changed">Тема изменена</string>
+    <string name="send_this_to_developer">Отправьте это разработчику</string>
 </resources>
