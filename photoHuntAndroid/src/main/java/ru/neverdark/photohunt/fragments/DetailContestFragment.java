@@ -65,11 +65,13 @@ public class DetailContestFragment extends UfoFragment {
     private class VoteHandler implements DetailContestAdapter.CallbackListener {
 
         @Override
-        public void onVote() {
-            if (mRemainingVotes > 0) {
+        public void onVote(boolean isVoted) {
+            if (!isVoted && mRemainingVotes > 0) {
                 mRemainingVotes--;
-                updateRemainingVotes(mRemainingVotes);
+            } else if (isVoted && mRemainingVotes < 3) {
+                mRemainingVotes++;
             }
+            updateRemainingVotes(mRemainingVotes);
         }
 
         @Override

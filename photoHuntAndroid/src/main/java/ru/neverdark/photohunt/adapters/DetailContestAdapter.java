@@ -113,6 +113,14 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
             setVoteBlockVisible(holder, false);
         }
 
+        if (mContest.status == Contest.STATUS_VOTES) {
+            if (image.is_voted) {
+                holder.mVoteButton.setImageResource(R.drawable.ic_favorite_grey600_24dp);
+            } else {
+                holder.mVoteButton.setImageResource(R.drawable.ic_favorite_outline_grey600_24dp);
+            }
+        }
+
         if (subject == null) {
             subject = hidden;
         }
@@ -170,7 +178,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
     }
 
     public interface CallbackListener {
-        public void onVote();
+        public void onVote(boolean isVoted);
         public void onRemoveImage(Image image);
         public void onEditImage(Image image);
         public void showError(String message);
@@ -192,6 +200,12 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
 
     private class VoteHandler implements Callback<Void> {
 
+        private final Image mImage;
+
+        public VoteHandler(Image image) {
+            mImage = image;
+        }
+
         @Override
         public void failure(RetrofitError error) {
             // TODO: разобраться с причиной краша на HTC One X+ (4.2)
@@ -207,9 +221,10 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
 
         @Override
         public void success(Void data, Response response) {
-            Common.showMessage(mContext, R.string.vote_success);
             if (mCallback != null) {
-                mCallback.onVote();
+                mCallback.onVote(mImage.is_voted);
+                mImage.is_voted = !mImage.is_voted;
+                notifyDataSetChanged();
             }
         }
 
@@ -252,7 +267,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
                     String pass = Settings.getPassword(mContext);
 
                     RestService service = new RestService(user, pass);
-                    service.getContestApi().voteForContest(mImage.contest_id, mImage, new VoteHandler());
+                    service.getContestApi().voteForContest(mImage.contest_id, mImage, new VoteHandler(mImage));
                     break;
                 case R.id.detail_contest_edit:
                     if (mCallback != null) {
