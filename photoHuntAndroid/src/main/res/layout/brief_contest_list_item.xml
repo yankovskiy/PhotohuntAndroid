@@ -64,11 +64,23 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/brief_contest_close"
+                android:id="@+id/brief_contest_open"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/brief_contest_reward"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:drawableLeft="@drawable/ic_access_time_grey600_edit_24dp"
+                android:drawablePadding="8dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/brief_contest_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/brief_contest_open"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:drawableLeft="@drawable/ic_access_time_grey600_24dp"

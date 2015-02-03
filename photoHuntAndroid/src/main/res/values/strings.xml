@@ -46,6 +46,7 @@
     <string name="error_contest_not_found">Конкурсов не найдено</string>
     <string name="author">Автор </string>
     <string name="reward">Награда</string>
+    <string name="open_date">Дата начала</string>
     <string name="close_date">Дата окончания</string>
     <string name="vote_count">Количество голосов</string>
     <string name="new_subject">Тема нового конкурса</string>

@@ -26,6 +26,7 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
         private TextView mSubject;
         private TextView mAuthor;
         private TextView mRewards;
+        private TextView mOpenDate;
         private TextView mCloseDate;
         private TextView mWorks;
     }
@@ -64,6 +65,7 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
             holder.mSubject = (TextView) row.findViewById(R.id.brief_contest_subject);
             holder.mAuthor = (TextView) row.findViewById(R.id.brief_contest_author);
             holder.mRewards = (TextView) row.findViewById(R.id.brief_contest_reward);
+            holder.mOpenDate = (TextView) row.findViewById(R.id.brief_contest_open);
             holder.mCloseDate = (TextView) row.findViewById(R.id.brief_contest_close);
             holder.mWorks = (TextView) row.findViewById(R.id.brief_contest_works);
 
@@ -75,12 +77,14 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
         RestService.Contest contest = getItem(position);
         String subject = contest.subject;
         String author = String.format("%s: %s", mContext.getString(R.string.author), contest.display_name);
+        String openDate = String.format("%s: %s", mContext.getString(R.string.open_date), contest.open_date);
         String closeDate = String.format("%s: %s", mContext.getString(R.string.close_date), contest.close_date);
         String rewards = String.format(Locale.US, "%s: %d", mContext.getString(R.string.reward), contest.rewards);
         String works = String.format("%s: %s", mContext.getString(R.string.works_count), contest.works);
 
         holder.mAuthor.setText(author);
         holder.mSubject.setText(subject);
+        holder.mOpenDate.setText(openDate);
         holder.mCloseDate.setText(closeDate);
         holder.mRewards.setText(rewards);
         holder.mWorks.setText(works);

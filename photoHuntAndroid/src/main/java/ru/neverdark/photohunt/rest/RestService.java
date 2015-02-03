@@ -49,6 +49,7 @@ public class RestService {
         public long id;
         public String subject;
         public int rewards;
+        public String open_date;
         public String close_date;
         public int status;
         public long user_id;
@@ -59,8 +60,8 @@ public class RestService {
         public String toString() {
             return String
                     .format(Locale.US,
-                            "Contest id = %d, subject = %s, rewards = %d, close_date = %s, status = %d, user_id = %d, display_name = %s",
-                            id, subject, rewards, close_date, status, user_id, display_name);
+                            "Contest id = %d, subject = %s, rewards = %d, open_date = %s, close_date = %s, status = %d, user_id = %d, display_name = %s",
+                            id, subject, rewards, open_date, close_date, status, user_id, display_name);
         }
     }
 
