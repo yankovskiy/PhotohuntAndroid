@@ -131,12 +131,12 @@ public class ProfileFragment extends UfoFragment {
         if (mIsSelf) {
             mButtonRemove.setOnTouchListener(new ImageOnTouchListener());
             mButtonEdit.setOnTouchListener(new ImageOnTouchListener());
-            mButtonInsta.setOnTouchListener(new ImageOnTouchListener());
             mButtonEdit.setOnClickListener(new ButtonOnClickListener());
             mButtonRemove.setOnClickListener(new ButtonOnClickListener());
-            mButtonInsta.setOnClickListener(new ButtonOnClickListener());
         }
 
+        mButtonInsta.setOnTouchListener(new ImageOnTouchListener());
+        mButtonInsta.setOnClickListener(new ButtonOnClickListener());
         mButtonAlbum.setOnTouchListener(new ImageOnTouchListener());
         mButtonAlbum.setOnClickListener(new ButtonOnClickListener());
     }
