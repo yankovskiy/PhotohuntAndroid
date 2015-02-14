@@ -131,8 +131,11 @@ public class StatsFragment extends UfoFragment {
         private String formatDate(String date) {
             String[] dateParts = date.split("-");
             String year = dateParts[0];
+            String month = null;
             int monthIndex = Integer.valueOf(dateParts[1]);
-            String month = getResources().getStringArray(R.array.months)[monthIndex - 1];
+            if (isAdded()) {
+                month = getResources().getStringArray(R.array.months)[monthIndex - 1];
+            }
 
             return String.format("%s %s", month, year);
         }
