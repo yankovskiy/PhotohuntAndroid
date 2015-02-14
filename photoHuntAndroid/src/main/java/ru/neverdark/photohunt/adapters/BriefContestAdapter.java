@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -13,13 +14,14 @@ import java.util.Locale;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
+import ru.neverdark.photohunt.utils.ImageOnTouchListener;
 
 public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
 
     private final Context mContext;
     private final List<RestService.Contest> mObjects;
     private final int mResource;
-    private OnEnterToContest mCallback;
+    private OnBriefCardClickListener mCallback;
 
     private static class RowHolder {
         private TextView mEnterButton;
@@ -29,13 +31,15 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
         private TextView mOpenDate;
         private TextView mCloseDate;
         private TextView mWorks;
+        private ImageView mContextButton;
     }
 
-    public interface OnEnterToContest {
+    public interface OnBriefCardClickListener {
         public void enterToContest(long contestId);
+        public void onMoreButton(RestService.Contest contest);
     }
 
-    public void setCallback(OnEnterToContest callback) {
+    public void setCallback(OnBriefCardClickListener callback) {
         mCallback = callback;
     }
 
@@ -68,7 +72,7 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
             holder.mOpenDate = (TextView) row.findViewById(R.id.brief_contest_open);
             holder.mCloseDate = (TextView) row.findViewById(R.id.brief_contest_close);
             holder.mWorks = (TextView) row.findViewById(R.id.brief_contest_works);
-
+            holder.mContextButton = (ImageView) row.findViewById(R.id.brief_context_button);
             row.setTag(holder);
         } else {
             holder = (RowHolder) row.getTag();
@@ -102,24 +106,37 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
         }
 
         holder.mEnterButton.setText(enterText.toUpperCase(Locale.getDefault()));
-        holder.mEnterButton.setOnClickListener(new EnterClickListener(contest.id));
+        holder.mEnterButton.setOnClickListener(new ButtonClickListener(contest.id));
         holder.mEnterButton.setOnTouchListener(new ButtonOnTouchListener());
+
+        holder.mContextButton.setOnTouchListener(new ImageOnTouchListener(false));
+        holder.mContextButton.setOnClickListener(new ButtonClickListener(contest));
 
         return row;
     }
 
-    private class EnterClickListener implements View.OnClickListener {
+    private class ButtonClickListener implements View.OnClickListener {
 
         private final long mId;
+        private RestService.Contest mContest;
 
-        public EnterClickListener(long id) {
+        public ButtonClickListener(long id) {
             mId = id;
         }
+
+        public ButtonClickListener(RestService.Contest contest) {mId = 0L; mContest = contest;}
 
         @Override
         public void onClick(View v) {
             if (mCallback != null) {
-                mCallback.enterToContest(mId);
+                switch (v.getId()) {
+                    case R.id.brief_contest_enter:
+                        mCallback.enterToContest(mId);
+                        break;
+                    case R.id.brief_context_button:
+                        mCallback.onMoreButton(mContest);
+                        break;
+                }
             }
         }
     }

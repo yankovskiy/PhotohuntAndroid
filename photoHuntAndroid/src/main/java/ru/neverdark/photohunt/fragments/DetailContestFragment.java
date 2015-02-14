@@ -1,5 +1,32 @@
 package ru.neverdark.photohunt.fragments;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.support.v4.app.FragmentTransaction;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +36,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import ru.neverdark.abs.OnCallback;
+import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.DetailContestAdapter;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
@@ -24,34 +53,6 @@ import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.PicassoScrollListener;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
-import ru.neverdark.abs.UfoFragment;
-import ru.neverdark.abs.UfoFragmentActivity;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Message;
-import android.os.Parcelable;
-import android.provider.MediaStore;
-import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 /**
  * Фрагмент содержащий детальную информацию о проводимом конкурсе Должен
@@ -59,10 +60,233 @@ import android.widget.TextView;
  */
 @SuppressLint("ValidFragment")
 public class DetailContestFragment extends UfoFragment {
+    private static final int PICTURE_REQUEST_CODE = 1;
+    private final long mContestId;
     private RelativeLayout mDetailContestBottom;
     private DetailContestAdapter mAdapter;
+    private Contest mContest;
+    private RestService.Image mSelectedImage;
+    private int mRemainingVotes = 0;
+    private Uri outputFileUri;
+    private View mView;
+    private Context mContext;
+    private boolean mIsDataLoaded;
+    private ListView mContestList;
+    private TextView mSubject;
+    private TextView mAuthor;
+    private TextView mCloseDate;
+    private ImageView mCamera;
+    private ImageView mContextButton;
+    private RelativeLayout mDetailHeader;
 
-    private class VoteHandler implements DetailContestAdapter.CallbackListener {
+    public DetailContestFragment(long contestId) {
+        mContestId = contestId;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PICTURE_REQUEST_CODE) {
+                final boolean isCamera;
+                if (data == null) {
+                    isCamera = true;
+                } else {
+                    final String action = data.getAction();
+                    if (action == null) {
+                        isCamera = false;
+                    } else {
+                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    }
+                }
+
+                Uri selectedImageUri;
+                if (isCamera) {
+                    selectedImageUri = outputFileUri;
+                } else {
+                    selectedImageUri = data == null ? null : data.getData();
+                }
+
+                Log.variable("uri", selectedImageUri.getPath());
+                UploadImageFragment fragment = new UploadImageFragment(selectedImageUri, mContestId);
+                fragment.setFileName(outputFileUri.getPath());
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void updateRemainingVotes(int newVotes) {
+        mRemainingVotes = newVotes;
+        String votes = String.format(Locale.US, "%s: %d", getString(R.string.remaining_votes), newVotes);
+        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(votes);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater,
+     * android.view.ViewGroup, android.os.Bundle)
+     */
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
+        Log.enter();
+        mView = inflater.inflate(R.layout.detail_contest_fragment, container, false);
+        mContext = mView.getContext();
+        mIsDataLoaded = false;
+        bindObjects();
+        setListeners();
+        getActivity().setTitle(R.string.contest);
+        return mView;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.detail_contest_refresh:
+                refresh();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.detail_contest, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void bindObjects() {
+        mContestList = (ListView) mView.findViewById(R.id.detail_contest_list);
+        mSubject = (TextView) mView.findViewById(R.id.detail_contest_subject);
+        mCamera = (ImageView) mView.findViewById(R.id.detail_contest_camera);
+        mAuthor = (TextView) mView.findViewById(R.id.detail_contest_author);
+        mCloseDate = (TextView) mView.findViewById(R.id.detail_contest_close_date);
+        mDetailContestBottom = (RelativeLayout) mView.findViewById(R.id.detail_contest_bottom);
+        mContextButton = (ImageView) mView.findViewById(R.id.detail_context_button);
+        mDetailHeader = (RelativeLayout) mView.findViewById(R.id.detail_header);
+    }
+
+    @Override
+    public void setListeners() {
+        mContestList.setOnScrollListener(new PicassoScrollListener(mContext));
+        mCamera.setOnTouchListener(new ImageOnTouchListener());
+        mCamera.setOnClickListener(new ChoosePictureHandler());
+
+        mContextButton.setOnTouchListener(new ImageOnTouchListener(false));
+        mContextButton.setOnClickListener(new MoreButtonClickListener());
+
+        registerForContextMenu(mDetailHeader);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        Log.enter();
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        switch (v.getId()) {
+            case R.id.detail_header:
+                inflater.inflate(R.menu.contest_card, menu);
+                break;
+            case R.id.detail_contest_list:
+                inflater.inflate(R.menu.detail_contest_card, menu);
+                break;
+        }
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Log.enter();
+
+        switch (item.getItemId()) {
+            case R.id.view_profile:
+                if (mContest != null) {
+                    showUserProfile(mContest.user_id);
+                }
+                return true;
+            case R.id.card_view_profile:
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                RestService.Image image;
+
+                // если выбрано по троеточию, то info будет Null
+                if (info == null) {
+                    image = mSelectedImage;
+                } else {
+                    image = (RestService.Image) mContestList.getAdapter().getItem(info.position);
+                }
+
+                showUserProfile(image.user_id);
+                return true;
+            case R.id.view_prev_contest:
+                if (mContest != null) {
+                    if (mContest.prev_id != 0L) {
+                        showContest(mContest.prev_id);
+                    } else {
+                        Common.showMessage(mContext, R.string.error_contest_not_found);
+                    }
+                }
+                return true;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    private void showContest(long contestId) {
+        DetailContestFragment fragment = new DetailContestFragment(contestId);
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void showUserProfile(long userId) {
+        ProfileFragment fragment = ProfileFragment.getInstance(userId);
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public void onResume() {
+        Log.enter();
+        super.onResume();
+        if (mIsDataLoaded == false) {
+            refresh();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.enter();
+        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+        super.onDestroyView();
+    }
+
+    private void refresh() {
+        setHasOptionsMenu(false);
+        String user = Settings.getUserId(mContext);
+        String pass = Settings.getPassword(mContext);
+
+        RestService service = new RestService(user, pass);
+        service.getContestApi().getContestDetails(mContestId,
+                new GetContestDetailsHandler(mView));
+    }
+
+    private class CardCallbackListener implements DetailContestAdapter.OnCallbackListener {
+
+        @Override
+        public void onMoreButton(RestService.Image image) {
+            mSelectedImage = image;
+            getActivity().openContextMenu(mContestList);
+        }
 
         @Override
         public void onVote(boolean isVoted) {
@@ -97,10 +321,16 @@ public class DetailContestFragment extends UfoFragment {
             dialog.setMessages(getString(R.string.send_this_to_developer), message);
             dialog.show(getFragmentManager(), MessageDialog.DIALOG_ID);
         }
-    }
 
-    private int mRemainingVotes = 0;
-    private static final int PICTURE_REQUEST_CODE = 1;
+        @Override
+        public void onShowUserProfile(long userId) {
+            ProfileFragment fragment = ProfileFragment.getInstance(userId);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+    }
 
     private class ChoosePictureHandler implements OnClickListener {
 
@@ -141,49 +371,10 @@ public class DetailContestFragment extends UfoFragment {
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == PICTURE_REQUEST_CODE) {
-                final boolean isCamera;
-                if (data == null) {
-                    isCamera = true;
-                } else {
-                    final String action = data.getAction();
-                    if (action == null) {
-                        isCamera = false;
-                    } else {
-                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    }
-                }
-
-                Uri selectedImageUri;
-                if (isCamera) {
-                    selectedImageUri = outputFileUri;
-                } else {
-                    selectedImageUri = data == null ? null : data.getData();
-                }
-
-                Log.variable("uri", selectedImageUri.getPath());
-                UploadImageFragment fragment = new UploadImageFragment(selectedImageUri, mContestId);
-                fragment.setFileName(outputFileUri.getPath());
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.main_container, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private Uri outputFileUri;
-
     private class GetContestDetailsHandler extends CallbackHandler<ContestDetail> {
 
         public GetContestDetailsHandler(View view) {
-            super(view);
-            // TODO Auto-generated constructor stub
+            super(view, R.id.detail_hide_when_loading, R.id.detail_loading_progress);
         }
 
         @Override
@@ -214,6 +405,7 @@ public class DetailContestFragment extends UfoFragment {
         public void success(ContestDetail data, Response response) {
             setHasOptionsMenu(true);
             if (data != null) {
+                mContest = data.contest;
                 mSubject.setText(data.contest.subject);
                 mAuthor.setText(data.contest.display_name);
                 mCloseDate.setText(data.contest.close_date);
@@ -231,110 +423,21 @@ public class DetailContestFragment extends UfoFragment {
                 if (data.contest.status == Contest.STATUS_VOTES) {
                     updateRemainingVotes(data.votes);
                 }
+
+                if (data.contest.status == Contest.STATUS_CLOSE) {
+                    registerForContextMenu(mContestList);
+                } else {
+                    unregisterForContextMenu(mContestList);
+                }
             }
             super.success(data, response);
         }
 
         private void initList(ContestDetail contestDetail) {
             mAdapter = new DetailContestAdapter(mContext, contestDetail);
-            mAdapter.setCallback(new VoteHandler());
+            mAdapter.setCallback(new CardCallbackListener());
             mContestList.setAdapter(mAdapter);
         }
-    }
-
-    private void updateRemainingVotes(int newVotes) {
-        mRemainingVotes = newVotes;
-        String votes = String.format(Locale.US, "%s: %d", getString(R.string.remaining_votes), newVotes);
-        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(votes);
-    }
-
-
-    private final long mContestId;
-    private View mView;
-    private Context mContext;
-    private boolean mIsDataLoaded;
-    private ListView mContestList;
-    private TextView mSubject;
-    private TextView mAuthor;
-    private TextView mCloseDate;
-    private ImageView mCamera;
-
-    public DetailContestFragment(long contestId) {
-        mContestId = contestId;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater,
-     * android.view.ViewGroup, android.os.Bundle)
-     */
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
-        mView = inflater.inflate(R.layout.detail_contest_fragment, container, false);
-        mContext = mView.getContext();
-        mIsDataLoaded = false;
-        bindObjects();
-        setListeners();
-        return mView;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.detail_contest_refresh:
-                refresh();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.detail_contest, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void bindObjects() {
-        mContestList = (ListView) mView.findViewById(R.id.detail_contest_list);
-        mSubject = (TextView) mView.findViewById(R.id.detail_contest_subject);
-        mCamera = (ImageView) mView.findViewById(R.id.detail_contest_camera);
-        mAuthor = (TextView) mView.findViewById(R.id.detail_contest_author);
-        mCloseDate = (TextView) mView.findViewById(R.id.detail_contest_close_date);
-        mDetailContestBottom = (RelativeLayout) mView.findViewById(R.id.detail_contest_bottom);
-    }
-
-    @Override
-    public void setListeners() {
-        mContestList.setOnScrollListener(new PicassoScrollListener(mContext));
-        mCamera.setOnTouchListener(new ImageOnTouchListener());
-        mCamera.setOnClickListener(new ChoosePictureHandler());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mIsDataLoaded == false) {
-            refresh();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(null);
-        super.onDestroy();
-    }
-
-    private void refresh() {
-        setHasOptionsMenu(false);
-        String user = Settings.getUserId(mContext);
-        String pass = Settings.getPassword(mContext);
-
-        RestService service = new RestService(user, pass);
-        service.getContestApi().getContestDetails(mContestId,
-                new GetContestDetailsHandler(mView));
     }
 
     private class RemoveImageListener implements OnCallback, ConfirmDialog.OnPositiveClickListener {
@@ -392,6 +495,13 @@ public class DetailContestFragment extends UfoFragment {
                 RestService.ErrorData err = (RestService.ErrorData) retrofitError.getBodyAs(RestService.ErrorData.class);
                 Common.showMessage(mContext, err.error);
             }
+        }
+    }
+
+    private class MoreButtonClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            getActivity().openContextMenu(mDetailHeader);
         }
     }
 }

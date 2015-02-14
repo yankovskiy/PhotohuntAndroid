@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Фотокросс</string>
     <string name="contests">Конкурсы</string>
     <string name="stats">Статистика</string>
@@ -11,8 +12,8 @@
     <string name="displayname">Отображаемое имя</string>
     <string name="password">Пароль</string>
     <string name="lost_password">ЗАБЫЛИ ПАРОЛЬ?</string>
-    <string name="registering">Регистрация&#8230;</string>
-    <string name="please_wait">Пожалуйста подождите&#8230;</string>
+    <string name="registering">Регистрация…</string>
+    <string name="please_wait">Пожалуйста подождите…</string>
     <string name="image_removed">Изображение удалено</string>
     <string name="error_user_already_exists">Пользователь с таким email уже есть</string>
     <string name="error_network_problem">Проблема с сетью</string>
@@ -29,7 +30,7 @@
     <string name="email_for_send_password">Укажите email для отправки инструкций</string>
     <string name="password_request">Запрос пароля</string>
     <string name="login">Вход</string>
-    <string name="entering">Вход&#8230;</string>
+    <string name="entering">Вход…</string>
     <string name="error_wrong_password">Неверное имя пользователя или пароль</string>
     <string name="profile">Профиль</string>
     <string name="edit_button">ИЗМЕНИТЬ</string>
@@ -58,6 +59,7 @@
     <string name="user_information">Информация о пользователе</string>
     <string name="rating">Рейтинг</string>
     <string name="current_contests">Текущие конкурсы</string>
+    <string name="user_album">Альбом пользователя</string>
     <string name="take_part">Принять участие</string>
     <string name="vote">Голосовать</string>
     <string name="view">Просмотреть</string>
@@ -79,11 +81,18 @@
     <string name="empty_rating">Рейтинг пуст</string>
     <string name="subject_help_message"><b>Тема нового конкурса</b> - тема, которая стартует при вашей победе в текущем конкурсе</string>
     <string name="hint">Подсказка</string>
-    <string name="your_profile">Ваш профиль</string>
+    <string name="user_profile">Профиль пользователя</string>
     <string name="top10">Tоп 10</string>
     <string name="rating_count">Очков</string>
     <string name="in_social">Мы в соцсетях</string>
     <string name="edit_image_subject_title">Новая тема</string>
     <string name="subject_changed">Тема изменена</string>
     <string name="send_this_to_developer">Отправьте это разработчику</string>
+    <string name="rating_position">Место в рейтинге</string>
+    <string name="wins_count">Количество побед</string>
+    <string name="exit">Выход</string>
+    <string name="exit_confirmation_message">Выйти из программы?</string>
+    <string name="contest">Конкурс</string>
+    <string name="to_contest">Перейти к конкурсу</string>
+    <string name="prev_contest">Предыдущий конкурс</string>
 </resources>

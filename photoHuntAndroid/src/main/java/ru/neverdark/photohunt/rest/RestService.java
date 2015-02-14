@@ -1,5 +1,6 @@
 package ru.neverdark.photohunt.rest;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,7 +23,7 @@ public class RestService {
         public String error;
     }
 
-    public static class Image {
+    public static class Image implements Serializable {
         public long id;
         public long contest_id;
         public long user_id;
@@ -31,13 +32,14 @@ public class RestService {
         public int vote_count;
         public boolean is_editable;
         public boolean is_voted;
+        public String contest_subject;
 
         @Override
         public String toString() {
             return String
                     .format(Locale.US,
-                            "Image id = %d, contest_id = %d, user_id = %d, subject = %s, display_name = %s, vote_count = %d, is_editable = %b, is_voted = %b",
-                            id, contest_id, user_id, subject, display_name, vote_count, is_editable, is_voted);
+                            "Image id = %d, contest_id = %d, user_id = %d, subject = %s, display_name = %s, vote_count = %d, is_editable = %b, is_voted = %b, contest_subject = %s",
+                            id, contest_id, user_id, subject, display_name, vote_count, is_editable, is_voted, contest_subject);
         }
     }
 
@@ -55,13 +57,14 @@ public class RestService {
         public long user_id;
         public String display_name;
         public int works;
+        public long prev_id;
 
         @Override
         public String toString() {
             return String
                     .format(Locale.US,
-                            "Contest id = %d, subject = %s, rewards = %d, open_date = %s, close_date = %s, status = %d, user_id = %d, display_name = %s",
-                            id, subject, rewards, open_date, close_date, status, user_id, display_name);
+                            "Contest id = %d, subject = %s, rewards = %d, open_date = %s, close_date = %s, status = %d, user_id = %d, display_name = %s, prev_id = %d",
+                            id, subject, rewards, open_date, close_date, status, user_id, display_name, prev_id);
         }
     }
 
@@ -135,9 +138,16 @@ public class RestService {
         public int balance;
         public String hash;
         public String insta;
+        public int images_count;
+        public int rank;
+        public int wins_count;
     }
 
     public class UserApi {
+        public void getUserImages(long id, Callback<List<Image>> callback) {
+            mUserMgmt.getUserImages(id, callback);
+        }
+
         public void addUser(User user, Callback<User> callback) {
             mUserMgmt.addUser(user, callback);
         }
@@ -154,7 +164,11 @@ public class RestService {
             mUserMgmt.getUser(userId, callback);
         }
 
-        public void updateUser(String userId, User user, Callback<User> callback) {
+        public void getUser(long userId, Callback<User> callback) {
+            mUserMgmt.getUser(userId, callback);
+        }
+
+        public void updateUser(String userId, User user, Callback<Void> callback) {
             mUserMgmt.updateUser(userId, user, callback);
         }
         
@@ -164,6 +178,9 @@ public class RestService {
     }
 
     private interface UserMgmt {
+        @GET("/user/{id}/images")
+        public void getUserImages(@Path("id") long id, Callback<List<Image>> callback);
+
         @POST("/user")
         public void addUser(@Body User user, Callback<User> callback);
 
@@ -176,8 +193,12 @@ public class RestService {
         @GET("/user/{id}")
         public void getUser(@Path("id") String userId, Callback<User> callback);
 
+        @GET("/user/{id}")
+        public void getUser(@Path("id") long userId, Callback<User> callback);
+
+
         @PUT("/user/{id}")
-        public void updateUser(@Path("id") String userId, @Body User user, Callback<User> callback);
+        public void updateUser(@Path("id") String userId, @Body User user, Callback<Void> callback);
         
         @GET("/user")
         public void getRating(Callback<List<User>> callback);
@@ -186,7 +207,7 @@ public class RestService {
     private final static String DEBUG_REST_URL = "http://192.168.0.3/api.tim-sw.com";
     private final static String RELEASE_REST_URL = "http://api.tim-sw.com";
 
-    public final static String getRestUrl() {
+    public static String getRestUrl() {
         if (BuildConfig.DEBUG) {
             return DEBUG_REST_URL;
         } else {

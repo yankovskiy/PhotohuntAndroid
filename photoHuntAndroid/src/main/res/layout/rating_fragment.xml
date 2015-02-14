@@ -18,7 +18,7 @@
         android:textStyle="bold" />
 
     <RelativeLayout
-        android:id="@+id/loading_progress"
+        android:id="@+id/rating_loading_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center">
@@ -31,7 +31,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/hide_when_loading"
+        android:id="@+id/rating_hide_when_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

@@ -1,22 +1,22 @@
 package ru.neverdark.photohunt.fragments;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import ru.neverdark.abs.UfoFragmentActivity;
+import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.StatsAdapter;
 import ru.neverdark.photohunt.adapters.StatsAdapter.ChildRecord;
@@ -26,17 +26,71 @@ import ru.neverdark.photohunt.rest.RestService.Contest;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
-import ru.neverdark.abs.UfoFragment;
 
 /**
  * Фрагмент содержащий статистику
  */
 public class StatsFragment extends UfoFragment {
+    private StatsAdapter mAdapter;
+    private boolean mIsDataLoaded;
+    private Context mContext;
+    private ExpandableListView mContestList;
+    private View mView;
+
+    @Override
+    public void bindObjects() {
+        mContestList = (ExpandableListView) mView.findViewById(R.id.stats_contestList);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater,
+     * android.view.ViewGroup, android.os.Bundle)
+     */
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
+        Log.enter();
+        mIsDataLoaded = false;
+        mView = inflater.inflate(R.layout.stats_fragment, container, false);
+        mContext = mView.getContext();
+        bindObjects();
+        setListeners();
+        getActivity().setTitle(R.string.stats);
+        return mView;
+    }
+
+    @Override
+    public void onResume() {
+        Log.enter();
+        super.onResume();
+        if (!mIsDataLoaded) {
+            String user = Settings.getUserId(mContext);
+            String pass = Settings.getPassword(mContext);
+
+            RestService service = new RestService(user, pass);
+            service.getContestApi().getContests(
+                    new GetContestsHandler(mView));
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        Log.enter();
+        super.onDetach();
+    }
+
+    @Override
+    public void setListeners() {
+        mContestList.setOnChildClickListener(new ContestClickHandler());
+    }
+
     private class ContestClickHandler implements OnChildClickListener {
 
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
-                int childPosition, long id) {
+                                    int childPosition, long id) {
             DetailContestFragment fragment = new DetailContestFragment(id);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager()
                     .beginTransaction();
@@ -51,7 +105,7 @@ public class StatsFragment extends UfoFragment {
     private class GetContestsHandler extends CallbackHandler<List<RestService.Contest>> {
 
         public GetContestsHandler(View view) {
-            super(view);
+            super(view, R.id.stats_hide_when_loading, R.id.stats_loading_progress);
         }
 
         @Override
@@ -129,57 +183,10 @@ public class StatsFragment extends UfoFragment {
             Log.variable("child size", String.valueOf(childs.size()));
             mAdapter = new StatsAdapter(mContext, headers, childs);
             mContestList.setAdapter(mAdapter);
-
+            mIsDataLoaded = true;
             mContestList.expandGroup(0);    // expand top group
             super.success(data, response);
         }
 
-    }
-
-    private StatsAdapter mAdapter;
-
-    private boolean mIsDataLoaded;
-    private Context mContext;
-    private ExpandableListView mContestList;
-    private View mView;
-
-    @Override
-    public void bindObjects() {
-        mContestList = (ExpandableListView) mView.findViewById(R.id.stats_contestList);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater,
-     * android.view.ViewGroup, android.os.Bundle)
-     */
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
-        mIsDataLoaded = false;
-        mView = inflater.inflate(R.layout.stats_fragment, container, false);
-        mContext = mView.getContext();
-        bindObjects();
-        setListeners();
-        return mView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!mIsDataLoaded) {
-            String user = Settings.getUserId(mContext);
-            String pass = Settings.getPassword(mContext);
-
-            RestService service = new RestService(user, pass);
-            service.getContestApi().getContests(
-                    new GetContestsHandler(mView));
-        }
-    }
-
-    @Override
-    public void setListeners() {
-        mContestList.setOnChildClickListener(new ContestClickHandler());
     }
 }

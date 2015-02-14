@@ -1,28 +1,25 @@
 package ru.neverdark.photohunt.rest;
 
-import android.content.Context;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.dialogs.UProgressDialog;
 
-public class CallbackHandler<T> implements Callback<T>{
+public class CallbackHandler<T> implements Callback<T> {
     private View mView;
     private RelativeLayout mProgress;
     private RelativeLayout mHideLayout;
-    
-    public CallbackHandler(View view) {
+
+    public CallbackHandler(View view, int hideViewId, int progressBarId) {
         mView = view;
-        mProgress = (RelativeLayout) mView.findViewById(R.id.loading_progress);
-        mHideLayout = (RelativeLayout) mView.findViewById(R.id.hide_when_loading);
+        mProgress = (RelativeLayout) mView.findViewById(progressBarId);
+        mHideLayout = (RelativeLayout) mView.findViewById(hideViewId);
         mProgress.setVisibility(View.VISIBLE);
         mHideLayout.setVisibility(View.GONE);
     }
-    
+
     @Override
     public void failure(RetrofitError error) {
         mProgress.setVisibility(View.GONE);

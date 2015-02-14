@@ -9,10 +9,7 @@ import com.squareup.picasso.Transformation;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import ru.neverdark.abs.OnCallback;
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.dialogs.ConfirmDialog;
-import ru.neverdark.photohunt.dialogs.MessageDialog;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.RestService.Contest;
 import ru.neverdark.photohunt.rest.RestService.ContestDetail;
@@ -37,7 +34,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
 
     private final List<Image> mObjects;
     private final Context mContext;
-    private CallbackListener mCallback;
+    private OnCallbackListener mCallback;
     private Contest mContest;
     private int mResource;
 
@@ -53,7 +50,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         mResource = resource;
     }
 
-    public void setCallback(CallbackListener callback) {
+    public void setCallback(OnCallbackListener callback) {
         mCallback = callback;
     }
 
@@ -81,6 +78,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
             holder.mRemoveButton = (TextView) row.findViewById(R.id.detail_contest_remove);
             holder.mEditButton = (TextView) row.findViewById(R.id.detail_contest_edit);
             holder.mUserOps = (RelativeLayout) row.findViewById(R.id.detail_contest_user_ops);
+            holder.mContextButton = (ImageView) row.findViewById(R.id.detail_contest_list_item_context);
             row.setTag(holder);
         } else {
             holder = (RowHolder) row.getTag();
@@ -95,10 +93,12 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         String hidden = mContext.getString(R.string.hidden);
 
         if (mContest.status == Contest.STATUS_CLOSE) {
+            holder.mContextButton.setVisibility(View.VISIBLE);
             voteCount = String.format(Locale.US, "%d", image.vote_count);
             author = image.display_name;
             setDataBlockVisible(holder, true);
         } else {
+            holder.mContextButton.setVisibility(View.GONE);
             voteCount = hidden;
             author = hidden;
             setDataBlockVisible(holder, false);
@@ -143,6 +143,8 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         holder.mRemoveButton.setOnTouchListener(new ButtonOnTouchListener());
         holder.mEditButton.setOnClickListener(new ClickListener(image));
         holder.mRemoveButton.setOnClickListener(new ClickListener(image));
+        holder.mContextButton.setOnTouchListener(new ImageOnTouchListener(false));
+        holder.mContextButton.setOnClickListener(new ClickListener(image));
 
         String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.getRestUrl(), image.id);
 
@@ -177,11 +179,13 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         return mObjects.get(position).id;
     }
 
-    public interface CallbackListener {
+    public interface OnCallbackListener {
+        public void onMoreButton(Image image);
         public void onVote(boolean isVoted);
         public void onRemoveImage(Image image);
         public void onEditImage(Image image);
         public void showError(String message);
+        public void onShowUserProfile(long userId);
     }
 
     private static class RowHolder {
@@ -196,6 +200,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
         private View mDataDelemiter;
         private RelativeLayout mContestData;
         private RelativeLayout mUserOps;
+        private ImageView mContextButton;
     }
 
     private class VoteHandler implements Callback<Void> {
@@ -213,9 +218,7 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
                 RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
                 Common.showMessage(mContext, err.error);
             } catch (Exception e) {
-                if (mCallback != null) {
-                    mCallback.showError(error.getMessage());
-                }
+
             }
         }
 
@@ -277,6 +280,16 @@ public class DetailContestAdapter extends ArrayAdapter<Image> {
                 case R.id.detail_contest_remove:
                     if (mCallback != null) {
                         mCallback.onRemoveImage(mImage);
+                    }
+                    break;
+                case R.id.detail_contest_list_item_author:
+                    if (mCallback != null) {
+                        mCallback.onShowUserProfile(mImage.user_id);
+                    }
+                    break;
+                case R.id.detail_contest_list_item_context:
+                    if (mCallback != null) {
+                        mCallback.onMoreButton(mImage);
                     }
                     break;
             }

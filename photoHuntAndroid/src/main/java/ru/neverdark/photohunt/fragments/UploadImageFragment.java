@@ -80,7 +80,7 @@ public class UploadImageFragment extends UfoFragment {
         }
 
         public ConfirmImageHandler(View view) {
-            super(view);
+            super(view, R.id.upload_hide_when_loading, R.id.upload_loading_progress);
         }
 
     }

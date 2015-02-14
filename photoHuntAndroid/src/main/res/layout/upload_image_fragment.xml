@@ -6,7 +6,7 @@
     android:padding="@dimen/default_padding">
 
     <RelativeLayout
-        android:id="@+id/loading_progress"
+        android:id="@+id/upload_loading_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -20,7 +20,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/hide_when_loading"
+        android:id="@+id/upload_hide_when_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -34,6 +34,7 @@
                 android:id="@+id/upload_new_subject"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:inputType="textCapSentences"
                 android:layout_marginRight="16dp"
                 android:layout_toLeftOf="@+id/upload_subject_help"
                 android:drawableLeft="@drawable/ic_whatshot_grey600_18dp"
@@ -44,7 +45,9 @@
                 android:textSize="16sp" />
 
             <ImageView
-                android:padding="12dp"
+                android:background="@drawable/grey50_button"
+                android:padding="6dp"
+                android:layout_margin="8dp"
                 android:id="@+id/upload_subject_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

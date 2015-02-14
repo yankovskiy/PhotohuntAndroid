@@ -2,12 +2,13 @@ package ru.neverdark.photohunt.fragments;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.BriefContestAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.RestService.Contest;
+import ru.neverdark.photohunt.utils.Common;
+import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
 import ru.neverdark.abs.UfoFragment;
@@ -15,11 +16,13 @@ import ru.neverdark.abs.UfoFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.List;
@@ -29,6 +32,7 @@ public class BriefContestFragment extends UfoFragment {
     private View mView;
     private boolean mIsDataLoaded;
     private ListView mContestList;
+    private Contest mSelectedContest;
 
     /*
      * (non-Javadoc)
@@ -39,13 +43,71 @@ public class BriefContestFragment extends UfoFragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
+        Log.enter();
         mIsDataLoaded = false;
         mView = inflater.inflate(R.layout.brief_contest_fragment, container, false);
         mContext = mView.getContext();
         bindObjects();
         setListeners();
+        getActivity().setTitle(R.string.contests);
+        registerForContextMenu(mContestList);
         return mView;
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        Log.enter();
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.contest_card, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Log.enter();
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Contest contest;
+
+        // если выбрано по троеточию, то info будет Null
+        if (info == null) {
+            contest = mSelectedContest;
+        } else {
+            contest = (Contest) mContestList.getAdapter().getItem(info.position);
+        }
+
+        switch (item.getItemId()) {
+            case R.id.view_profile:
+                showUserProfile(contest.user_id);
+                return true;
+            case R.id.view_prev_contest:
+                if (contest.prev_id != 0L) {
+                    showContest(contest.prev_id);
+                } else {
+                    Common.showMessage(mContext, R.string.error_contest_not_found);
+                }
+                return true;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    private void showContest(long contestId) {
+        DetailContestFragment fragment = new DetailContestFragment(contestId);
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void showUserProfile(long userId) {
+        ProfileFragment fragment = ProfileFragment.getInstance(userId);
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
 
     @Override
     public void bindObjects() {
@@ -54,6 +116,7 @@ public class BriefContestFragment extends UfoFragment {
 
     @Override
     public void setListeners() {
+
     }
 
     @Override
@@ -71,7 +134,7 @@ public class BriefContestFragment extends UfoFragment {
     private class GetOpenContestsHandler extends CallbackHandler<List<Contest>> {
 
         public GetOpenContestsHandler(View view) {
-            super(view);
+            super(view, R.id.brief_hide_when_loading, R.id.brief_loading_progress);
         }
 
         @Override
@@ -110,14 +173,16 @@ public class BriefContestFragment extends UfoFragment {
         }
     }
 
-    private class EnterToContestListener implements BriefContestAdapter.OnEnterToContest {
+    private class EnterToContestListener implements BriefContestAdapter.OnBriefCardClickListener {
         @Override
         public void enterToContest(long contestId) {
-            DetailContestFragment fragment = new DetailContestFragment(contestId);
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.main_container, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            showContest(contestId);
+        }
+
+        @Override
+        public void onMoreButton(Contest contest) {
+            mSelectedContest = contest;
+            getActivity().openContextMenu(mContestList);
         }
     }
 }

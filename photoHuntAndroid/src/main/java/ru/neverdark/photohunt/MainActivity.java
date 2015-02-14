@@ -1,8 +1,10 @@
 package ru.neverdark.photohunt;
 
+import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.adapters.MenuAdapter;
+import ru.neverdark.photohunt.dialogs.ConfirmDialog;
 import ru.neverdark.photohunt.dialogs.SocialNetDialog;
 import ru.neverdark.photohunt.dialogs.RulesDialog;
 import ru.neverdark.photohunt.fragments.BriefContestFragment;
@@ -23,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
@@ -62,7 +65,7 @@ public class MainActivity extends UfoFragmentActivity {
                     break;
                 case R.string.profile:
                     mIsBackToContest = true;
-                    fragment = new ProfileFragment();
+                    fragment = ProfileFragment.getInstance(0L);
                     ((ProfileFragment)fragment).setCallback(new DeleteUserListener());
                     break;
                 case R.string.rating:
@@ -81,14 +84,23 @@ public class MainActivity extends UfoFragmentActivity {
                 case R.string.feedback:
                     sendMail();
                     break;
+                case R.string.exit:
+                    exitApp();
+                    break;
             }
 
             getDrawerLayout().closeDrawer(mLeftMenu);
 
             if (fragment != null) {
-                setTitle(item.getMenuLabel());
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.main_container, fragment).commit();
+                FragmentTransaction trans = fragmentManager.beginTransaction();
+                if (fragmentManager.getBackStackEntryCount() > 0) {
+                    fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                }
+                trans.replace(R.id.main_container, fragment);
+                trans.commit();
+                fragmentManager.executePendingTransactions();
             }
         }
 
@@ -119,8 +131,14 @@ public class MainActivity extends UfoFragmentActivity {
         }
     }
 
+    private void exitApp() {
+        ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
+        dialog.setCallback(new ExitAppListener());
+        dialog.setMessage(R.string.exit_confirmation_message);
+        dialog.show(getSupportFragmentManager(), ConfirmDialog.DIALOG_ID);
+    }
+
     private ListView mLeftMenu;
-    private CharSequence mTitle;
 
     @Override
     public void bindObjects() {
@@ -145,15 +163,17 @@ public class MainActivity extends UfoFragmentActivity {
         UfoMenuItem rateItem = new UfoMenuItem(mContext, R.drawable.ic_thumb_up_grey600_24dp, R.string.rate);
         UfoMenuItem feedbackItem = new UfoMenuItem(mContext, R.drawable.ic_email_grey600_24dp, R.string.feedback);
         UfoMenuItem socialItem = new UfoMenuItem(mContext, R.drawable.ic_group_work_grey600_24dp, R.string.in_social);
+        UfoMenuItem exitItem = new UfoMenuItem(mContext, R.drawable.ic_exit_to_app_grey600_24dp, R.string.exit);
 
         menuAdapter.add(contestItem);
         menuAdapter.add(statsItem);
-        menuAdapter.add(profileItem);
         menuAdapter.add(ratingItem);
+        menuAdapter.add(profileItem);
         menuAdapter.add(socialItem);
         menuAdapter.add(aboutItem);
         menuAdapter.add(rateItem);
         menuAdapter.add(feedbackItem);
+        menuAdapter.add(exitItem);
 
         mLeftMenu.setAdapter(menuAdapter);
     }
@@ -174,7 +194,6 @@ public class MainActivity extends UfoFragmentActivity {
             Log.message("Could not determine version use");
         }
 
-        mTitle = getTitle();
         bindObjects();
         setListeners();
         createLeftMenu();
@@ -263,15 +282,20 @@ public class MainActivity extends UfoFragmentActivity {
         public void onBackStackChanged() {
             Log.enter();
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 getDrawerToggle().setDrawerIndicatorEnabled(false);
             } else {
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
                 if ((fragment instanceof WelcomeFragment) == false) {
-                    getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                     getDrawerToggle().setDrawerIndicatorEnabled(true);
                 }
             }
+        }
+    }
+
+    private class ExitAppListener implements OnCallback, ConfirmDialog.OnPositiveClickListener {
+        @Override
+        public void onPositiveClickHandler() {
+            finish();
         }
     }
 }
