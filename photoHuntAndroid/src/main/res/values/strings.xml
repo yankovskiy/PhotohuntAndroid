@@ -83,7 +83,7 @@
     <string name="hint">Подсказка</string>
     <string name="user_profile">Профиль пользователя</string>
     <string name="top10">Tоп 10</string>
-    <string name="rating_count">Очков</string>
+    <string name="rating_count">Количество очков</string>
     <string name="in_social">Мы в соцсетях</string>
     <string name="edit_image_subject_title">Новая тема</string>
     <string name="subject_changed">Тема изменена</string>
