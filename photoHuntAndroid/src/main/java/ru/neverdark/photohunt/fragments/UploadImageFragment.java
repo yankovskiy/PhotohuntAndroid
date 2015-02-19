@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -120,14 +121,15 @@ public class UploadImageFragment extends UfoFragment {
 
     private void loadImage() {
         try {
-            Bitmap bitmap = Common.resizeBitmap(MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), mUri), 1024);
+            Bitmap bitmap = Common.resizeBitmap(Common.decodeSampledBitmapFromUri(mContext, mUri, 1024), 1024);
 
             int pixels = (int) (mContext.getResources().getDisplayMetrics().density * 32);
             Log.variable("pixels", String.valueOf(pixels));
             int width = mContext.getResources().getDisplayMetrics().widthPixels - pixels;
             Log.variable("width", String.valueOf(width));
 
-            mImage.setImageBitmap(Common.resizeBitmap(MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), mUri), width));
+            mImage.setImageBitmap(Common.resizeBitmap(Common.decodeSampledBitmapFromUri(mContext, mUri, width), width));
+
             File file = new File(mFileName);
             mOutputFileUri = Uri.fromFile(file);
             OutputStream outStream = new FileOutputStream(file);
