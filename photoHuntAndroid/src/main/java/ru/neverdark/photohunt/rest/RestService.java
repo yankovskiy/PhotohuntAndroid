@@ -23,6 +23,29 @@ public class RestService {
         public String error;
     }
 
+    public static class Goods {
+        public long id;
+        public String service_name;
+        public String name;
+        public String description;
+        public int price_money;
+        public int price_dc;
+        public int auto_use;
+    }
+
+    public static class Item {
+        public long id;
+        public String name;
+        public String description;
+        public int count;
+        public int auto_use;
+    }
+
+    public static class ShopData {
+        List<Goods> goods;
+        List<Item> items;
+    }
+
     public static class Image implements Serializable {
         public long id;
         public long contest_id;
@@ -103,6 +126,38 @@ public class RestService {
         public void voteForContest(long id, Image image, Callback<Void> callback) {
             mContestMgmt.voteForContest(id, image, callback);
         }
+    }
+
+    public class ShopApi {
+        public void getShop(Callback<ShopData> callback) {
+            mShopMgmt.getShop(callback);
+        }
+
+        public void getMyItems(Callback<List<Item>> callback) {
+            mShopMgmt.getMyItems(callback);
+        }
+
+        public void buyItem(long itemId, Callback<Void> callback) {
+            mShopMgmt.buyItem(itemId, callback);
+        }
+
+        public void useItem(long itemId, Callback<Void> callback) {
+            mShopMgmt.useItem(itemId, callback);
+        }
+    }
+
+    private interface ShopMgmt {
+        @GET("/shop")
+        public void getShop(Callback<ShopData> callback);
+
+        @GET("/shop/my")
+        public void getMyItems(Callback<List<Item>> callback);
+
+        @POST("/shop/{id}")
+        public void buyItem(@Path("id") long itemId, Callback<Void> callback);
+
+        @PUT("/shop/my/{id}")
+        public void useItem(@Path("id") long itemId, Callback<Void> callback);
     }
 
     private interface ContestMgmt {
@@ -221,6 +276,10 @@ public class RestService {
 
     private final ContestMgmt mContestMgmt;
 
+    private final ShopMgmt mShopMgmt;
+
+    private final ShopApi mShopApi;
+
     private final UserApi mUserApi;
 
     private final ContestApi mContestApi;
@@ -230,9 +289,13 @@ public class RestService {
 
         mContestApi = new ContestApi();
         mUserApi = new UserApi();
+        mShopApi = new ShopApi();
+
         mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(interceptor).setEndpoint(getRestUrl()).build();
+
         mUserMgmt = mRestAdapter.create(UserMgmt.class);
         mContestMgmt = mRestAdapter.create(ContestMgmt.class);
+        mShopMgmt = mRestAdapter.create(ShopMgmt.class);
     }
 
     public RestService(String user, String password) {
@@ -241,10 +304,13 @@ public class RestService {
 
         mContestApi = new ContestApi();
         mUserApi = new UserApi();
-        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(auth).setEndpoint(getRestUrl())
-                .build();
+        mShopApi = new ShopApi();
+
+        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(auth).setEndpoint(getRestUrl()).build();
+
         mUserMgmt = mRestAdapter.create(UserMgmt.class);
         mContestMgmt = mRestAdapter.create(ContestMgmt.class);
+        mShopMgmt = mRestAdapter.create(ShopMgmt.class);
     }
 
     public ContestApi getContestApi() {

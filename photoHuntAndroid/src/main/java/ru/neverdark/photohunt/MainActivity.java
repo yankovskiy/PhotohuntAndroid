@@ -10,6 +10,7 @@ import ru.neverdark.photohunt.dialogs.RulesDialog;
 import ru.neverdark.photohunt.fragments.BriefContestFragment;
 import ru.neverdark.photohunt.fragments.ProfileFragment;
 import ru.neverdark.photohunt.fragments.RatingFragment;
+import ru.neverdark.photohunt.fragments.ShopFragment;
 import ru.neverdark.photohunt.fragments.StatsFragment;
 import ru.neverdark.photohunt.fragments.WelcomeFragment;
 import ru.neverdark.photohunt.utils.Log;
@@ -62,6 +63,10 @@ public class MainActivity extends UfoFragmentActivity {
                 case R.string.stats:
                     mIsBackToContest = true;
                     fragment = new StatsFragment();
+                    break;
+                case R.string.shop:
+                    mIsBackToContest = true;
+                    fragment = new ShopFragment();
                     break;
                 case R.string.profile:
                     mIsBackToContest = true;
@@ -157,6 +162,7 @@ public class MainActivity extends UfoFragmentActivity {
 
         UfoMenuItem contestItem = new UfoMenuItem(mContext, R.drawable.ic_whatshot_grey600_24dp, R.string.contests);
         UfoMenuItem statsItem = new UfoMenuItem(mContext, R.drawable.ic_poll_grey600_24dp, R.string.stats);
+        UfoMenuItem shopItem = new UfoMenuItem(mContext, R.drawable.ic_shopping_cart_grey600_24dp, R.string.shop);
         UfoMenuItem profileItem = new UfoMenuItem(mContext, R.drawable.ic_assignment_ind_grey600_24dp, R.string.profile);
         UfoMenuItem ratingItem = new UfoMenuItem(mContext, R.drawable.ic_group_grey600_24dp, R.string.rating);
         UfoMenuItem aboutItem = new UfoMenuItem(mContext, R.drawable.ic_info_outline_grey600_24dp, R.string.rules);
@@ -167,6 +173,7 @@ public class MainActivity extends UfoFragmentActivity {
 
         menuAdapter.add(contestItem);
         menuAdapter.add(statsItem);
+        menuAdapter.add(shopItem);
         menuAdapter.add(ratingItem);
         menuAdapter.add(profileItem);
         menuAdapter.add(socialItem);
