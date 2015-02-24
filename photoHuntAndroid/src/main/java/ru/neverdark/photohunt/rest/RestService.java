@@ -1,5 +1,7 @@
 package ru.neverdark.photohunt.rest;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
@@ -42,8 +44,8 @@ public class RestService {
     }
 
     public static class ShopData {
-        List<Goods> goods;
-        List<Item> items;
+        public List<Goods> shop_items;
+        public List<Item> my_items;
     }
 
     public static class Image implements Serializable {
@@ -319,6 +321,10 @@ public class RestService {
 
     public UserApi getUserApi() {
         return mUserApi;
+    }
+
+    public ShopApi getShopApi() {
+        return mShopApi;
     }
 
 }
