@@ -1,7 +1,5 @@
 package ru.neverdark.photohunt.rest;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
@@ -36,14 +34,35 @@ public class RestService {
     }
 
     public static class Item {
+        public final static String EXTRA_PHOTO = "extra_photo";
+        public final static String AVATAR = "avatar";
+        public final static String EXTRA_CONTEST = "extra_contest";
+        public final static String PREMIUM7 = "premium7";
+        public final static String PREMIUM30 = "premium30";
+
         public long id;
         public String name;
+        public String service_name;
         public String description;
         public int count;
         public int auto_use;
+
+        public Item() {
+
+        }
+
+        public Item(Goods goods) {
+            name = goods.name;
+            description = goods.description;
+            auto_use = goods.auto_use;
+            service_name = goods.service_name;
+            count = 1;
+        }
     }
 
     public static class ShopData {
+        public int money;
+        public int dc;
         public List<Goods> shop_items;
         public List<Item> my_items;
     }
@@ -119,12 +138,12 @@ public class RestService {
         public void getContestDetails(long id, Callback<ContestDetail> callback) {
             mContestMgmt.getContestDetails(id, callback);
         }
-        
+
         public void addImageToContest(long id, String subject, TypedOutput image, Callback<Void> callback) {
             Log.enter();
             mContestMgmt.addImageToContest(id, subject, image, callback);
         }
-        
+
         public void voteForContest(long id, Image image, Callback<Void> callback) {
             mContestMgmt.voteForContest(id, image, callback);
         }
@@ -181,8 +200,8 @@ public class RestService {
         @Multipart
         @POST("/contest/{id}")
         public void addImageToContest(@Path("id") long id, @Part("subject") String subject,
-                @Part("image") TypedOutput image, Callback<Void> callback);
-        
+                                      @Part("image") TypedOutput image, Callback<Void> callback);
+
         @PUT("/contest/{id}")
         public void voteForContest(@Path("id") long id, @Body Image image, Callback<Void> callback);
     }
@@ -228,7 +247,7 @@ public class RestService {
         public void updateUser(String userId, User user, Callback<Void> callback) {
             mUserMgmt.updateUser(userId, user, callback);
         }
-        
+
         public void getRating(Callback<List<User>> callback) {
             mUserMgmt.getRating(callback);
         }
@@ -256,7 +275,7 @@ public class RestService {
 
         @PUT("/user/{id}")
         public void updateUser(@Path("id") String userId, @Body User user, Callback<Void> callback);
-        
+
         @GET("/user")
         public void getRating(Callback<List<User>> callback);
     }

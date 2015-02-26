@@ -97,4 +97,8 @@
     <string name="prev_contest">Предыдущий конкурс</string>
     <string name="shop">Магазин</string>
     <string name="my_items">Мои покупки</string>
+    <string name="confirm_buy_title">Купить?</string>
+    <string name="brief_count">шт.</string>
+    <string name="purchase_success">Покупка успешно совершена</string>
+    <string name="balance">Баланс</string>
 </resources>

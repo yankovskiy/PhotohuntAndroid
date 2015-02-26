@@ -12,6 +12,7 @@ public class ConfirmDialog extends UfoDialogFragment {
     public static final String DIALOG_ID = "confirmDialog";
     private int mTitleId;
     private int mMessageId;
+    private String mMessage;
 
     public static ConfirmDialog getInstance(Context context) {
         ConfirmDialog dialog = new ConfirmDialog();
@@ -44,11 +45,21 @@ public class ConfirmDialog extends UfoDialogFragment {
         }
         if (mMessageId != 0) {
             getAlertDialog().setMessage(mMessageId);
+        } else if (mMessage != null) {
+            getAlertDialog().setMessage(mMessage);
         }
     }
 
     public void setMessage(int messageId) {
         mMessageId = messageId;
+    }
+
+    public void setMessage(String message) {
+        mMessage = message;
+    }
+
+    public void setTitle(int titleId) {
+        mTitleId = titleId;
     }
 
     public interface OnPositiveClickListener {
