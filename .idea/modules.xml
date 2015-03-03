@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PhotohuntAndroid.iml" filepath="$PROJECT_DIR$/PhotohuntAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/photoHuntAndroid/photoHuntAndroid.iml" filepath="$PROJECT_DIR$/photoHuntAndroid/photoHuntAndroid.iml" />
-      <module fileurl="file://$PROJECT_DIR$/photohunt.iml" filepath="$PROJECT_DIR$/photohunt.iml" />
     </modules>
   </component>
 </project>

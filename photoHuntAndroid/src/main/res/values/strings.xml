@@ -95,4 +95,5 @@
     <string name="contest">Конкурс</string>
     <string name="to_contest">Перейти к конкурсу</string>
     <string name="prev_contest">Предыдущий конкурс</string>
+    <string name="upload_image_attention">Публикуя фотографию, вы подтверждаете, что являетесь ее автором и что снимок сделан в период проведения конкурса</string>
 </resources>
