@@ -101,4 +101,5 @@
     <string name="brief_count">шт.</string>
     <string name="purchase_success">Покупка успешно совершена</string>
     <string name="balance">Баланс</string>
+    <string name="upload_image_attention">Публикуя фотографию, вы подтверждаете, что являетесь ее автором и что снимок сделан в период проведения конкурса</string>
 </resources>
