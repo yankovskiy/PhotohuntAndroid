@@ -1,7 +1,9 @@
 package ru.neverdark.photohunt.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,18 +11,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
+import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.dialogs.UProgressDialog;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ToastException;
-import ru.neverdark.abs.UfoFragment;
 
 public class RegisterUserFragment extends UfoFragment {
+    private boolean mIsLogin = false;
 
     private class AddUserHandler implements Callback<RestService.User> {
         private UProgressDialog mDialog;
@@ -53,8 +58,22 @@ public class RegisterUserFragment extends UfoFragment {
         @Override
         public void success(RestService.User user, Response response) {
             mDialog.dismiss();
-            getActivity().getSupportFragmentManager().popBackStack();
-            Common.showMessage(mContext, R.string.registered_success);
+
+            SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(getString(R.string.pref_isLogin), true);
+            editor.putString(getString(R.string.pref_userId), mUserId.getText().toString());
+            editor.putString(getString(R.string.pref_password), mPassword.getText().toString());
+            editor.commit();
+
+            getFragmentManager().popBackStack();
+            BriefContestFragment fragment = new BriefContestFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, fragment);
+            transaction.commit();
+            ((UfoFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((UfoFragmentActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+            mIsLogin = true;
         }
     }
 
@@ -76,8 +95,10 @@ public class RegisterUserFragment extends UfoFragment {
 
     @Override
     public void onDestroy() {
-        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((UfoFragmentActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+        if (!mIsLogin) {
+            ((UfoFragmentActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            ((UfoFragmentActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+        }
         super.onDestroy();
     }
 
@@ -134,7 +155,9 @@ public class RegisterUserFragment extends UfoFragment {
             if (password.length() == 0) {
                 throw new ToastException(R.string.error_empty_password);
             }
-            
+
+            ((MainActivity) getActivity()).hideKeyboard();
+
             RestService restService = new RestService();
             RestService.User user = new RestService.User();
             user.display_name = displayName;

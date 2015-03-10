@@ -1,23 +1,5 @@
 package ru.neverdark.photohunt;
 
-import ru.neverdark.abs.OnCallback;
-import ru.neverdark.abs.UfoFragment;
-import ru.neverdark.abs.UfoFragmentActivity;
-import ru.neverdark.photohunt.adapters.MenuAdapter;
-import ru.neverdark.photohunt.dialogs.ConfirmDialog;
-import ru.neverdark.photohunt.dialogs.SocialNetDialog;
-import ru.neverdark.photohunt.dialogs.RulesDialog;
-import ru.neverdark.photohunt.fragments.BriefContestFragment;
-import ru.neverdark.photohunt.fragments.ProfileFragment;
-import ru.neverdark.photohunt.fragments.RatingFragment;
-import ru.neverdark.photohunt.fragments.ShopFragment;
-import ru.neverdark.photohunt.fragments.StatsFragment;
-import ru.neverdark.photohunt.fragments.WelcomeFragment;
-import ru.neverdark.photohunt.utils.Log;
-import ru.neverdark.photohunt.utils.SingletonHelper;
-import ru.neverdark.photohunt.utils.UfoMenuItem;
-import ru.neverdark.photohunt.utils.Settings;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -38,6 +20,24 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+
+import ru.neverdark.abs.OnCallback;
+import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.abs.UfoFragmentActivity;
+import ru.neverdark.photohunt.adapters.MenuAdapter;
+import ru.neverdark.photohunt.dialogs.ConfirmDialog;
+import ru.neverdark.photohunt.dialogs.RulesDialog;
+import ru.neverdark.photohunt.dialogs.SocialNetDialog;
+import ru.neverdark.photohunt.fragments.BriefContestFragment;
+import ru.neverdark.photohunt.fragments.ProfileFragment;
+import ru.neverdark.photohunt.fragments.RatingFragment;
+import ru.neverdark.photohunt.fragments.ShopFragment;
+import ru.neverdark.photohunt.fragments.StatsFragment;
+import ru.neverdark.photohunt.fragments.WelcomeFragment;
+import ru.neverdark.photohunt.utils.Log;
+import ru.neverdark.photohunt.utils.Settings;
+import ru.neverdark.photohunt.utils.SingletonHelper;
+import ru.neverdark.photohunt.utils.UfoMenuItem;
 
 /**
  * Главная активность приложения
@@ -291,12 +291,16 @@ public class MainActivity extends UfoFragmentActivity {
         mIsBackToContest = false;
     }
 
+    public void hideKeyboard() {
+        final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
     private class BackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
         @Override
         public void onBackStackChanged() {
             Log.enter();
-            final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            hideKeyboard();
 
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getDrawerToggle().setDrawerIndicatorEnabled(false);
