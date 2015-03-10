@@ -116,7 +116,7 @@
     <string name="remove_avatar_success">Аватар успешно удален</string>
     <string name="common_info">ОБЩАЯ ИНФОРМАЦИЯ</string>
     <string name="private_info">ЛИЧНАЯ ИНФОРМАЦИЯ</string>
-    <string name="danger_zone">ОПАСНЫЕ ДЕЙСТВИЯ</string>
+    <string name="danger_zone">ОПАСНАЯ ЗОНА</string>
     <string name="delete_account">Удалить аккаунт</string>
     <string name="delete_account_title">Удалить аккаунт?</string>
     <string name="delete_account_message">При удалении аккаунта ваши данные удаляются полностью и необратимо! Служба поддержки не сможет помочь вам с восстановлением удаленной информации.</string>
