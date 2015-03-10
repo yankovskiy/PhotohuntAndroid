@@ -93,6 +93,11 @@ public class ShopFragment extends UfoFragment {
         tabHost.addTab(tabSpec);
     }
 
+    public static ShopFragment getInstance() {
+        ShopFragment fragment = new ShopFragment();
+        return fragment;
+    }
+
     private class ListItemClickListener implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

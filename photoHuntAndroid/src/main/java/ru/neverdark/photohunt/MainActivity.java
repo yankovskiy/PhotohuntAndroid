@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,9 +33,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 /**
  * Главная активность приложения
@@ -50,19 +54,18 @@ public class MainActivity extends UfoFragmentActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            //mLeftMenu.setItemChecked(position, true);
-            UfoMenuItem item = (UfoMenuItem) mLeftMenu.getAdapter().getItem(position);
             UfoFragment fragment = null;
 
             mIsBackToContest = false;
 
-            switch (item.getId()) {
+            int itemId = (int) id;
+            switch (itemId) {
                 case R.string.contests:
                     fragment = new BriefContestFragment();
                     break;
                 case R.string.stats:
                     mIsBackToContest = true;
-                    fragment = new StatsFragment();
+                    fragment = StatsFragment.getInstance(0L, null);
                     break;
                 case R.string.shop:
                     mIsBackToContest = true;
@@ -71,7 +74,6 @@ public class MainActivity extends UfoFragmentActivity {
                 case R.string.profile:
                     mIsBackToContest = true;
                     fragment = ProfileFragment.getInstance(0L);
-                    ((ProfileFragment)fragment).setCallback(new DeleteUserListener());
                     break;
                 case R.string.rating:
                     mIsBackToContest = true;
@@ -217,6 +219,15 @@ public class MainActivity extends UfoFragmentActivity {
 
         getSupportFragmentManager().beginTransaction().add(R.id.main_container, fragment).commit();
         getSupportFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.progress);
+        ProgressBar progressBar = (ProgressBar) getSupportActionBar().getCustomView();
+        progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+    }
+
+    @Override
+    public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
+        getSupportActionBar().getCustomView().setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -276,18 +287,17 @@ public class MainActivity extends UfoFragmentActivity {
         getDrawerLayout().setDrawerListener(getDrawerToggle());
     }
 
-    private class DeleteUserListener implements ProfileFragment.OnDeleteUser {
-        @Override
-        public void deleteSuccess() {
-            // в случае удаления пользователя обработка нажатия кнопки back нужна стандартная
-            mIsBackToContest = false;
-        }
+    public void resetBackButtonToDefault() {
+        mIsBackToContest = false;
     }
 
     private class BackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
         @Override
         public void onBackStackChanged() {
             Log.enter();
+            final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getDrawerToggle().setDrawerIndicatorEnabled(false);
             } else {

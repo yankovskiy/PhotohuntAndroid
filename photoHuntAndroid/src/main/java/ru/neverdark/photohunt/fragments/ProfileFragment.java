@@ -1,20 +1,30 @@
 package ru.neverdark.photohunt.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,134 +33,106 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
-import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
+import ru.neverdark.photohunt.adapters.MenuAdapter;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
-import ru.neverdark.photohunt.dialogs.UProgressDialog;
-import ru.neverdark.photohunt.dialogs.UpdateProfileDialog;
+import ru.neverdark.photohunt.dialogs.UploadAvatarDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.User;
+import ru.neverdark.photohunt.utils.ButtonBGOnTouchListener;
 import ru.neverdark.photohunt.utils.Common;
-import ru.neverdark.photohunt.utils.ImageOnTouchListener;
+import ru.neverdark.photohunt.utils.ImageOutput;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
+import ru.neverdark.photohunt.utils.UfoMenuItem;
 
+/**
+ * Фрагмент профиля пользователя как своего, так и чужого
+ */
 public class ProfileFragment extends UfoFragment {
 
-    private Context mContext;
+    private final static int INSTAGRAM_MENU_ID = 1;
+    private final static int BALANCE_MENU_ID = 2;
+
     private View mView;
-    private boolean mIsDataLoaded = false;
-    private TextView mDisplayName;
-    private TextView mRank;
+    private Context mContext;
+    private boolean mIsDataLoaded;
+
+    private View mRateBalanceButton;
+    private View mRatePlaceButton;
+    private View mImagesCountButton;
+    private View mWinsCountButton;
+
+    private TextView mBalance;
+    private TextView mRating;
+    private TextView mWorks;
     private TextView mWins;
-    private TextView mImagesCount;
-    private TextView mCardInsta;
-    private TextView mCardUserId;
-    private TextView mCardBalance;
-    private ImageView mButtonAlbum;
-    private ImageView mButtonEdit;
-    private ImageView mButtonRemove;
-    private ImageView mButtonInsta;
-    private User mUserData;
+
+    private ListView mButtonsList;
+
     private boolean mIsSelf;
+    private long mUserId;
+    private RestService.User mUserData;
+    private TextView mTitle;
+    private ImageView mAvatar;
+    private TextView mBalanceCountText;
+    private TextView mWorksCountText;
+    private TextView mWinsCountText;
+    private Uri mOutputUri;
 
-    private void updateProfileInfo(User user) {
-        String balance = String.format(Locale.US, "%s: %d", getString(R.string.rating_count), user.balance);
-        String email = Settings.getUserId(mContext);
-        if (mIsSelf) {
-            mCardUserId.setText(email);
-        }
-
-        String worksCount = String.format(Locale.US, "%s: %d", getString(R.string.works_count), user.images_count);
-        String winsCount = String.format(Locale.US, "%s: %d", getString(R.string.wins_count), user.wins_count);
-        String rank = String.format(Locale.US, "%s: %d", getString(R.string.rating_position), user.rank);
-
-        mWins.setText(winsCount);
-        mRank.setText(rank);
-        mImagesCount.setText(worksCount);
-        mCardBalance.setText(balance);
-        mDisplayName.setText(user.display_name);
-
-        visibilityControl(user);
-    }
-
-    private void visibilityControl(User user) {
-        if (user.insta == null || user.insta.trim().length() == 0) {
-            mCardInsta.setVisibility(View.GONE);
-            mButtonInsta.setVisibility(View.GONE);
-        } else {
-            mButtonInsta.setVisibility(View.VISIBLE);
-            mCardInsta.setVisibility(View.VISIBLE);
-            mCardInsta.setText(user.insta);
-        }
+    public static ProfileFragment getInstance(long userId) {
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.mUserId = userId;
+        fragment.mIsSelf = (userId == 0L);
+        return fragment;
     }
 
     @Override
     public void bindObjects() {
-        mCardBalance = (TextView) mView.findViewById(R.id.profile_card_balance);
-        mDisplayName = (TextView) mView.findViewById(R.id.profile_displayname);
-        mButtonAlbum = (ImageView) mView.findViewById(R.id.profile_button_album);
-        mButtonInsta = (ImageView) mView.findViewById(R.id.profile_button_insta);
-        mCardInsta = (TextView) mView.findViewById(R.id.profile_insta);
-        mImagesCount = (TextView) mView.findViewById(R.id.profile_images_count);
-        mRank = (TextView) mView.findViewById(R.id.profile_card_rank);
-        mWins = (TextView) mView.findViewById(R.id.profile_card_wins);
+        mTitle = (TextView) mView.findViewById(R.id.profile_title);
 
-        if (mIsSelf) {
-            mButtonEdit = (ImageView) mView.findViewById(R.id.profile_button_edit);
-            mButtonRemove = (ImageView) mView.findViewById(R.id.profile_button_remove);
-            mCardUserId = (TextView) mView.findViewById(R.id.profile_card_userid);
-        }
-    }
+        mRateBalanceButton = mView.findViewById(R.id.profile_button_balance);
+        mRatePlaceButton = mView.findViewById(R.id.profile_button_rating);
+        mImagesCountButton = mView.findViewById(R.id.profile_button_works);
+        mWinsCountButton = mView.findViewById(R.id.profile_button_wins);
 
-    private void showInstaProfile(String user) {
-        String url = String.format(Locale.US, "http://instagram.com/_u/%s", user);
-        Uri uri = Uri.parse(url);
-        Intent insta = new Intent(Intent.ACTION_VIEW, uri);
-        insta.setPackage("com.instagram.android");
+        mBalance = (TextView) mView.findViewById(R.id.profile_balance);
+        mBalanceCountText = (TextView) mView.findViewById(R.id.profile_balance_count);
+        mRating = (TextView) mView.findViewById(R.id.profile_rating);
+        mWorks = (TextView) mView.findViewById(R.id.profile_works);
+        mWorksCountText = (TextView) mView.findViewById(R.id.profile_works_count);
+        mWins = (TextView) mView.findViewById(R.id.profile_wins);
+        mWinsCountText = (TextView) mView.findViewById(R.id.profile_wins_count);
 
-        if (isIntentAvailable(mContext, insta)) {
-            startActivity(insta);
-        } else {
-            url = String.format(Locale.US, "http://instagram.com/%s", user);
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-        }
+        mAvatar = (ImageView) mView.findViewById(R.id.profile_avatar);
 
-    }
-
-    private boolean isIntentAvailable(Context ctx, Intent intent) {
-        final PackageManager packageManager = ctx.getPackageManager();
-        List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        return list.size() > 0;
+        mButtonsList = (ListView) mView.findViewById(R.id.profile_buttons_list);
     }
 
     @Override
     public void setListeners() {
-        if (mIsSelf) {
-            mButtonRemove.setOnTouchListener(new ImageOnTouchListener());
-            mButtonEdit.setOnTouchListener(new ImageOnTouchListener());
-            mButtonEdit.setOnClickListener(new ButtonOnClickListener());
-            mButtonRemove.setOnClickListener(new ButtonOnClickListener());
-        }
+        mRateBalanceButton.setOnClickListener(new ButtonClickListener());
+        mRateBalanceButton.setOnTouchListener(new ButtonBGOnTouchListener());
+        mRatePlaceButton.setOnClickListener(new ButtonClickListener());
+        mRatePlaceButton.setOnTouchListener(new ButtonBGOnTouchListener());
+        mImagesCountButton.setOnClickListener(new ButtonClickListener());
+        mImagesCountButton.setOnTouchListener(new ButtonBGOnTouchListener());
+        mWinsCountButton.setOnClickListener(new ButtonClickListener());
+        mWinsCountButton.setOnTouchListener(new ButtonBGOnTouchListener());
 
-        mButtonInsta.setOnTouchListener(new ImageOnTouchListener());
-        mButtonInsta.setOnClickListener(new ButtonOnClickListener());
-        mButtonAlbum.setOnTouchListener(new ImageOnTouchListener());
-        mButtonAlbum.setOnClickListener(new ButtonOnClickListener());
+        mButtonsList.setOnItemClickListener(new ButtonsListClickListener());
+
+        if (mIsSelf) {
+            mAvatar.setOnClickListener(new ButtonClickListener());
+            registerForContextMenu(mAvatar);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
-        int layoutId;
-        if (mIsSelf) {
-            layoutId = R.layout.self_profile_fragment;
-        } else {
-            layoutId = R.layout.profile_fragment;
-        }
 
-        mView = inflater.inflate(layoutId, container, false);
+        mView = inflater.inflate(R.layout.profile_fragment, container, false);
         mContext = mView.getContext();
         mIsDataLoaded = false;
         bindObjects();
@@ -160,192 +142,293 @@ public class ProfileFragment extends UfoFragment {
         return mView;
     }
 
-    private final static String USER_ID = "userId";
-    private long mUserId;
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.user_profile, menu);
 
-    public static ProfileFragment getInstance(long userId) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putLong(USER_ID, userId);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mUserId = getArguments().getLong(USER_ID);
-        }
-
-        mIsSelf = (mUserId == 0L);
-    }
-
-    private void removeProfile() {
-        ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
-        dialog.setCallback(new OnConfirmHandler());
-        dialog.setMessages(R.string.delete_confirmation_title, R.string.profile_delete_confirmation_message);
-        dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
-    }
-
-    private void showUpdateProfileDialog() {
-        if (mUserData != null) {
-            mUserData.password = Settings.getPassword(mContext);
-
-            UpdateProfileDialog dialog = UpdateProfileDialog.getInstance(mContext);
-            dialog.setUser(mUserData);
-            dialog.setCallback(new OnUpdateProfileHandler());
-            dialog.show(getFragmentManager(), UpdateProfileDialog.DIALOG_ID);
+        if (!mIsSelf) {
+            menu.removeItem(R.id.user_profile_edit);
         }
     }
 
-    private void getProfile() {
-        if (!mIsDataLoaded) {
-            String user = Settings.getUserId(mContext);
-            String password = Settings.getPassword(mContext);
-            try {
-                if (user.length() == 0 || password.length() == 0) {
-                    throw new ToastException(R.string.error_not_authorized);
-                }
-
-                RestService service = new RestService(user, password);
-                if (mIsSelf) {
-                    service.getUserApi().getUser(user, new GetUserHandler(mView));
-                } else {
-                    service.getUserApi().getUser(mUserId, new GetUserHandler(mView));
-                }
-            } catch (ToastException e) {
-                e.show(mContext);
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.user_profile_edit:
+                openProfileEditFragment();
+                return true;
         }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Отображает фрагмент для редактирования профиля
+     */
+    private void openProfileEditFragment() {
+        EditProfileFragment fragment = EditProfileFragment.getInstance(mUserData);
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.enter();
-        Log.variable("isLoaded", String.valueOf(mIsDataLoaded));
-        getProfile();
+        if (!mIsDataLoaded) {
+            setHasOptionsMenu(false);
+            loadData();
+        }
     }
 
-    private class DeleteUserHandler implements Callback<User> {
-        private UProgressDialog mDialog;
+    /**
+     * Запрос данных с сервера
+     */
+    private void loadData() {
+        Log.enter();
+        String user = Settings.getUserId(mContext);
+        String password = Settings.getPassword(mContext);
+        if (user.length() != 0 || password.length() != 0) {
+            RestService service = new RestService(user, password);
+            if (mIsSelf) {
+                service.getUserApi().getUser(user, new GetUserListener(mView));
+            } else {
+                service.getUserApi().getUser(mUserId, new GetUserListener(mView));
+            }
+        }
+    }
 
-        public DeleteUserHandler() {
-            mDialog = UProgressDialog.getInstance(mContext);
-            mDialog.show(R.string.deleting_profile, R.string.please_wait);
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        Log.enter();
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.avatar_contest, menu);
+
+        if (!mUserData.avatar_present) {
+            menu.removeItem(R.id.remove_avatar);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.upload_avatar:
+                if (mUserData.avatar_permission) {
+                    uploadAvatar();
+                } else {
+                    showAttentionDialog();
+                }
+                break;
+            case R.id.remove_avatar:
+                removeAvatar();
+                break;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    /**
+     * Инициирует удаление аватара пользователя
+     */
+    private void removeAvatar() {
+        ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
+        dialog.setMessages(R.string.delete_confirmation_title, R.string.remove_avatar_confirmation_message);
+        dialog.setCallback(new RemoveAvatarDialogListener());
+        dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
+    }
+
+    /**
+     * Отображает диалог информирующий об отсутствии прав на загрузку аватара и предлагающий перейти
+     * в магазин для покупки
+     */
+    private void showAttentionDialog() {
+        ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
+        dialog.setMessages(R.string.goto_shop_title, R.string.goto_shop_message);
+        dialog.setCallback(new GotoShopListener());
+        dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
+    }
+
+    /**
+     * Инициирует загрузку аватара пользователя
+     */
+    private void uploadAvatar() {
+        mOutputUri = Common.chooseImage(mContext, this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Common.PICTURE_REQUEST_CODE) {
+                Uri selectedImageUri = Common.handleChoosenImage(data, mOutputUri);
+
+                UploadAvatarDialog dialog = UploadAvatarDialog.getInstance(mContext);
+                dialog.setData(selectedImageUri, mOutputUri.getPath());
+                dialog.show(getFragmentManager(), UploadAvatarDialog.DIALOG_ID);
+                dialog.setCallback(new UploadAvatarDialogListener());
+            }
+        }
+    }
+
+    /**
+     * Обновляет элементы управления окна на основе полученной от сервера информации
+     *
+     * @param user объект содержащий информацию о пользователе полученную от сервера
+     */
+    private void updateProfileInfo(RestService.User user) {
+
+        mTitle.setText(user.display_name);
+        mBalance.setText(String.valueOf(user.balance));
+        mBalanceCountText.setText(Common.declensionByNumber(user.balance, getResources().getStringArray(R.array.rate_count)));
+        mRating.setText(String.valueOf(user.rank));
+        mWorks.setText(String.valueOf(user.images_count));
+        mWorksCountText.setText(Common.declensionByNumber(user.images_count, getResources().getStringArray(R.array.image_count)));
+        mWins.setText(String.valueOf(user.wins_count));
+        mWinsCountText.setText(Common.declensionByNumber(user.wins_count, getResources().getStringArray(R.array.contest_wins_count)));
+
+        MenuAdapter adapter = new MenuAdapter(mContext, R.layout.profile_menu_item);
+        if (user.insta != null && user.insta.trim().length() > 0) {
+            UfoMenuItem menuItem = new UfoMenuItem(mContext, R.drawable.ic_insta_grey600_24dp, user.insta, INSTAGRAM_MENU_ID);
+            adapter.add(menuItem);
+        }
+
+        if (mIsSelf) {
+            String balance = String.format(Locale.US, "%d %s", user.money, Common.declensionByNumber(user.money, getResources().getStringArray(R.array.money)));
+            UfoMenuItem menuItem = new UfoMenuItem(mContext, R.drawable.ic_attach_money_grey600_24dp, balance, BALANCE_MENU_ID);
+            adapter.add(menuItem);
+        }
+
+        if (adapter.getCount() > 0) {
+            mButtonsList.setAdapter(adapter);
+        }
+
+        if (user.avatar_present) {
+            String url = String.format(Locale.US, "%s/avatars/%s.jpg", RestService.getRestUrl(), user.avatar);
+            Picasso.with(mContext).load(url).transform(new Transform(mAvatar)).placeholder(R.drawable.no_avatar).tag(mContext).into(mAvatar);
+        }
+    }
+
+    /**
+     * Открытие фрагмента с магазином
+     */
+    private void openShop() {
+        ShopFragment fragment = ShopFragment.getInstance();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    /**
+     * Трансформация загружаемого изображения (ресайз)
+     */
+    private class Transform implements Transformation {
+
+        private ImageView mImage;
+
+        public Transform(ImageView image) {
+            this.mImage = image;
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            mDialog.dismiss();
-            Response response = error.getResponse();
-            try {
-                if (response == null) {
-                    throw new ToastException(R.string.error_network_problem);
-                }
+        public Bitmap transform(Bitmap source) {
+            int targetWidth = this.mImage.getWidth();
+            return Common.resizeBitmap(source, targetWidth, targetWidth);
+        }
 
-                if (response.getStatus() == 401 || response.getStatus() == 403) {
-                    throw new ToastException(R.string.error_wrong_password);
-                }
+        @Override
+        public String key() {
+            return "transformation" + " desiredWidth";
+        }
+    }
 
-                throw new ToastException(R.string.error_unexpected_error);
-            } catch (ToastException e) {
-                e.show(mContext);
+    /**
+     * Обработчик кликов на кнопках
+     */
+    private class ButtonClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.profile_button_balance:
+                    openUserStats();
+                    break;
+
+                case R.id.profile_button_rating:
+                    openRating();
+                    break;
+
+                case R.id.profile_button_works:
+                    openUserAlbum();
+                    break;
+
+                case R.id.profile_button_wins:
+                    openUserWinList();
+                    break;
+
+                case R.id.profile_avatar:
+                    getActivity().openContextMenu(mAvatar);
+                    break;
             }
         }
 
-        @Override
-        public void success(User user, Response response) {
-            mDialog.dismiss();
-            SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
-            Editor editor = prefs.edit();
-            editor.clear();
-            editor.commit();
-
-            WelcomeFragment fragment = new WelcomeFragment();
+        /**
+         * Открывает статистику пользователя
+         */
+        private void openUserStats() {
+            UserStatsFragment fragment = UserStatsFragment.getInstance(mUserData.id, mUserData.display_name);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
+            transaction.addToBackStack(null);
             transaction.commit();
-            ((UfoFragmentActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            ((UfoFragmentActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
-
-            Common.showMessage(mContext, R.string.accaunt_removed);
-            if (mCallback != null) {
-                mCallback.deleteSuccess();
-            }
         }
 
-    }
+        /**
+         * Открывает список конкурсов в которых пользователь победил
+         */
+        private void openUserWinList() {
+            StatsFragment fragment = StatsFragment.getInstance(mUserData.id, mUserData.display_name);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
 
-    public interface OnDeleteUser {
-        public void deleteSuccess();
-    }
+        /**
+         * Открывает рейтинг пользователей
+         */
+        private void openRating() {
+            RatingFragment fragment = RatingFragment.getInstance();
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
 
-    private OnDeleteUser mCallback;
+        /**
+         * Отображение фрагмента с альбомом пользователя
+         */
+        private void openUserAlbum() {
+            long userId = mUserData.id;
+            String displayName = mUserData.display_name;
 
-    public void setCallback(OnDeleteUser callback) {
-        mCallback = callback;
-    }
-
-    private class OnConfirmHandler implements OnCallback, ConfirmDialog.OnPositiveClickListener {
-
-        @Override
-        public void onPositiveClickHandler() {
-            String userId = Settings.getUserId(mContext);
-            String password = Settings.getPassword(mContext);
-
-            RestService service = new RestService(userId, password);
-            service.getUserApi().deleteUser(userId, new DeleteUserHandler());
+            UserImagesFragment fragment = UserImagesFragment.getInstance(userId, displayName);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
     }
 
-    private class UpdateUserHandler extends CallbackHandler<Void> {
-        private User mUser;
-
-        public UpdateUserHandler(View view, User user) {
-            super(view, R.id.profile_hide_when_loading, R.id.profile_loading_progress);
-            mUser = user;
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            super.failure(error);
-            Response response = error.getResponse();
-            try {
-                if (response == null) {
-                    throw new ToastException(R.string.error_network_problem);
-                }
-
-                if (response.getStatus() == 401) {
-                    throw new ToastException(R.string.error_wrong_password);
-                }
-
-                throw new ToastException(R.string.error_unexpected_error);
-            } catch (ToastException e) {
-                e.show(mContext);
-            }
-        }
-
-        @Override
-        public void success(Void data, Response response) {
-            SharedPreferences prefs = mContext.getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
-            Editor editor = prefs.edit();
-            editor.putString(getString(R.string.pref_password), mUser.password);
-            editor.commit();
-            mDisplayName.setText(mUser.display_name);
-            mCardInsta.setText(mUser.insta);
-            mUserData.display_name = mUser.display_name;
-            mUserData.insta = mUser.insta;
-            visibilityControl(mUser);
-            super.success(data, response);
-            Common.showMessage(mContext, R.string.profile_updated);
-        }
-
-    }
-
-    private class GetUserHandler extends CallbackHandler<User> {
-        public GetUserHandler(View view) {
-            super(view, R.id.profile_hide_when_loading, R.id.profile_loading_progress);
+    /**
+     * Обработчик получения профиля пользователя
+     */
+    private class GetUserListener extends CallbackHandler<RestService.User> {
+        public GetUserListener(View mView) {
+            super(mView, R.id.profile_hide_when_loading, R.id.profile_loading_progress);
         }
 
         @Override
@@ -370,72 +453,172 @@ public class ProfileFragment extends UfoFragment {
         }
 
         @Override
-        public void success(User user, Response response) {
+        public void success(RestService.User user, Response response) {
             updateProfileInfo(user);
             mIsDataLoaded = true;
             mUserData = user;
+            setHasOptionsMenu(true);
             super.success(user, response);
         }
     }
 
-    private class ButtonOnClickListener implements View.OnClickListener {
+    /**
+     * Обработчик кликов по элементам списка
+     */
+    private class ButtonsListClickListener implements android.widget.AdapterView.OnItemClickListener {
         @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.profile_button_edit:
-                    showUpdateProfileDialog();
-                    break;
-                case R.id.profile_button_remove:
-                    removeProfile();
-                    break;
-                case R.id.profile_button_album:
-                    showUserAlbum();
-                    break;
-                case R.id.profile_button_insta:
-                    showInstaProfile(mUserData.insta);
-                    break;
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (id == INSTAGRAM_MENU_ID) {
+                openInstaProfile(mUserData.insta);
+            } else if (id == BALANCE_MENU_ID) {
+                openShop();
             }
+        }
+
+        /**
+         * Откытие инстаграмма пользователя. Если instagram не установлен на телефоне, то профиль
+         * пользователя будет открыт в браузере
+         *
+         * @param user имя пользователя
+         */
+        private void openInstaProfile(String user) {
+            String url = String.format(Locale.US, "http://instagram.com/_u/%s", user);
+            Uri uri = Uri.parse(url);
+            Intent insta = new Intent(Intent.ACTION_VIEW, uri);
+            insta.setPackage("com.instagram.android");
+
+            if (isIntentAvailable(mContext, insta)) {
+                startActivity(insta);
+            } else {
+                url = String.format(Locale.US, "http://instagram.com/%s", user);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            }
+        }
+
+        /**
+         * Проверяет наличие интента способного обработать ссылку
+         *
+         * @param context контекст приложения
+         * @param intent  интент для проверки
+         * @return true если интент найден
+         */
+        private boolean isIntentAvailable(Context context, Intent intent) {
+            final PackageManager packageManager = context.getPackageManager();
+            List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            return list.size() > 0;
         }
     }
 
-    private void showUserAlbum() {
-        long userId = mUserData.id;
-        String displayName = mUserData.display_name;
-
-        Log.variable("userId", String.valueOf(userId));
-
-        UserImagesFragment fragment = UserImagesFragment.getInstance(userId, displayName);
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+    /**
+     * Обработчик нажатия "Да" в диалоге запроса на переход в магазин
+     */
+    private class GotoShopListener implements OnCallback, ConfirmDialog.OnPositiveClickListener {
+        @Override
+        public void onPositiveClickHandler() {
+            openShop();
+        }
     }
 
-    private class OnUpdateProfileHandler implements OnCallback, UpdateProfileDialog.OnUpdateProfileListener {
+    /**
+     * Обработчик нажатия "Да" в диалоге загрузки аватара
+     */
+    private class UploadAvatarDialogListener implements OnCallback, UploadAvatarDialog.OnPositiveClickListener {
         @Override
-        public void updateProfileListener(User user) {
+        public void onPositiveClickHandler(Uri outputFileUri) {
+            mOutputUri = outputFileUri;
             try {
-                String userId = Settings.getUserId(mContext);
-                String password = Settings.getPassword(mContext);
+                String user = Settings.getUserId(mContext);
+                String pass = Settings.getPassword(mContext);
+                RestService service = new RestService(user, pass);
+                ImageOutput image = new ImageOutput(mContext, outputFileUri);
+                service.getUserApi().addAvatar(image, new UploadAvatarListener());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-                if (!mIsDataLoaded || userId.length() == 0 || password.length() == 0) {
-                    throw new ToastException(R.string.error_not_authorized);
+        /**
+         * Обработчик загрузки аватара на сервер
+         */
+        private class UploadAvatarListener implements Callback<Void> {
+            @Override
+            public void failure(RetrofitError error) {
+                Response response = error.getResponse();
+                try {
+                    if (response == null) {
+                        throw new ToastException(R.string.error_network_problem);
+                    }
+
+                    if (response.getStatus() == 401) {
+                        throw new ToastException(R.string.error_wrong_password);
+                    }
+
+                    RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+
+                    throw new ToastException(err.error);
+                } catch (ToastException e) {
+                    e.show(mContext);
                 }
 
-                if (user.display_name.length() == 0) {
-                    throw new ToastException(R.string.error_empty_display_name);
-                }
+            }
 
-                if (user.password.length() == 0) {
-                    throw new ToastException(R.string.error_empty_password);
-                }
+            @Override
+            public void success(Void data, Response response) {
+                Common.showMessage(mContext, R.string.upload_successfully);
+                mUserData.avatar_present = true;
+                int width = (int) getResources().getDimension(R.dimen.avatar_size);
 
-                RestService service = new RestService(userId, password);
-                service.getUserApi().updateUser(userId, user, new UpdateUserHandler(mView, user));
-
-            } catch (ToastException e) {
-                e.show(mContext);
+                Bitmap imgBitmap = Common.decodeSampledBitmapFromUri(mContext, mOutputUri, width);
+                mAvatar.setImageBitmap(imgBitmap);
             }
         }
     }
+
+    /**
+     * Обработчик нажатия "Да" в диалоге удаления аватара
+     */
+    private class RemoveAvatarDialogListener implements OnCallback, ConfirmDialog.OnPositiveClickListener {
+        @Override
+        public void onPositiveClickHandler() {
+            String user = Settings.getUserId(mContext);
+            String pass = Settings.getPassword(mContext);
+            RestService service = new RestService(user, pass);
+            service.getUserApi().deleteAvatar(new RemoveAvatarListener());
+        }
+
+        /**
+         * Обработчик удаления аватара
+         */
+        private class RemoveAvatarListener implements Callback<Void> {
+            @Override
+            public void failure(RetrofitError error) {
+                Response response = error.getResponse();
+                try {
+                    if (response == null) {
+                        throw new ToastException(R.string.error_network_problem);
+                    }
+
+                    if (response.getStatus() == 401) {
+                        throw new ToastException(R.string.error_wrong_password);
+                    }
+
+                    RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+
+                    throw new ToastException(err.error);
+                } catch (ToastException e) {
+                    e.show(mContext);
+                }
+            }
+
+            @Override
+            public void success(Void data, Response response) {
+                Common.showMessage(mContext, R.string.remove_avatar_success);
+                mUserData.avatar_present = false;
+                mOutputUri = null;
+                mAvatar.setImageResource(R.drawable.no_avatar);
+            }
+        }
+    }
+
+
 }

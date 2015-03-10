@@ -59,4 +59,9 @@ public class MenuAdapter extends ArrayAdapter<UfoMenuItem> {
         return row;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return mObjects.get(position).getId();
+    }
+
 }

@@ -1,15 +1,146 @@
 package ru.neverdark.photohunt.utils;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.photohunt.R;
 
 public class Common {
+
+    public static final int PICTURE_REQUEST_CODE = 1;
+
+    public static Uri handleChoosenImage(Intent data, Uri fileUri) {
+        final boolean isCamera;
+        if (data == null) {
+            isCamera = true;
+        } else {
+            final String action = data.getAction();
+            if (action == null) {
+                isCamera = false;
+            } else {
+                isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            }
+        }
+
+        Uri selectedImageUri;
+        if (isCamera) {
+            selectedImageUri = fileUri;
+        } else {
+            selectedImageUri = data == null ? null : data.getData();
+        }
+
+        return selectedImageUri;
+    }
+
+    public static Uri chooseImage(Context context, UfoFragment fragment) {
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "Photohunt" + File.separator);
+        root.mkdirs();
+        final String fname = Common.getUniqueImageFilename();
+        final File sdImageMainDirectory = new File(root, fname);
+        Uri outputFileUri = Uri.fromFile(sdImageMainDirectory);
+        // Camera.
+        final List<Intent> cameraIntents = new ArrayList<Intent>();
+        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        final PackageManager packageManager = context.getPackageManager();
+        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for (ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            final Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
+
+        // Filesystem.
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        // Chooser of filesystem options.
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, context.getString(R.string.choose_source));
+
+        // Add the camera options.
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+
+        fragment.startActivityForResult(chooserIntent, PICTURE_REQUEST_CODE);
+
+        return outputFileUri;
+    }
+
+    public static Bitmap getRoundedCornerBitmap(Context context, Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff000000;//context.getResources().getColor(R.color.grey505050);
+
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = context.getResources().getDimension(R.dimen.avatar_border);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
+
+    /**
+     * Склоняет существительное по числу, например: 1 помидор, 3 помидора, 16 помидоров
+     * @param number число по которому осуществить склонение
+     * @param words массив из трех слов (помидор, помидора, помидоров)
+     * @return существительное в нужном падеже, или null в случае ошибки
+     */
+    public static String declensionByNumber(int number, String[] words) {
+        int wordIndex = 2;
+
+        if (words.length != 3) {
+            return null;
+        }
+
+        int num = Math.abs(number) % 100;
+        int numX = num % 10;
+
+        if (num > 10 && num < 20) {
+            wordIndex = 2;
+        } else if (numX > 1 && numX < 5) {
+            wordIndex = 1;
+        } else if (numX == 1) {
+            wordIndex = 0;
+        }
+
+        return words[wordIndex];
+    }
+
     public static boolean isValidEmail(String target) {
         if (target == null || target.length() == 0) {
             return false;
@@ -37,12 +168,16 @@ public class Common {
         double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
         int targetHeight = (int) (targetWidth * aspectRatio);
 
+        return resizeBitmap(source, targetWidth, targetHeight);
+    }
+
+    public static Bitmap resizeBitmap(Bitmap source, int targetWidth, int targetHeight) {
         Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
         if (result != source) {
             // Same bitmap is returned if sizes are the same
             source.recycle();
         }
-        
+
         return result;
     }
 

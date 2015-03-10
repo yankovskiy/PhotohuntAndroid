@@ -71,6 +71,11 @@ public class RatingFragment extends UfoFragment {
         }
     }
 
+    public static RatingFragment getInstance() {
+        RatingFragment fragment = new RatingFragment();
+        return fragment;
+    }
+
     private class GetRatingHandler extends CallbackHandler<List<User>> {
 
         public GetRatingHandler(View view) {

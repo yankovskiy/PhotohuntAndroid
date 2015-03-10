@@ -324,11 +324,7 @@ public class DetailContestFragment extends UfoFragment {
 
         @Override
         public void onShowUserProfile(long userId) {
-            ProfileFragment fragment = ProfileFragment.getInstance(userId);
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.main_container, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            showUserProfile(userId);
         }
     }
 

@@ -16,9 +16,146 @@ import retrofit.http.Part;
 import retrofit.http.Path;
 import retrofit.mime.TypedOutput;
 import ru.neverdark.photohunt.BuildConfig;
-import ru.neverdark.photohunt.utils.Log;
 
 public class RestService {
+    private final static String DEBUG_REST_URL = "http://192.168.0.3/api.tim-sw.com";
+    private final static String RELEASE_REST_URL = "http://api.tim-sw.com";
+    private final RestAdapter mRestAdapter;
+    private final UserMgmt mUserMgmt;
+    private final ContestMgmt mContestMgmt;
+    private final ShopMgmt mShopMgmt;
+    private final ShopApi mShopApi;
+    private final UserApi mUserApi;
+    private final ContestApi mContestApi;
+
+    public RestService() {
+        BasicInterceptor interceptor = new BasicInterceptor();
+
+        mContestApi = new ContestApi();
+        mUserApi = new UserApi();
+        mShopApi = new ShopApi();
+
+        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(interceptor).setEndpoint(getRestUrl()).build();
+
+        mUserMgmt = mRestAdapter.create(UserMgmt.class);
+        mContestMgmt = mRestAdapter.create(ContestMgmt.class);
+        mShopMgmt = mRestAdapter.create(ShopMgmt.class);
+    }
+
+    public RestService(String user, String password) {
+        AuthInterceptor auth = new AuthInterceptor();
+        auth.setAuthData(user, password);
+
+        mContestApi = new ContestApi();
+        mUserApi = new UserApi();
+        mShopApi = new ShopApi();
+
+        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(auth).setEndpoint(getRestUrl()).build();
+
+        mUserMgmt = mRestAdapter.create(UserMgmt.class);
+        mContestMgmt = mRestAdapter.create(ContestMgmt.class);
+        mShopMgmt = mRestAdapter.create(ShopMgmt.class);
+    }
+
+    public static String getRestUrl() {
+        if (BuildConfig.DEBUG) {
+            return DEBUG_REST_URL;
+        } else {
+            return RELEASE_REST_URL;
+        }
+    }
+
+    public ContestApi getContestApi() {
+        return mContestApi;
+    }
+
+    public UserApi getUserApi() {
+        return mUserApi;
+    }
+
+    public ShopApi getShopApi() {
+        return mShopApi;
+    }
+
+    private interface ShopMgmt {
+        @GET("/shop")
+        public void getShop(Callback<ShopData> callback);
+
+        @GET("/shop/my")
+        public void getMyItems(Callback<List<Item>> callback);
+
+        @POST("/shop/{id}")
+        public void buyItem(@Path("id") long itemId, Callback<Void> callback);
+
+        @PUT("/shop/my/{id}")
+        public void useItem(@Path("id") long itemId, Callback<Void> callback);
+    }
+
+    private interface ContestMgmt {
+        @DELETE("/image/{id}")
+        public void deleteImage(@Path("id") long imageId, Callback<Void> callback);
+
+        @PUT("/image/{id}")
+        public void updateImage(@Path("id") long imageId, @Body Image image, Callback<Void> callback);
+
+        @GET("/contests")
+        public void getContests(Callback<List<Contest>> callback);
+
+        @GET("/contest")
+        public void getOpenContests(Callback<List<Contest>> callback);
+
+        @GET("/contest/{id}")
+        public void getContestDetails(@Path("id") long id, Callback<ContestDetail> callback);
+
+        @Multipart
+        @POST("/contest/{id}")
+        public void addImageToContest(@Path("id") long id, @Part("subject") String subject,
+                                      @Part("image") TypedOutput image, Callback<Void> callback);
+
+        @PUT("/contest/{id}")
+        public void voteForContest(@Path("id") long id, @Body Image image, Callback<Void> callback);
+    }
+
+    private interface UserMgmt {
+        @GET("/user/{id}/wins")
+        public void getWinsList(@Path("id") long id, Callback<List<Contest>> callback);
+
+        @GET("/user/{id}/stats")
+        public void getUserStats(@Path("id") long id, Callback<Stats> callback);
+
+        @Multipart
+        @POST("/avatar")
+        public void addAvatar(@Part("image") TypedOutput image, Callback<Void> callback);
+
+        @DELETE("/avatar")
+        public void deleteAvatar(Callback<Void> callback);
+
+        @GET("/user/{id}/images")
+        public void getUserImages(@Path("id") long id, Callback<List<Image>> callback);
+
+        @POST("/user")
+        public void addUser(@Body User user, Callback<User> callback);
+
+        @DELETE("/user/{id}")
+        public void deleteUser(@Path("id") String userId, Callback<User> callback);
+
+        @PUT("/reset")
+        public void generateHash(@Body User user, Callback<User> callback);
+
+        @GET("/user/{id}")
+        public void getUser(@Path("id") String userId, Callback<User> callback);
+
+        @GET("/user/{id}")
+        public void getUser(@Path("id") long userId, Callback<User> callback);
+
+
+        @PUT("/user/{id}")
+        public void updateUser(@Path("id") String userId, @Body User user, Callback<Void> callback);
+
+        @GET("/user")
+        public void getRating(Callback<List<User>> callback);
+    }
+
     public static class ErrorData {
         public String error;
     }
@@ -118,6 +255,31 @@ public class RestService {
         public int votes;
     }
 
+    public static class User {
+        public long id;
+        public String user_id;
+        public String display_name;
+        public String password;
+        public int balance;
+        public String hash;
+        public String insta;
+        public int images_count;
+        public int rank;
+        public int wins_count;
+        public int money;
+        public int dc;
+        public boolean avatar_present;
+        public boolean avatar_permission;
+        public String avatar;
+    }
+
+    public static class Stats {
+        public int total;
+        public int works;
+        public int wins_rewards;
+        public int other;
+    }
+
     public class ContestApi {
         public void updateImage(long imageId, Image image, Callback<Void> callback) {
             mContestMgmt.updateImage(imageId, image, callback);
@@ -140,7 +302,6 @@ public class RestService {
         }
 
         public void addImageToContest(long id, String subject, TypedOutput image, Callback<Void> callback) {
-            Log.enter();
             mContestMgmt.addImageToContest(id, subject, image, callback);
         }
 
@@ -167,59 +328,19 @@ public class RestService {
         }
     }
 
-    private interface ShopMgmt {
-        @GET("/shop")
-        public void getShop(Callback<ShopData> callback);
-
-        @GET("/shop/my")
-        public void getMyItems(Callback<List<Item>> callback);
-
-        @POST("/shop/{id}")
-        public void buyItem(@Path("id") long itemId, Callback<Void> callback);
-
-        @PUT("/shop/my/{id}")
-        public void useItem(@Path("id") long itemId, Callback<Void> callback);
-    }
-
-    private interface ContestMgmt {
-        @DELETE("/image/{id}")
-        public void deleteImage(@Path("id") long imageId, Callback<Void> callback);
-
-        @PUT("/image/{id}")
-        public void updateImage(@Path("id") long imageId, @Body Image image, Callback<Void> callback);
-
-        @GET("/contests")
-        public void getContests(Callback<List<Contest>> callback);
-
-        @GET("/contest")
-        public void getOpenContests(Callback<List<Contest>> callback);
-
-        @GET("/contest/{id}")
-        public void getContestDetails(@Path("id") long id, Callback<ContestDetail> callback);
-
-        @Multipart
-        @POST("/contest/{id}")
-        public void addImageToContest(@Path("id") long id, @Part("subject") String subject,
-                                      @Part("image") TypedOutput image, Callback<Void> callback);
-
-        @PUT("/contest/{id}")
-        public void voteForContest(@Path("id") long id, @Body Image image, Callback<Void> callback);
-    }
-
-    public static class User {
-        public long id;
-        public String user_id;
-        public String display_name;
-        public String password;
-        public int balance;
-        public String hash;
-        public String insta;
-        public int images_count;
-        public int rank;
-        public int wins_count;
-    }
-
     public class UserApi {
+        public void getUserStats(long id, Callback<Stats> callback) {
+            mUserMgmt.getUserStats(id, callback);
+        }
+
+        public void addAvatar(TypedOutput image, Callback<Void> callback) {
+            mUserMgmt.addAvatar(image, callback);
+        }
+
+        public void deleteAvatar(Callback<Void> callback) {
+            mUserMgmt.deleteAvatar(callback);
+        }
+
         public void getUserImages(long id, Callback<List<Image>> callback) {
             mUserMgmt.getUserImages(id, callback);
         }
@@ -251,99 +372,10 @@ public class RestService {
         public void getRating(Callback<List<User>> callback) {
             mUserMgmt.getRating(callback);
         }
-    }
 
-    private interface UserMgmt {
-        @GET("/user/{id}/images")
-        public void getUserImages(@Path("id") long id, Callback<List<Image>> callback);
-
-        @POST("/user")
-        public void addUser(@Body User user, Callback<User> callback);
-
-        @DELETE("/user/{id}")
-        public void deleteUser(@Path("id") String userId, Callback<User> callback);
-
-        @PUT("/reset")
-        public void generateHash(@Body User user, Callback<User> callback);
-
-        @GET("/user/{id}")
-        public void getUser(@Path("id") String userId, Callback<User> callback);
-
-        @GET("/user/{id}")
-        public void getUser(@Path("id") long userId, Callback<User> callback);
-
-
-        @PUT("/user/{id}")
-        public void updateUser(@Path("id") String userId, @Body User user, Callback<Void> callback);
-
-        @GET("/user")
-        public void getRating(Callback<List<User>> callback);
-    }
-
-    private final static String DEBUG_REST_URL = "http://192.168.0.3/api.tim-sw.com";
-    private final static String RELEASE_REST_URL = "http://api.tim-sw.com";
-
-    public static String getRestUrl() {
-        if (BuildConfig.DEBUG) {
-            return DEBUG_REST_URL;
-        } else {
-            return RELEASE_REST_URL;
+        public void getWinsList(long id, Callback<List<Contest>> callback) {
+            mUserMgmt.getWinsList(id, callback);
         }
-    }
-
-    private final RestAdapter mRestAdapter;
-
-    private final UserMgmt mUserMgmt;
-
-    private final ContestMgmt mContestMgmt;
-
-    private final ShopMgmt mShopMgmt;
-
-    private final ShopApi mShopApi;
-
-    private final UserApi mUserApi;
-
-    private final ContestApi mContestApi;
-
-    public RestService() {
-        BasicInterceptor interceptor = new BasicInterceptor();
-
-        mContestApi = new ContestApi();
-        mUserApi = new UserApi();
-        mShopApi = new ShopApi();
-
-        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(interceptor).setEndpoint(getRestUrl()).build();
-
-        mUserMgmt = mRestAdapter.create(UserMgmt.class);
-        mContestMgmt = mRestAdapter.create(ContestMgmt.class);
-        mShopMgmt = mRestAdapter.create(ShopMgmt.class);
-    }
-
-    public RestService(String user, String password) {
-        AuthInterceptor auth = new AuthInterceptor();
-        auth.setAuthData(user, password);
-
-        mContestApi = new ContestApi();
-        mUserApi = new UserApi();
-        mShopApi = new ShopApi();
-
-        mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(auth).setEndpoint(getRestUrl()).build();
-
-        mUserMgmt = mRestAdapter.create(UserMgmt.class);
-        mContestMgmt = mRestAdapter.create(ContestMgmt.class);
-        mShopMgmt = mRestAdapter.create(ShopMgmt.class);
-    }
-
-    public ContestApi getContestApi() {
-        return mContestApi;
-    }
-
-    public UserApi getUserApi() {
-        return mUserApi;
-    }
-
-    public ShopApi getShopApi() {
-        return mShopApi;
     }
 
 }

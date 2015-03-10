@@ -15,4 +15,28 @@
         <item >Декабрь</item>
     </string-array>
 
+    <string-array name="money">
+        <item>фотокойн</item>
+        <item>фотокойна</item>
+        <item>фотокойнов</item>
+    </string-array>
+    
+    <string-array name="rate_count">
+        <item>очко</item>
+        <item>очка</item>
+        <item>очков</item>
+    </string-array>
+
+    <string-array name="image_count">
+        <item>работа</item>
+        <item>работы</item>
+        <item>работ</item>
+    </string-array>
+
+    <string-array name="contest_wins_count">
+        <item>победа</item>
+        <item>победы</item>
+        <item>побед</item>
+    </string-array>
+
 </resources>

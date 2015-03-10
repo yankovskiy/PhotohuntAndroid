@@ -17,6 +17,7 @@ import java.util.Map;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.StatsAdapter;
 import ru.neverdark.photohunt.adapters.StatsAdapter.ChildRecord;
@@ -36,6 +37,8 @@ public class StatsFragment extends UfoFragment {
     private Context mContext;
     private ExpandableListView mContestList;
     private View mView;
+    private long mUserId;
+    private String mDisplayName;
 
     @Override
     public void bindObjects() {
@@ -57,7 +60,12 @@ public class StatsFragment extends UfoFragment {
         mContext = mView.getContext();
         bindObjects();
         setListeners();
-        getActivity().setTitle(R.string.stats);
+        if (mUserId == 0L) {
+            getActivity().setTitle(R.string.stats);
+        } else {
+            getActivity().setTitle(R.string.wins_list);
+            ((MainActivity)getActivity()).getSupportActionBar().setSubtitle(mDisplayName);
+        }
         return mView;
     }
 
@@ -70,20 +78,33 @@ public class StatsFragment extends UfoFragment {
             String pass = Settings.getPassword(mContext);
 
             RestService service = new RestService(user, pass);
-            service.getContestApi().getContests(
-                    new GetContestsHandler(mView));
+            if (mUserId == 0L) {
+                service.getContestApi().getContests(
+                        new GetContestsHandler(mView));
+            } else {
+                service.getUserApi().getWinsList(mUserId, new GetContestsHandler(mView));
+            }
         }
     }
 
     @Override
     public void onDetach() {
-        Log.enter();
+        if (mUserId != 0L) {
+            ((MainActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+        }
         super.onDetach();
     }
 
     @Override
     public void setListeners() {
         mContestList.setOnChildClickListener(new ContestClickHandler());
+    }
+
+    public static StatsFragment getInstance(long userId, String displayName) {
+        StatsFragment fragment = new StatsFragment();
+        fragment.mUserId = userId;
+        fragment.mDisplayName = displayName;
+        return fragment;
     }
 
     private class ContestClickHandler implements OnChildClickListener {
@@ -143,51 +164,40 @@ public class StatsFragment extends UfoFragment {
         @Override
         public void success(List<RestService.Contest> data, Response response) {
             Log.enter();
-            final List<String> headers = new ArrayList<String>();
-            final Map<String, List<ChildRecord>> childs = new HashMap<String, List<ChildRecord>>();
+            if (data != null) {
+                final List<String> headers = new ArrayList<>();
+                final Map<String, List<ChildRecord>> childs = new HashMap<>();
 
-            for (Contest contest : data) {
-                String date = formatDate(contest.close_date);
-                Log.variable("date", date);
-                if (headers.indexOf(date) == -1) {
-                    headers.add(date);
+                for (Contest contest : data) {
+                    String date = formatDate(contest.close_date);
+                    if (headers.indexOf(date) == -1) {
+                        headers.add(date);
+                    }
+
+                    ChildRecord record = new ChildRecord();
+                    record.setAuthor(contest.display_name);
+                    record.setId(contest.id);
+                    record.setSubject(contest.subject);
+                    record.setCloseDate(contest.close_date);
+                    record.setReward(contest.rewards);
+                    record.setWorks(contest.works);
+                    record.setStatus(contest.status);
+
+                    List<ChildRecord> records = childs.get(date);
+                    if (records == null) {
+                        records = new ArrayList<ChildRecord>();
+                        records.add(record);
+                        childs.put(date, records);
+                    } else {
+                        records.add(record);
+                    }
                 }
 
-                ChildRecord record = new ChildRecord();
-                record.setAuthor(contest.display_name);
-                record.setId(contest.id);
-                record.setSubject(contest.subject);
-                record.setCloseDate(contest.close_date);
-                record.setReward(contest.rewards);
-                record.setWorks(contest.works);
-                record.setStatus(contest.status);
-
-                Log.variable("Author", contest.display_name);
-                Log.variable("Id", String.valueOf(contest.id));
-                Log.variable("Subject", contest.subject);
-                Log.variable("Close date", contest.close_date);
-                Log.variable("Reward", String.valueOf(contest.rewards));
-                Log.variable("Works", String.valueOf(contest.works));
-                Log.variable("Status", String.valueOf(contest.status));
-
-                List<ChildRecord> records = childs.get(date);
-                if (records == null) {
-                    Log.message("Create new");
-                    records = new ArrayList<ChildRecord>();
-                    records.add(record);
-                    childs.put(date, records);
-                } else {
-                    Log.message("Use exists");
-                    records.add(record);
-                }
+                mAdapter = new StatsAdapter(mContext, headers, childs);
+                mContestList.setAdapter(mAdapter);
+                mIsDataLoaded = true;
+                mContestList.expandGroup(0);    // expand top group
             }
-
-            Log.variable("headers size", String.valueOf(headers.size()));
-            Log.variable("child size", String.valueOf(childs.size()));
-            mAdapter = new StatsAdapter(mContext, headers, childs);
-            mContestList.setAdapter(mAdapter);
-            mIsDataLoaded = true;
-            mContestList.expandGroup(0);    // expand top group
             super.success(data, response);
         }
 
