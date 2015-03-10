@@ -127,4 +127,5 @@
     <string name="works_balance">За опубликованные фотографии</string>
     <string name="other_balance">Прочее</string>
     <string name="wins_list">Список побед</string>
+    <string name="no_have_money">У вас недостаточно средств</string>
 </resources>

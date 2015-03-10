@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.Locale;
 
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.utils.UfoMenuItem;
+import ru.neverdark.photohunt.utils.Common;
 
 public class GoodsAdapter extends ArrayAdapter<RestService.Goods> {
     private final Context mContext;
@@ -51,7 +50,7 @@ public class GoodsAdapter extends ArrayAdapter<RestService.Goods> {
 
 
         RestService.Goods goods = getItem(position);
-        String price = String.format(Locale.US, "%d MON / %d DC", goods.price_money, goods.price_dc);
+        String price = String.format(Locale.US, "%d %s", goods.price_money, Common.declensionByNumber(goods.price_money, mContext.getResources().getStringArray(R.array.money)));
 
         holder.mGoodsName.setText(goods.name);
         holder.mGoodsDescription.setText(goods.description);

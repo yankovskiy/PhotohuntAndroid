@@ -54,7 +54,7 @@ public class ShopFragment extends UfoFragment {
     private void updateBalance(int money, int dc) {
         mUserMoney = money;
         mUserDc = dc;
-        String balance = String.format(Locale.US, "%s: %d MON / %d DC", getString(R.string.balance), money, dc);
+        String balance = String.format(Locale.US, "%s: %d %s", getString(R.string.balance), money, Common.declensionByNumber(money, getResources().getStringArray(R.array.money)));
         ((UfoFragmentActivity)getActivity()).getSupportActionBar().setSubtitle(balance);
     }
 
@@ -102,7 +102,6 @@ public class ShopFragment extends UfoFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Log.enter();
-            Log.variable("id", String.valueOf(view.getId()));
             switch (parent.getId()) {
                 case R.id.shop_shop_tab:
                     // TODO сделать проверку на баланс, отображать диалог подтверждения только если денег достаточно
@@ -205,6 +204,10 @@ public class ShopFragment extends UfoFragment {
             try {
                 if (user.length() == 0 || password.length() == 0) {
                     throw new ToastException(R.string.error_not_authorized);
+                }
+
+                if (mUserMoney < mGoods.price_money) {
+                    throw new ToastException(R.string.no_have_money);
                 }
 
                 RestService service = new RestService(user, password);
