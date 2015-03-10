@@ -4,144 +4,147 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:padding="@dimen/default_padding"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="@dimen/default_padding">
 
-            <TextView
-                android:id="@+id/edit_profile_common_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="@string/common_info"
-                android:textColor="@color/material_grey_500"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/edit_profile_common_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="@string/common_info"
+            android:textColor="@color/material_grey_500"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-            <View
-                android:id="@+id/edit_profile_divider1"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/edit_profile_common_info"
-                android:layout_marginTop="4dp"
-                android:background="@color/material_grey_500" />
+        <View
+            android:id="@+id/edit_profile_divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/edit_profile_common_info"
+            android:layout_marginTop="4dp"
+            android:background="@color/material_grey_500" />
 
-            <EditText
-                android:id="@+id/edit_profile_displayname"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@+id/edit_profile_divider1"
-                android:layout_marginTop="16dp"
-                android:drawableLeft="@drawable/ic_account_box_grey600_18dp"
-                android:drawablePadding="8dp"
-                android:hint="@string/displayname"
-                android:paddingBottom="16dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="16dp"
-                android:textSize="16sp" />
+        <EditText
+            android:id="@+id/edit_profile_displayname"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@+id/edit_profile_divider1"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@drawable/ic_account_box_grey600_18dp"
+            android:drawablePadding="8dp"
+            android:hint="@string/displayname"
+            android:inputType="textPersonName"
+            android:paddingBottom="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="16dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edit_profile_insta"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@+id/edit_profile_displayname"
-                android:layout_marginTop="16dp"
-                android:drawableLeft="@drawable/ic_insta_grey600_18dp"
-                android:drawablePadding="8dp"
-                android:hint="@string/insta"
-                android:paddingBottom="16dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="16dp"
-                android:textSize="16sp" />
+        <EditText
+            android:id="@+id/edit_profile_insta"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@+id/edit_profile_displayname"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@drawable/ic_insta_grey600_18dp"
+            android:drawablePadding="8dp"
+            android:hint="@string/insta"
+            android:inputType="text"
+            android:paddingBottom="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="16dp"
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/edit_profile_private_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edit_profile_insta"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="48dp"
-                android:text="@string/private_info"
-                android:textColor="@color/material_grey_500"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/edit_profile_private_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_profile_insta"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="48dp"
+            android:text="@string/private_info"
+            android:textColor="@color/material_grey_500"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-            <View
-                android:id="@+id/edit_profile_divider2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/edit_profile_private_info"
-                android:layout_marginTop="4dp"
-                android:background="@color/material_grey_500" />
+        <View
+            android:id="@+id/edit_profile_divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/edit_profile_private_info"
+            android:layout_marginTop="4dp"
+            android:background="@color/material_grey_500" />
 
-            <EditText
-                android:id="@+id/edit_profile_email"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@+id/edit_profile_divider2"
-                android:layout_marginTop="16dp"
-                android:drawableLeft="@drawable/ic_email_grey600_18dp"
-                android:drawablePadding="8dp"
-                android:enabled="false"
-                android:hint="@string/email"
-                android:paddingBottom="16dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="16dp"
-                android:textSize="16sp" />
+        <EditText
+            android:id="@+id/edit_profile_email"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@+id/edit_profile_divider2"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@drawable/ic_email_grey600_18dp"
+            android:drawablePadding="8dp"
+            android:enabled="false"
+            android:hint="@string/email"
+            android:paddingBottom="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="16dp"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edit_profile_password"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@+id/edit_profile_email"
-                android:layout_marginTop="16dp"
-                android:drawableLeft="@drawable/ic_lock_grey600_18dp"
-                android:drawablePadding="8dp"
-                android:hint="@string/new_password"
-                android:paddingBottom="16dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="16dp"
-                android:textSize="16sp" />
+        <EditText
+            android:id="@+id/edit_profile_password"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@+id/edit_profile_email"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@drawable/ic_lock_grey600_18dp"
+            android:drawablePadding="8dp"
+            android:hint="@string/new_password"
+            android:inputType="textPassword"
+            android:paddingBottom="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="16dp"
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/edit_profile_danger_zone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edit_profile_password"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="48dp"
-                android:text="@string/danger_zone"
-                android:textColor="@color/attention_color"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/edit_profile_danger_zone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_profile_password"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="48dp"
+            android:text="@string/danger_zone"
+            android:textColor="@color/attention_color"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-            <View
-                android:id="@+id/edit_profile_divider3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/edit_profile_danger_zone"
-                android:layout_marginTop="4dp"
-                android:background="@color/attention_color" />
+        <View
+            android:id="@+id/edit_profile_divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/edit_profile_danger_zone"
+            android:layout_marginTop="4dp"
+            android:background="@color/attention_color" />
 
-            <TextView
-                android:id="@+id/edit_profile_remove"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edit_profile_divider3"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/material_grey_50"
-                android:paddingBottom="16dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="16dp"
-                android:text="@string/delete_account"
-                android:textColor="@color/attention_color"
-                android:textSize="14sp" />
+        <TextView
+            android:id="@+id/edit_profile_remove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_profile_divider3"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/material_grey_50"
+            android:paddingBottom="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="16dp"
+            android:text="@string/delete_account"
+            android:textColor="@color/attention_color"
+            android:textSize="14sp" />
 
-        </RelativeLayout>
+    </RelativeLayout>
 </ScrollView>
