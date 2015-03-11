@@ -308,7 +308,8 @@ public class ProfileFragment extends UfoFragment {
 
         if (user.avatar_present) {
             String url = String.format(Locale.US, "%s/avatars/%s.jpg", RestService.getRestUrl(), user.avatar);
-            Picasso.with(mContext).load(url).transform(new Transform(mAvatar)).placeholder(R.drawable.no_avatar).tag(mContext).into(mAvatar);
+            Picasso picasso = new Picasso.Builder(mContext).build();
+            picasso.load(url).transform(new Transform()).placeholder(R.drawable.no_avatar).tag(mContext).into(mAvatar);
         }
     }
 
@@ -328,15 +329,13 @@ public class ProfileFragment extends UfoFragment {
      */
     private class Transform implements Transformation {
 
-        private ImageView mImage;
-
-        public Transform(ImageView image) {
-            this.mImage = image;
+        public Transform() {
         }
 
         @Override
         public Bitmap transform(Bitmap source) {
-            int targetWidth = this.mImage.getWidth();
+            int targetWidth = (int) mContext.getResources().getDimension(R.dimen.avatar_size);
+            Log.variable("width", String.valueOf(targetWidth));
             return Common.resizeBitmap(source, targetWidth, targetWidth);
         }
 

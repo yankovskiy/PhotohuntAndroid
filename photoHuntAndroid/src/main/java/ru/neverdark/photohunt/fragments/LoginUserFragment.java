@@ -13,12 +13,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import ru.neverdark.photohunt.R;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
+import ru.neverdark.photohunt.MainActivity;
+import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.dialogs.ResetPasswordDialog;
 import ru.neverdark.photohunt.dialogs.UProgressDialog;
 import ru.neverdark.photohunt.rest.RestService;
@@ -168,6 +170,8 @@ public class LoginUserFragment extends UfoFragment {
             if (password.length() == 0) {
                 throw new ToastException(R.string.error_empty_password);
             }
+
+            ((MainActivity) getActivity()).hideKeyboard();
             
             RestService service = new RestService(userId, password);
             service.getUserApi().getUser(userId, new GetUserHandler());
