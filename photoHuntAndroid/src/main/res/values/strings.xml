@@ -79,7 +79,7 @@
     <string name="refresh">Обновить</string>
     <string name="remaining_votes">Осталось голосов</string>
     <string name="empty_rating">Рейтинг пуст</string>
-    <string name="subject_help_message"><b>Тема нового конкурса</b> - тема, которая стартует при вашей победе в текущем конкурсе</string>
+    <string name="subject_help_message">Если вы победите в текущем конкурсе, то станете автором следующего. Укажите его тему:</string>
     <string name="hint">Подсказка</string>
     <string name="user_profile">Профиль пользователя</string>
     <string name="top10">Tоп 10</string>

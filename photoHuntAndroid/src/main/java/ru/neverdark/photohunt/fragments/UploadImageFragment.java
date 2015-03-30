@@ -1,5 +1,19 @@
 package ru.neverdark.photohunt.fragments;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,46 +21,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.mime.TypedOutput;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.dialogs.MessageDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.utils.Common;
-import ru.neverdark.photohunt.utils.ImageOnTouchListener;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
 
 @SuppressLint("ValidFragment")
 public class UploadImageFragment extends UfoFragment {
-    private class OnImageHelpClickListener implements OnClickListener {
-
-        @Override
-        public void onClick(View view) {
-            MessageDialog dialog = MessageDialog.getInstance(mContext);
-            dialog.setMessages(R.string.hint, R.string.subject_help_message);
-            dialog.show(getFragmentManager(), MessageDialog.DIALOG_ID);}
-    }
 
     private class ConfirmImageHandler extends CallbackHandler<Void> {
 
@@ -94,7 +82,6 @@ public class UploadImageFragment extends UfoFragment {
     private EditText mNewSubject;
     private Uri mOutputFileUri;
     private String mFileName;
-    private ImageView mSubjectHelp;
 
     public UploadImageFragment(Uri uri, long contestId) {
         mUri = uri;
@@ -150,13 +137,11 @@ public class UploadImageFragment extends UfoFragment {
     public void bindObjects() {
         mImage = (ImageView) mView.findViewById(R.id.upload_image);
         mNewSubject = (EditText) mView.findViewById(R.id.upload_new_subject);
-        mSubjectHelp = (ImageView) mView.findViewById(R.id.upload_subject_help);
     }
 
     @Override
     public void setListeners() {
-        mSubjectHelp.setOnTouchListener(new ImageOnTouchListener());
-        mSubjectHelp.setOnClickListener(new OnImageHelpClickListener());
+
     }
 
     @Override
