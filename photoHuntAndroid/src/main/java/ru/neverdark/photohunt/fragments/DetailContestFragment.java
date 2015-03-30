@@ -72,6 +72,7 @@ public class DetailContestFragment extends UfoFragment {
     private Context mContext;
     private boolean mIsDataLoaded;
     private ListView mContestList;
+    private Parcelable mContestListState = null;
     private TextView mSubject;
     private TextView mAuthor;
     private TextView mCloseDate;
@@ -267,6 +268,7 @@ public class DetailContestFragment extends UfoFragment {
     public void onDestroyView() {
         Log.enter();
         ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+        mContestListState = mContestList.onSaveInstanceState();
         super.onDestroyView();
     }
 
@@ -433,6 +435,10 @@ public class DetailContestFragment extends UfoFragment {
             mAdapter = new DetailContestAdapter(mContext, contestDetail);
             mAdapter.setCallback(new CardCallbackListener());
             mContestList.setAdapter(mAdapter);
+
+            if (mContestListState != null) {
+                mContestList.onRestoreInstanceState(mContestListState);
+            }
         }
     }
 

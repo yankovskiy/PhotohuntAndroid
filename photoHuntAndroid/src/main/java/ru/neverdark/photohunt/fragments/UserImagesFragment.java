@@ -2,6 +2,7 @@ package ru.neverdark.photohunt.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ public class UserImagesFragment extends UfoFragment {
     private Context mContext;
     private View mView;
     private GridView mGrid;
+    private Parcelable mGridState = null;
     private boolean mIsDataLoaded;
     private String mDisplayName;
 
@@ -42,6 +44,12 @@ public class UserImagesFragment extends UfoFragment {
         args.putString(DISPLAY_NAME, displayName);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onDestroyView() {
+        mGridState = mGrid.onSaveInstanceState();
+        super.onDestroyView();
     }
 
     @Override
@@ -150,6 +158,9 @@ public class UserImagesFragment extends UfoFragment {
             if (data != null) {
                 UserImagesAdapter adapter = new UserImagesAdapter(mContext, data);
                 mGrid.setAdapter(adapter);
+                if (mGridState != null) {
+                    mGrid.onRestoreInstanceState(mGridState);
+                }
                 mIsDataLoaded = true;
             }
 

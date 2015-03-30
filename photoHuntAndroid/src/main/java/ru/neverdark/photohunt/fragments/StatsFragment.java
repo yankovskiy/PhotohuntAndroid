@@ -2,6 +2,7 @@ package ru.neverdark.photohunt.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,9 +37,12 @@ public class StatsFragment extends UfoFragment {
     private boolean mIsDataLoaded;
     private Context mContext;
     private ExpandableListView mContestList;
+    private Parcelable mContestListState = null;
     private View mView;
     private long mUserId;
     private String mDisplayName;
+    private int mListPosition;
+    private int mItemPosition;
 
     @Override
     public void bindObjects() {
@@ -93,6 +97,16 @@ public class StatsFragment extends UfoFragment {
             ((MainActivity)getActivity()).getSupportActionBar().setSubtitle(null);
         }
         super.onDetach();
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.enter();
+        mContestListState = mContestList.onSaveInstanceState();
+        mListPosition = mContestList.getFirstVisiblePosition();
+        View itemView = mContestList.getChildAt(0);
+        mItemPosition = itemView == null ? 0 : itemView.getTop();
+        super.onDestroyView();
     }
 
     @Override
@@ -196,7 +210,15 @@ public class StatsFragment extends UfoFragment {
                 mAdapter = new StatsAdapter(mContext, headers, childs);
                 mContestList.setAdapter(mAdapter);
                 mIsDataLoaded = true;
-                mContestList.expandGroup(0);    // expand top group
+
+                if (mContestListState != null) {
+                    Log.message("not null");
+                    mContestList.onRestoreInstanceState(mContestListState);
+                    mContestList.setSelectionFromTop(mListPosition, mItemPosition);
+                } else {
+                    Log.message("null");
+                    mContestList.expandGroup(0);    // expand top group
+                }
             }
             super.success(data, response);
         }

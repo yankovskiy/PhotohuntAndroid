@@ -7,8 +7,8 @@ android {
         applicationId "ru.neverdark.photohunt"
         minSdkVersion 9
         targetSdkVersion 21
-        versionCode 23
-        versionName '0.7-dev3'
+        versionCode 24
+        versionName '0.7-beta'
     }
     buildTypes {
         release {

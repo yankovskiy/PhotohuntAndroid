@@ -2,6 +2,7 @@ package ru.neverdark.photohunt.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,12 +31,13 @@ public class RatingFragment extends UfoFragment {
     private View mView;
     private Context mContext;
     private ListView mRatingList;
+    private Parcelable mRatingListState = null;
     private boolean mIsLoaded = false;
 
     @Override
-    public void onDetach() {
-        Log.enter();
-        super.onDetach();
+    public void onDestroyView() {
+        mRatingListState = mRatingList.onSaveInstanceState();
+        super.onDestroyView();
     }
 
     @Override
@@ -107,6 +109,9 @@ public class RatingFragment extends UfoFragment {
             if (data != null) {
                 RatingAdapter adapter = new RatingAdapter(mContext, R.layout.rating_list_item, data);
                 mRatingList.setAdapter(adapter);
+                if (mRatingListState != null) {
+                    mRatingList.onRestoreInstanceState(mRatingListState);
+                }
             } else {
                 Common.showMessage(mContext, R.string.empty_rating);
             }

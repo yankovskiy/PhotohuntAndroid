@@ -1,20 +1,8 @@
 package ru.neverdark.photohunt.fragments;
 
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.adapters.BriefContestAdapter;
-import ru.neverdark.photohunt.rest.CallbackHandler;
-import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.Contest;
-import ru.neverdark.photohunt.utils.Common;
-import ru.neverdark.photohunt.utils.Log;
-import ru.neverdark.photohunt.utils.Settings;
-import ru.neverdark.photohunt.utils.ToastException;
-import ru.neverdark.abs.UfoFragment;
-
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -27,12 +15,26 @@ import android.widget.ListView;
 
 import java.util.List;
 
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.photohunt.R;
+import ru.neverdark.photohunt.adapters.BriefContestAdapter;
+import ru.neverdark.photohunt.rest.CallbackHandler;
+import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.RestService.Contest;
+import ru.neverdark.photohunt.utils.Common;
+import ru.neverdark.photohunt.utils.Log;
+import ru.neverdark.photohunt.utils.Settings;
+import ru.neverdark.photohunt.utils.ToastException;
+
 public class BriefContestFragment extends UfoFragment {
     private Context mContext;
     private View mView;
     private boolean mIsDataLoaded;
     private ListView mContestList;
     private Contest mSelectedContest;
+    private Parcelable mContestListState = null;
 
     /*
      * (non-Javadoc)
@@ -52,6 +54,12 @@ public class BriefContestFragment extends UfoFragment {
         getActivity().setTitle(R.string.contests);
         registerForContextMenu(mContestList);
         return mView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        mContestListState = mContestList.onSaveInstanceState();
+        super.onDestroyView();
     }
 
     @Override
@@ -166,6 +174,10 @@ public class BriefContestFragment extends UfoFragment {
                 BriefContestAdapter adapter = new BriefContestAdapter(mContext, data);
                 adapter.setCallback(new EnterToContestListener());
                 mContestList.setAdapter(adapter);
+
+                if (mContestListState != null) {
+                    mContestList.onRestoreInstanceState(mContestListState);
+                }
                 mIsDataLoaded = true;
             }
 

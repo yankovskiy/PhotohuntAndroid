@@ -2,6 +2,7 @@ package ru.neverdark.photohunt.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ public class FavoritesUsersFragment extends UfoFragment {
     private long mUserId;
     private Context mContext;
     private ListView mFavoritesList;
+    private Parcelable mFavoritesListState = null;
     private boolean mIsDataLoaded;
 
     public static FavoritesUsersFragment getInstance(long userId, int action) {
@@ -48,6 +50,12 @@ public class FavoritesUsersFragment extends UfoFragment {
         fragment.mUserId = userId;
         fragment.mAction = action;
         return fragment;
+    }
+
+    @Override
+    public void onDestroyView() {
+        mFavoritesListState = mFavoritesList.onSaveInstanceState();
+        super.onDestroyView();
     }
 
     @Override
@@ -195,6 +203,9 @@ public class FavoritesUsersFragment extends UfoFragment {
                 HeadersArrayAdapter adapter = new HeadersArrayAdapter(mContext, items);
                 mFavoritesList.setAdapter(adapter);
 
+                if (mFavoritesListState != null) {
+                    mFavoritesList.onRestoreInstanceState(mFavoritesListState);
+                }
                 mIsDataLoaded = true;
             }
 
