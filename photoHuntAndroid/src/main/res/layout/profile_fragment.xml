@@ -179,8 +179,6 @@
             android:background="@color/material_grey_600"/>
 
         <ListView
-            android:divider="@color/material_grey_600"
-            android:dividerHeight="0.5dp"
             android:id="@+id/profile_buttons_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

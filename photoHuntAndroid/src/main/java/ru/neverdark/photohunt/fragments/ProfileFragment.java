@@ -33,6 +33,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.MenuAdapter;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
@@ -80,11 +81,12 @@ public class ProfileFragment extends UfoFragment {
     private TextView mWorksCountText;
     private TextView mWinsCountText;
     private Uri mOutputUri;
+    private MenuItem mAddUser;
+    private MenuItem mRemoveUser;
 
     public static ProfileFragment getInstance(long userId) {
         ProfileFragment fragment = new ProfileFragment();
         fragment.mUserId = userId;
-        fragment.mIsSelf = (userId == 0L);
         return fragment;
     }
 
@@ -136,7 +138,6 @@ public class ProfileFragment extends UfoFragment {
         mContext = mView.getContext();
         mIsDataLoaded = false;
         bindObjects();
-        setListeners();
         getActivity().setTitle(R.string.profile);
 
         return mView;
@@ -144,8 +145,21 @@ public class ProfileFragment extends UfoFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.enter();
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.user_profile, menu);
+
+        if (!mIsSelf && mUserData.id != 1L) {
+            mAddUser = menu.findItem(R.id.user_profile_add_user);
+            mRemoveUser = menu.findItem(R.id.user_profile_remove_user);
+
+            mAddUser.setVisible(!mUserData.is_bookmarked);
+            mRemoveUser.setVisible(mUserData.is_bookmarked);
+
+        } else {
+            menu.removeItem(R.id.user_profile_add_user);
+            menu.removeItem(R.id.user_profile_remove_user);
+        }
 
         if (!mIsSelf) {
             menu.removeItem(R.id.user_profile_edit);
@@ -158,9 +172,26 @@ public class ProfileFragment extends UfoFragment {
             case R.id.user_profile_edit:
                 openProfileEditFragment();
                 return true;
+            case R.id.user_profile_add_user:
+            case R.id.user_profile_remove_user:
+                updateFavoriteList();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Обновляет список избранных авторов
+     */
+    private void updateFavoriteList() {
+        Log.enter();
+        String user = Settings.getUserId(mContext);
+        String pass = Settings.getPassword(mContext);
+        setHasOptionsMenu(false);
+        ((MainActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(true);
+        RestService service = new RestService(user, pass);
+        service.getUserApi().updateFavoriteUser(mUserData.id, new UpdateFavoriteUserListener());
     }
 
     /**
@@ -192,7 +223,7 @@ public class ProfileFragment extends UfoFragment {
         String password = Settings.getPassword(mContext);
         if (user.length() != 0 || password.length() != 0) {
             RestService service = new RestService(user, password);
-            if (mIsSelf) {
+            if (mUserId == 0L) {
                 service.getUserApi().getUser(user, new GetUserListener(mView));
             } else {
                 service.getUserApi().getUser(mUserId, new GetUserListener(mView));
@@ -291,6 +322,24 @@ public class ProfileFragment extends UfoFragment {
         mWinsCountText.setText(Common.declensionByNumber(user.wins_count, getResources().getStringArray(R.array.contest_wins_count)));
 
         MenuAdapter adapter = new MenuAdapter(mContext, R.layout.profile_menu_item);
+        if (mIsSelf) {
+            UfoMenuItem menuItem = null;
+
+            if (user.unread_messages == 0) {
+                menuItem = new UfoMenuItem(mContext, R.drawable.ic_email_grey600_24dp, R.string.messages);
+            } else {
+                menuItem = new UfoMenuItem(mContext, R.drawable.ic_email_grey600_24dp, R.string.messages, user.unread_messages);
+            }
+
+            adapter.add(menuItem);
+
+            if (user.is_have_favorites) {
+                adapter.add(new UfoMenuItem(mContext, R.drawable.ic_group_grey600_24dp, R.string.favorite_users));
+            }
+        } else {
+            adapter.add(new UfoMenuItem(mContext, R.drawable.ic_email_grey600_24dp, R.string.write_message));
+        }
+
         if (user.insta != null && user.insta.trim().length() > 0) {
             UfoMenuItem menuItem = new UfoMenuItem(mContext, R.drawable.ic_insta_grey600_24dp, user.insta, INSTAGRAM_MENU_ID);
             adapter.add(menuItem);
@@ -306,10 +355,11 @@ public class ProfileFragment extends UfoFragment {
             mButtonsList.setAdapter(adapter);
         }
 
-        if (user.avatar_present) {
+        if (user.id == 1L) {
+            mAvatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.system_avatar_128dp));
+        } else if (user.avatar_present) {
             String url = String.format(Locale.US, "%s/avatars/%s.jpg", RestService.getRestUrl(), user.avatar);
-            Picasso picasso = new Picasso.Builder(mContext).build();
-            picasso.load(url).transform(new Transform()).placeholder(R.drawable.no_avatar).tag(mContext).into(mAvatar);
+            Picasso.with(mContext).load(url).transform(new Transform()).placeholder(R.drawable.no_avatar).tag(mContext).into(mAvatar);
         }
     }
 
@@ -453,7 +503,15 @@ public class ProfileFragment extends UfoFragment {
 
         @Override
         public void success(RestService.User user, Response response) {
-            updateProfileInfo(user);
+            Log.enter();
+
+            mIsSelf = user.user_id != null && (user.user_id.equals(Settings.getUserId(mContext)));
+            setListeners();
+
+            if (isAdded()) {
+                updateProfileInfo(user);
+            }
+
             mIsDataLoaded = true;
             mUserData = user;
             setHasOptionsMenu(true);
@@ -471,7 +529,24 @@ public class ProfileFragment extends UfoFragment {
                 openInstaProfile(mUserData.insta);
             } else if (id == BALANCE_MENU_ID) {
                 openShop();
+            } else if (id == R.string.messages) {
+                openNotifications();
+            } else if (id == R.string.favorite_users) {
+                openFavoritesUsersFragment();
+            } else if (id == R.string.write_message) {
+                openSendMessageFragment();
             }
+        }
+
+        /**
+         * Открывает список уведомлений от сервера
+         */
+        private void openNotifications() {
+            MessagesFragment fragment = MessagesFragment.getInstance(mUserData.id);
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
 
         /**
@@ -506,6 +581,28 @@ public class ProfileFragment extends UfoFragment {
             List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
             return list.size() > 0;
         }
+    }
+
+    /**
+     * Открыть фрагмент для отправки сообщения
+     */
+    private void openSendMessageFragment() {
+        RestService.FavoriteUser user = new RestService.FavoriteUser();
+        user.fid = mUserData.id;
+        user.display_name = mUserData.display_name;
+        user.avatar = mUserData.avatar;
+
+        SendMessageFragment fragment = SendMessageFragment.getInstance(user, null);
+        Common.openFragment(this, fragment, true);
+    }
+
+
+    /**
+     * Открывает фрагмент со списком избранных авторов
+     */
+    private void openFavoritesUsersFragment() {
+        FavoritesUsersFragment fragment = FavoritesUsersFragment.getInstance(mUserData.id, FavoritesUsersFragment.ACTION_OPEN_PROFILE);
+        Common.openFragment(this, fragment, true);
     }
 
     /**
@@ -620,4 +717,39 @@ public class ProfileFragment extends UfoFragment {
     }
 
 
+    private class UpdateFavoriteUserListener implements Callback<Void> {
+        @Override
+        public void success(Void data, Response response) {
+            mUserData.is_bookmarked = !mUserData.is_bookmarked;
+            if (mUserData.is_bookmarked) {
+                Common.showMessage(mContext, R.string.favorite_user_added);
+            } else {
+                Common.showMessage(mContext, R.string.favorite_user_removed);
+            }
+            setHasOptionsMenu(true);
+            ((MainActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(false);
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Response response = error.getResponse();
+            try {
+                if (response == null) {
+                    throw new ToastException(R.string.error_network_problem);
+                }
+
+                if (response.getStatus() == 401) {
+                    throw new ToastException(R.string.error_wrong_password);
+                }
+
+                RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+                throw new ToastException(err.error);
+            } catch (ToastException e) {
+                e.show(mContext);
+            }
+
+            setHasOptionsMenu(true);
+            ((MainActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(false);
+        }
+    }
 }

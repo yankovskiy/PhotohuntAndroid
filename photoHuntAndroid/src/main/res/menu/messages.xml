@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:visible="false"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/messages_remove"
+        android:icon="@drawable/ic_delete_white_24dp"
+        app:showAsAction="always"
+        android:title="@string/remove_messages">
+    </item>
+    <item
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/messages_new_message"
+        android:icon="@drawable/ic_note_add_white_24dp"
+        app:showAsAction="always"
+        android:title="@string/write_message">
+    </item>
+
+</menu>

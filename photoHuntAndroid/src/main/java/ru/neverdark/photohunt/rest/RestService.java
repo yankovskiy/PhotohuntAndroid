@@ -27,6 +27,8 @@ public class RestService {
     private final ShopApi mShopApi;
     private final UserApi mUserApi;
     private final ContestApi mContestApi;
+    private final MessagesApi mMessagesApi;
+    private final MessagesMgmt mMessagesMgmt;
 
     public RestService() {
         BasicInterceptor interceptor = new BasicInterceptor();
@@ -34,12 +36,14 @@ public class RestService {
         mContestApi = new ContestApi();
         mUserApi = new UserApi();
         mShopApi = new ShopApi();
+        mMessagesApi = new MessagesApi();
 
         mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(interceptor).setEndpoint(getRestUrl()).build();
 
         mUserMgmt = mRestAdapter.create(UserMgmt.class);
         mContestMgmt = mRestAdapter.create(ContestMgmt.class);
         mShopMgmt = mRestAdapter.create(ShopMgmt.class);
+        mMessagesMgmt = mRestAdapter.create(MessagesMgmt.class);
     }
 
     public RestService(String user, String password) {
@@ -49,12 +53,14 @@ public class RestService {
         mContestApi = new ContestApi();
         mUserApi = new UserApi();
         mShopApi = new ShopApi();
+        mMessagesApi = new MessagesApi();
 
         mRestAdapter = new RestAdapter.Builder().setRequestInterceptor(auth).setEndpoint(getRestUrl()).build();
 
         mUserMgmt = mRestAdapter.create(UserMgmt.class);
         mContestMgmt = mRestAdapter.create(ContestMgmt.class);
         mShopMgmt = mRestAdapter.create(ShopMgmt.class);
+        mMessagesMgmt = mRestAdapter.create(MessagesMgmt.class);
     }
 
     public static String getRestUrl() {
@@ -76,6 +82,28 @@ public class RestService {
     public ShopApi getShopApi() {
         return mShopApi;
     }
+
+    public MessagesApi getMessagesApi() {
+        return mMessagesApi;
+    }
+
+    private interface MessagesMgmt {
+        @GET("/messages")
+        public void getMessages(Callback<Messages> callback);
+
+        @PUT("/messages/{id}")
+        public void readMessage(@Path("id") long messageId, Callback<Message> callback);
+
+        @DELETE("/messages/{id}")
+        public void removeMessage(@Path("id") long messageId, Callback<Void> callback);
+
+        @DELETE("/messages/{folder}")
+        public void removeMessages(@Path("folder") String folder, Callback<Void> callback);
+
+        @POST("/messages")
+        void sendMessage(@Body Message data, Callback<Void> callback);
+    }
+
 
     private interface ShopMgmt {
         @GET("/shop")
@@ -117,6 +145,12 @@ public class RestService {
     }
 
     private interface UserMgmt {
+        @GET("/favorites/users")
+        public void getFavoritesUsers(Callback<List<FavoriteUser>> callback);
+
+        @PUT("/favorites/users/{id}")
+        public void updateFavoriteUser(@Path("id") long id, Callback<Void> callback);
+
         @GET("/user/{id}/wins")
         public void getWinsList(@Path("id") long id, Callback<List<Contest>> callback);
 
@@ -151,6 +185,9 @@ public class RestService {
 
         @PUT("/user/{id}")
         public void updateUser(@Path("id") String userId, @Body User user, Callback<Void> callback);
+
+        @PUT("/user/{id}")
+        public Void updateUser(@Path("id") String userId, @Body User user);
 
         @GET("/user")
         public void getRating(Callback<List<User>> callback);
@@ -271,6 +308,11 @@ public class RestService {
         public boolean avatar_present;
         public boolean avatar_permission;
         public String avatar;
+        public String regid;
+        public int unread_messages;
+        public int client_version;
+        public boolean is_bookmarked;
+        public boolean is_have_favorites;
     }
 
     public static class Stats {
@@ -278,6 +320,29 @@ public class RestService {
         public int works;
         public int wins_rewards;
         public int other;
+    }
+
+    public static class Message {
+        public final static int UNSENT = 0;
+        public final static int SENT = 1;
+        public final static int READ = 2;
+
+        public long id;
+        public long from_user_id;
+        public long to_user_id;
+        public String from;
+        public String to;
+        public String date;
+        public String title;
+        public String message;
+        public int status;
+        public String from_avatar;
+        public String to_avatar;
+    }
+
+    public static class Messages {
+        public List<Message> inbox;
+        public List<Message> outbox;
     }
 
     public class ContestApi {
@@ -328,7 +393,36 @@ public class RestService {
         }
     }
 
+    public class MessagesApi {
+        public void sendMessage(Message data, Callback<Void> callback) {
+            mMessagesMgmt.sendMessage(data, callback);
+        }
+        public void getMessages(Callback<Messages> callback) {
+            mMessagesMgmt.getMessages(callback);
+        }
+
+        public void readMessage(long messageId, Callback<Message> callback) {
+            mMessagesMgmt.readMessage(messageId, callback);
+        }
+
+        public void removeMessage(long messageId, Callback<Void> callback) {
+            mMessagesMgmt.removeMessage(messageId, callback);
+        }
+
+        public void removeMessages(String folder, Callback<Void> callback) {
+            mMessagesMgmt.removeMessages(folder, callback);
+        }
+    }
+
     public class UserApi {
+        public void getFavoritesUsers(Callback<List<FavoriteUser>> callback) {
+            mUserMgmt.getFavoritesUsers(callback);
+        }
+
+        public void updateFavoriteUser(long id, Callback<Void> callback) {
+            mUserMgmt.updateFavoriteUser(id, callback);
+        }
+
         public void getUserStats(long id, Callback<Stats> callback) {
             mUserMgmt.getUserStats(id, callback);
         }
@@ -369,6 +463,10 @@ public class RestService {
             mUserMgmt.updateUser(userId, user, callback);
         }
 
+        public Void updateUser(String userId, User user) {
+            return mUserMgmt.updateUser(userId, user);
+        }
+
         public void getRating(Callback<List<User>> callback) {
             mUserMgmt.getRating(callback);
         }
@@ -378,4 +476,19 @@ public class RestService {
         }
     }
 
+    public static class FavoriteUser {
+        public long fid;
+        public String display_name;
+        public String avatar;
+
+        public FavoriteUser(long fid, String display_name, String avatar) {
+            this.fid = fid;
+            this.display_name = display_name;
+            this.avatar = avatar;
+        }
+
+        public FavoriteUser() {
+
+        }
+    }
 }

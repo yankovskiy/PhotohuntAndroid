@@ -17,6 +17,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
 import java.io.File;
@@ -91,6 +93,21 @@ public class Common {
         return outputFileUri;
     }
 
+    /**
+     * Представляет дату в читабельном виде (03 мар 2015)
+     * @param context контекст приложения
+     * @param date дата
+     * @return строка содержащая дату
+     */
+    public static String parseDate(Context context, String date) {
+        String dateOnly = date.split(" ")[0];
+        String year = dateOnly.split("-")[0];
+        int monthIndex = Integer.valueOf(dateOnly.split("-")[1]);
+        String day = dateOnly.split("-")[2];
+
+        return String.format("%s %s %s", day, context.getResources().getStringArray(R.array.months_acc)[monthIndex - 1], year);
+    }
+
     public static Bitmap getRoundedCornerBitmap(Context context, Bitmap bitmap) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                 .getHeight(), Bitmap.Config.ARGB_8888);
@@ -112,6 +129,22 @@ public class Common {
         canvas.drawBitmap(bitmap, rect, rect, paint);
 
         return output;
+    }
+
+    public static void openFragment(Fragment baseFragment, Fragment openFragment, boolean isStack) {
+        FragmentTransaction transaction = baseFragment.getFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, openFragment);
+        if (isStack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
+    }
+
+    public static void openFragment(Fragment baseFragment, Fragment openFragment, String tag) {
+        FragmentTransaction transaction = baseFragment.getFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, openFragment);
+        transaction.addToBackStack(tag);
+        transaction.commit();
     }
 
     /**

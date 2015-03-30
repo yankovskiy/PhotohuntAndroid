@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/read_message_remove"
+        android:icon="@drawable/ic_delete_white_24dp"
+        app:showAsAction="always"
+        android:title="@string/remove_message">
+    </item>
+
+    <item
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/read_message_reply"
+        android:icon="@drawable/ic_reply_white_24dp"
+        app:showAsAction="always"
+        android:title="@string/reply_message">
+    </item>
+<!--
+    <item
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/read_message_forward"
+        android:icon="@drawable/ic_forward_white_24dp"
+        app:showAsAction="always"
+        android:title="@string/forward_message">
+    </item>
+-->
+</menu>

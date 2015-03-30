@@ -3,4 +3,5 @@
     <dimen name="default_padding">16dp</dimen>
     <dimen name="avatar_border">6dp</dimen>
     <dimen name="avatar_size">128dp</dimen>
+    <dimen name="min_avatar_size">48dp</dimen>
 </resources>

@@ -10,6 +10,7 @@ public class UfoMenuItem {
     private final Drawable mMenuIcon;
     private final String mMenuLabel;
     private final int mId;
+    private final int mCount;
 
     /**
      * Конструктор
@@ -21,6 +22,7 @@ public class UfoMenuItem {
         mMenuIcon = context.getResources().getDrawable(iconResource);
         mMenuLabel = context.getString(stringResource);
         mId = stringResource;
+        mCount = -1;
     }
 
     /**
@@ -34,6 +36,21 @@ public class UfoMenuItem {
         mMenuIcon = context.getResources().getDrawable(iconResource);
         mMenuLabel = menuLabel;
         mId = id;
+        mCount = -1;
+    }
+
+    /**
+     * Конструктор
+     * @param context context приложения
+     * @param iconResource id ресурса иконки для пункта меню
+     * @param stringResource id ресурса содержащего текст
+     * @param count значение колинки "количество"
+     */
+    public UfoMenuItem(Context context, int iconResource, int stringResource, int count) {
+        mMenuIcon = context.getResources().getDrawable(iconResource);
+        mMenuLabel = context.getString(stringResource);
+        mId = stringResource;
+        mCount = count;
     }
 
     /**
@@ -58,5 +75,13 @@ public class UfoMenuItem {
      */
     public int getId() {
         return mId;
+    }
+
+    /**
+     * Получает значение столбца "количество"
+     * @return количество, либо -1 если не задано
+     */
+    public int getMenuCount() {
+        return mCount;
     }
 }

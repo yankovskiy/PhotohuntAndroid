@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +22,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import java.io.IOException;
+
 import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
@@ -34,6 +41,7 @@ import ru.neverdark.photohunt.fragments.RatingFragment;
 import ru.neverdark.photohunt.fragments.ShopFragment;
 import ru.neverdark.photohunt.fragments.StatsFragment;
 import ru.neverdark.photohunt.fragments.WelcomeFragment;
+import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.SingletonHelper;
@@ -43,8 +51,12 @@ import ru.neverdark.photohunt.utils.UfoMenuItem;
  * Главная активность приложения
  */
 public class MainActivity extends UfoFragmentActivity {
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String SENDER_ID = "59526129623";
     private Context mContext;
     private boolean mIsBackToContest;
+    private GoogleCloudMessaging mGcm;
+    private String mRegid;
 
     /**
      * Обработчик кликов по выдвигающимуся меню
@@ -195,6 +207,7 @@ public class MainActivity extends UfoFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.enter();
         setContentView(R.layout.activity_main);
 
         try {
@@ -210,14 +223,46 @@ public class MainActivity extends UfoFragmentActivity {
         UfoFragment fragment = null;
 
         if (Settings.isLogin(mContext)) {
-            fragment = new BriefContestFragment();
+            if (checkPlayServices()) {
+                mGcm = GoogleCloudMessaging.getInstance(this);
+                mRegid = Settings.getRegistrationId(mContext);
+
+                if (mRegid.isEmpty()) {
+                    registerInBackground();
+                }
+            } else {
+                Log.message("No valid Google Play Services APK found.");
+            }
+
+            Intent intent = getIntent();
+            if (intent != null) {
+                if (intent.getAction().equals(GcmIntentService.OPEN_PROFILE_ACTION)) {
+                    fragment = ProfileFragment.getInstance(0L);
+                    mIsBackToContest = true;
+                }
+            }
+
+            if (fragment == null) {
+                fragment = new BriefContestFragment();
+            }
+
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         } else {
             fragment = new WelcomeFragment();
         }
 
-        getSupportFragmentManager().beginTransaction().add(R.id.main_container, fragment).commit();
+
+
+        /*
+         * workaround: при включении девайса и автостарте приложения иногда происходит наложение фрагментов
+         * вызвано двойным вызовом OnCreate для activity & множественным добавлением фрагмента который уже есть.
+         * Код ниже выполняет проверку, есть ли уже созданный фрагмент,
+         */
+        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.main_container);
+        if (frag == null) {
+            getSupportFragmentManager().beginTransaction().add(R.id.main_container, fragment).commit();
+        }
         getSupportFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.progress);
@@ -225,10 +270,86 @@ public class MainActivity extends UfoFragmentActivity {
         progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
     }
 
+    /**
+     * Registers the application with GCM servers asynchronously.
+     *
+     * Stores the registration ID and app versionCode in the application's
+     * shared preferences.
+     */
+    private void registerInBackground() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    if (mGcm == null) {
+                        mGcm = GoogleCloudMessaging.getInstance(mContext);
+                    }
+
+                    mRegid = mGcm.register(SENDER_ID);
+
+                    sendRegistrationIdToServer();
+
+                    // Persist the regID - no need to register again.
+                    Settings.storeRegistrationId(mContext, mRegid);
+                } catch (IOException ex) {
+                    Log.message(ex.getMessage());
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void data) {
+
+            }
+        }.execute(null, null, null);
+
+    }
+
+    /**
+     * Отправка id зарегистрированного пользователя на сервер
+     */
+    private void sendRegistrationIdToServer() {
+        String user = Settings.getUserId(mContext);
+        String pass = Settings.getPassword(mContext);
+        RestService service = new RestService(user, pass);
+        RestService.User data = new RestService.User();
+        data.regid = mRegid;
+        data.client_version = SingletonHelper.getInstance().getVersion();
+        service.getUserApi().updateUser(user, data);
+    }
+
     @Override
     public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
         getSupportActionBar().getCustomView().setVisibility(visible ? View.VISIBLE : View.GONE);
     }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.message("This device is not supported");
+            }
+
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPlayServices();
+    }
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

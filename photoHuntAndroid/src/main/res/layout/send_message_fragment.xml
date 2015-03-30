@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/send_message_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/default_padding">
+
+        <ImageView
+            android:src="@drawable/no_avatar"
+            android:id="@+id/send_message_avatar"
+            android:layout_width="@dimen/min_avatar_size"
+            android:layout_height="@dimen/min_avatar_size"
+            android:layout_alignParentLeft="true"/>
+
+        <TextView
+            android:id="@+id/send_message_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/send_message_avatar"
+            android:textColor="@color/grey505050"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/send_message_delimiter"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/send_message_header"
+        android:background="@color/list_divider" />
+
+    <EditText
+        android:id="@+id/send_message_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/send_message_delimiter"
+        android:hint="@string/message_title"
+        android:inputType="text"
+        android:padding="@dimen/default_padding"
+        android:textSize="16sp" />
+
+    <EditText
+        android:background="@color/transparent"
+        android:gravity="top"
+        android:id="@+id/send_message_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/send_message_title"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:inputType="textLongMessage|textMultiLine"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="16dp"
+        android:textSize="14sp" />
+
+</RelativeLayout>
