@@ -211,7 +211,7 @@ public class ReadMessageFragment extends UfoFragment {
 
             if (userId == 1L) {// system
                 mAvatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.system_avatar_48dp));
-            } else if (message.from_avatar != null && message.from_avatar.trim().length() > 0) {
+            } else if (avatar != null && avatar.trim().length() > 0) {
                 String url = String.format(Locale.US, "%s/avatars/%s.jpg", RestService.getRestUrl(), avatar);
                 Picasso.with(mContext).load(url).transform(new Transform()).placeholder(R.drawable.no_avatar).tag(mContext).into(mAvatar);
             }
