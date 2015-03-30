@@ -154,6 +154,6 @@
     <string name="message_sent">Сообщение отправлено</string>
     <string name="re">Re</string>
     <string name="remove_messages">Удалить сообщения</string>
-    <string name="remove_inbox_messages_confirm">Удалить прочитанные сообщения из входящих?</string>
-    <string name="remove_outbox_messages_confirm">Удалить все сообщения из исходящих?</string>
+    <string name="remove_inbox_messages_confirm">Удалить прочитанные сообщения?</string>
+    <string name="remove_outbox_messages_confirm">Очистить папку \"Исходящие\"?</string>
 </resources>
