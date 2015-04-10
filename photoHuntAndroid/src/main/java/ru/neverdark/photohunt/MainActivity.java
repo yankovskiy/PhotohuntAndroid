@@ -42,6 +42,7 @@ import ru.neverdark.photohunt.fragments.ShopFragment;
 import ru.neverdark.photohunt.fragments.StatsFragment;
 import ru.neverdark.photohunt.fragments.WelcomeFragment;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.User;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.SingletonHelper;
@@ -313,7 +314,7 @@ public class MainActivity extends UfoFragmentActivity {
         String user = Settings.getUserId(mContext);
         String pass = Settings.getPassword(mContext);
         RestService service = new RestService(user, pass);
-        RestService.User data = new RestService.User();
+        User data = new User();
         data.regid = mRegid;
         data.client_version = SingletonHelper.getInstance().getVersion();
         service.getUserApi().updateUser(user, data);

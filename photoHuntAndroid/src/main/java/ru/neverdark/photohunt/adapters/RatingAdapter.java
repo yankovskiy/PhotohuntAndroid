@@ -1,16 +1,17 @@
 package ru.neverdark.photohunt.adapters;
 
-import java.util.List;
-import java.util.Locale;
-
-import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService.User;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import java.util.List;
+import java.util.Locale;
+
+import ru.neverdark.photohunt.R;
+import ru.neverdark.photohunt.rest.data.User;
 
 public class RatingAdapter extends ArrayAdapter<User> {
     private final List<User> mObjects;

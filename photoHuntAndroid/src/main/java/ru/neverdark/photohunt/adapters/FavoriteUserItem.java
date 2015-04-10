@@ -15,13 +15,14 @@ import java.util.Locale;
 import ru.neverdark.abs.Item;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.FavoriteUser;
 import ru.neverdark.photohunt.utils.Common;
 
 /**
  * Элемент списка "избранные пользователи"
  */
 public class FavoriteUserItem implements Item {
-    private final RestService.FavoriteUser mUser;
+    private final FavoriteUser mUser;
     private final Context mContext;
 
     @Override
@@ -29,7 +30,7 @@ public class FavoriteUserItem implements Item {
         return mUser;
     }
 
-    public FavoriteUserItem (Context context, RestService.FavoriteUser user) {
+    public FavoriteUserItem (Context context, FavoriteUser user) {
         mUser = user;
         mContext = context;
     }

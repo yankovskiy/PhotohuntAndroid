@@ -22,7 +22,7 @@ import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.BriefContestAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.Contest;
+import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;

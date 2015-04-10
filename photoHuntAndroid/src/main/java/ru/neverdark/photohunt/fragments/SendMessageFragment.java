@@ -26,6 +26,8 @@ import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.FavoriteUser;
+import ru.neverdark.photohunt.rest.data.Message;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
@@ -37,7 +39,7 @@ public class SendMessageFragment extends UfoFragment {
     private boolean mIsDataLoaded;
     private Context mContext;
     private View mView;
-    private RestService.FavoriteUser mRecipient;
+    private FavoriteUser mRecipient;
     private String mCalledTag;
     private ImageView mAvatar;
     private TextView mUser;
@@ -66,7 +68,7 @@ public class SendMessageFragment extends UfoFragment {
      * @param calledTag tag вызывающего фрагмента
      * @return созданный фрагмент
      */
-    public static SendMessageFragment getInstance(RestService.FavoriteUser recipient, String calledTag) {
+    public static SendMessageFragment getInstance(FavoriteUser recipient, String calledTag) {
         SendMessageFragment fragment = new SendMessageFragment();
         fragment.mRecipient = recipient;
         fragment.mCalledTag = calledTag;
@@ -142,7 +144,7 @@ public class SendMessageFragment extends UfoFragment {
 
             String user = Settings.getUserId(mContext);
             String pass = Settings.getPassword(mContext);
-            RestService.Message data = new RestService.Message();
+            Message data = new Message();
             data.title = title;
             data.message = message;
             data.to_user_id = mRecipient.fid;
@@ -164,7 +166,7 @@ public class SendMessageFragment extends UfoFragment {
      * @param message текст сообщения
      * @return созданный фрагмент
      */
-    public static SendMessageFragment getInstance(RestService.FavoriteUser data, String tag, String title, String message) {
+    public static SendMessageFragment getInstance(FavoriteUser data, String tag, String title, String message) {
         SendMessageFragment fragment = getInstance(data, tag);
         fragment.mTitleData = title;
         fragment.mMessageData = message;

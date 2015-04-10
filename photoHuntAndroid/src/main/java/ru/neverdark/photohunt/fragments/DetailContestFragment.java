@@ -45,8 +45,9 @@ import ru.neverdark.photohunt.dialogs.EditImageDialog;
 import ru.neverdark.photohunt.dialogs.MessageDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.Contest;
-import ru.neverdark.photohunt.rest.RestService.ContestDetail;
+import ru.neverdark.photohunt.rest.data.Contest;
+import ru.neverdark.photohunt.rest.data.ContestDetail;
+import ru.neverdark.photohunt.rest.data.Image;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ImageOnTouchListener;
 import ru.neverdark.photohunt.utils.Log;
@@ -65,7 +66,7 @@ public class DetailContestFragment extends UfoFragment {
     private RelativeLayout mDetailContestBottom;
     private DetailContestAdapter mAdapter;
     private Contest mContest;
-    private RestService.Image mSelectedImage;
+    private Image mSelectedImage;
     private int mRemainingVotes = 0;
     private Uri outputFileUri;
     private View mView;
@@ -214,13 +215,13 @@ public class DetailContestFragment extends UfoFragment {
                 return true;
             case R.id.card_view_profile:
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                RestService.Image image;
+                Image image;
 
                 // если выбрано по троеточию, то info будет Null
                 if (info == null) {
                     image = mSelectedImage;
                 } else {
-                    image = (RestService.Image) mContestList.getAdapter().getItem(info.position);
+                    image = (Image) mContestList.getAdapter().getItem(info.position);
                 }
 
                 showUserProfile(image.user_id);
@@ -285,7 +286,7 @@ public class DetailContestFragment extends UfoFragment {
     private class CardCallbackListener implements DetailContestAdapter.OnCallbackListener {
 
         @Override
-        public void onMoreButton(RestService.Image image) {
+        public void onMoreButton(Image image) {
             mSelectedImage = image;
             getActivity().openContextMenu(mContestList);
         }
@@ -301,7 +302,7 @@ public class DetailContestFragment extends UfoFragment {
         }
 
         @Override
-        public void onRemoveImage(RestService.Image image) {
+        public void onRemoveImage(Image image) {
             ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
             dialog.setMessages(R.string.delete_confirmation_title, R.string.image_delete_confirmation_message);
             dialog.setCallback(new RemoveImageListener(image));
@@ -309,7 +310,7 @@ public class DetailContestFragment extends UfoFragment {
         }
 
         @Override
-        public void onEditImage(RestService.Image image) {
+        public void onEditImage(Image image) {
             Log.enter();
             EditImageDialog dialog = EditImageDialog.getInstance(mContext);
             dialog.setImage(image);
@@ -443,9 +444,9 @@ public class DetailContestFragment extends UfoFragment {
     }
 
     private class RemoveImageListener implements OnCallback, ConfirmDialog.OnPositiveClickListener {
-        private final RestService.Image mImage;
+        private final Image mImage;
 
-        public RemoveImageListener(RestService.Image image) {
+        public RemoveImageListener(Image image) {
             mImage = image;
         }
 
@@ -475,7 +476,7 @@ public class DetailContestFragment extends UfoFragment {
 
     private class EditImageListener implements OnCallback, EditImageDialog.OnPositiveClickListener {
         @Override
-        public void onPositiveClickHandler(RestService.Image image) {
+        public void onPositiveClickHandler(Image image) {
             Log.enter();
             String user = Settings.getUserId(mContext);
             String pass = Settings.getPassword(mContext);

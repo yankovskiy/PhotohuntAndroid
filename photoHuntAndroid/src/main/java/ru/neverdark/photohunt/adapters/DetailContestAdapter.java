@@ -1,24 +1,5 @@
 package ru.neverdark.photohunt.adapters;
 
-import java.util.List;
-import java.util.Locale;
-
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.Contest;
-import ru.neverdark.photohunt.rest.RestService.ContestDetail;
-import ru.neverdark.photohunt.rest.RestService.Image;
-import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
-import ru.neverdark.photohunt.utils.Common;
-import ru.neverdark.photohunt.utils.ImageOnTouchListener;
-import ru.neverdark.photohunt.utils.Settings;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
@@ -29,6 +10,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
+
+import java.util.List;
+import java.util.Locale;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import ru.neverdark.photohunt.R;
+import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Contest;
+import ru.neverdark.photohunt.rest.data.ContestDetail;
+import ru.neverdark.photohunt.rest.data.Image;
+import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
+import ru.neverdark.photohunt.utils.Common;
+import ru.neverdark.photohunt.utils.ImageOnTouchListener;
+import ru.neverdark.photohunt.utils.Settings;
 
 public class DetailContestAdapter extends ArrayAdapter<Image> {
 

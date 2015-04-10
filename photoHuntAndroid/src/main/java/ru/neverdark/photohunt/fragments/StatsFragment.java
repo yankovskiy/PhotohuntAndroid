@@ -24,7 +24,7 @@ import ru.neverdark.photohunt.adapters.StatsAdapter;
 import ru.neverdark.photohunt.adapters.StatsAdapter.ChildRecord;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.Contest;
+import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
@@ -137,7 +137,7 @@ public class StatsFragment extends UfoFragment {
 
     }
 
-    private class GetContestsHandler extends CallbackHandler<List<RestService.Contest>> {
+    private class GetContestsHandler extends CallbackHandler<List<Contest>> {
 
         public GetContestsHandler(View view) {
             super(view, R.id.stats_hide_when_loading, R.id.stats_loading_progress);
@@ -176,7 +176,7 @@ public class StatsFragment extends UfoFragment {
         }
 
         @Override
-        public void success(List<RestService.Contest> data, Response response) {
+        public void success(List<Contest> data, Response response) {
             Log.enter();
             if (data != null) {
                 final List<String> headers = new ArrayList<>();

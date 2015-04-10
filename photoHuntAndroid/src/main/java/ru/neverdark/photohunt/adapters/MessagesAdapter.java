@@ -18,12 +18,13 @@ import java.util.Locale;
 
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Message;
 import ru.neverdark.photohunt.utils.Common;
 
 /**
  * Адаптер для списка сообщений
  */
-public class MessagesAdapter extends ArrayAdapter<RestService.Message>{
+public class MessagesAdapter extends ArrayAdapter<Message>{
     private final Context mContext;
     private final int mResource;
     private final boolean mIsInbox;
@@ -35,7 +36,7 @@ public class MessagesAdapter extends ArrayAdapter<RestService.Message>{
         private TextView mDate;
     }
 
-    public MessagesAdapter(Context context, int resource, List<RestService.Message> objects, boolean isInbox) {
+    public MessagesAdapter(Context context, int resource, List<Message> objects, boolean isInbox) {
         super(context, resource, objects);
         mContext = context;
         mResource = resource;
@@ -71,7 +72,7 @@ public class MessagesAdapter extends ArrayAdapter<RestService.Message>{
             holder = (RowHolder) row.getTag();
         }
 
-        RestService.Message message = getItem(position);
+        Message message = getItem(position);
 
 
         if (mIsInbox) {
@@ -89,7 +90,7 @@ public class MessagesAdapter extends ArrayAdapter<RestService.Message>{
         holder.mTitle.setText(message.title);
         holder.mDate.setText(Common.parseDate(mContext, message.date));
 
-        if (mIsInbox && message.status != RestService.Message.READ) {
+        if (mIsInbox && message.status != Message.READ) {
             holder.mFrom.setTypeface(null, Typeface.BOLD);
         } else {
             holder.mFrom.setTypeface(null, Typeface.NORMAL);
@@ -122,8 +123,8 @@ public class MessagesAdapter extends ArrayAdapter<RestService.Message>{
 
     public boolean isReadInbox() {
         for (int i = 0; i < getCount(); i++) {
-            RestService.Message message = getItem(i);
-            if (message.status == RestService.Message.READ) {
+            Message message = getItem(i);
+            if (message.status == Message.READ) {
                 return true;
             }
         }

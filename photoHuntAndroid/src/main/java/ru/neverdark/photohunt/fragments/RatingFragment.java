@@ -20,7 +20,7 @@ import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.RatingAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.User;
+import ru.neverdark.photohunt.rest.data.User;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;

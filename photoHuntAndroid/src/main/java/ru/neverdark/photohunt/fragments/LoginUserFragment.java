@@ -24,7 +24,7 @@ import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.dialogs.ResetPasswordDialog;
 import ru.neverdark.photohunt.dialogs.UProgressDialog;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.User;
+import ru.neverdark.photohunt.rest.data.User;
 import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;

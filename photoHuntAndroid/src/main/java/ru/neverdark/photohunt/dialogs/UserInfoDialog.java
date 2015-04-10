@@ -1,14 +1,15 @@
 package ru.neverdark.photohunt.dialogs;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.Locale;
+
 import ru.neverdark.abs.CancelClickListener;
 import ru.neverdark.abs.UfoDialogFragment;
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService.User;
+import ru.neverdark.photohunt.rest.data.User;
 
 public class UserInfoDialog extends UfoDialogFragment {
     public static final String DIALOG_ID = "userInfoDialog";

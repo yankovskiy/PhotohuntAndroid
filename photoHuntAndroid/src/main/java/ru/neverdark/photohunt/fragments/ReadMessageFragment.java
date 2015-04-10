@@ -28,6 +28,8 @@ import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.FavoriteUser;
+import ru.neverdark.photohunt.rest.data.Message;
 import ru.neverdark.photohunt.utils.ButtonBGOnTouchListener;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Settings;
@@ -38,7 +40,7 @@ public class ReadMessageFragment extends UfoFragment {
     private boolean mIsDataLoaded;
     private View mView;
     private Context mContext;
-    private RestService.Message mMessage;
+    private Message mMessage;
     private View mReadMessageHeader;
 
     private ImageView mAvatar;
@@ -80,7 +82,7 @@ public class ReadMessageFragment extends UfoFragment {
      * Открытие фрагмента для написание ответа
      */
     private void openReply() {
-        RestService.FavoriteUser data = new RestService.FavoriteUser();
+        FavoriteUser data = new FavoriteUser();
         data.avatar = mMessage.from_avatar;
         data.display_name = mMessage.from;
         data.fid = mMessage.from_user_id;
@@ -145,7 +147,7 @@ public class ReadMessageFragment extends UfoFragment {
         }
     }
 
-    private class ReadMessageListener extends CallbackHandler<RestService.Message> {
+    private class ReadMessageListener extends CallbackHandler<Message> {
         public ReadMessageListener(View view) {
             super(view, R.id.read_message_hide_when_loading, R.id.read_message_loading_progress);
         }
@@ -174,7 +176,7 @@ public class ReadMessageFragment extends UfoFragment {
         }
 
         @Override
-        public void success(RestService.Message data, Response response) {
+        public void success(Message data, Response response) {
             if (data != null) {
                 if (isAdded()) {
                     updateView(data);
@@ -191,7 +193,7 @@ public class ReadMessageFragment extends UfoFragment {
          * Обновляет элементы управления фрагмента на основе полученных данных
          * @param message полученное сообщение
          */
-        private void updateView(RestService.Message message) {
+        private void updateView(Message message) {
             String date = Common.parseDate(mContext, message.date);
             String time = message.date.split(" ")[1];
 

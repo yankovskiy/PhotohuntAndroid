@@ -20,6 +20,7 @@ import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.UserImagesAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Image;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.PicassoScrollListener;
 import ru.neverdark.photohunt.utils.Settings;
@@ -117,7 +118,7 @@ public class UserImagesFragment extends UfoFragment {
     private class GridItemClickListener implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            RestService.Image image = (RestService.Image) mGrid.getAdapter().getItem(position);
+            Image image = (Image) mGrid.getAdapter().getItem(position);
             ViewImageFragment fragment = ViewImageFragment.getInstance(mDisplayName, image);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
@@ -126,7 +127,7 @@ public class UserImagesFragment extends UfoFragment {
         }
     }
 
-    private class GetUserImagesListener extends CallbackHandler<List<RestService.Image>> {
+    private class GetUserImagesListener extends CallbackHandler<List<Image>> {
 
         public GetUserImagesListener(View view) {
             super(view, R.id.user_images_hide_when_loading, R.id.user_images_loading_progress);
@@ -153,7 +154,7 @@ public class UserImagesFragment extends UfoFragment {
         }
 
         @Override
-        public void success(List<RestService.Image> data, Response response) {
+        public void success(List<Image> data, Response response) {
             setHasOptionsMenu(true);
             if (data != null) {
                 UserImagesAdapter adapter = new UserImagesAdapter(mContext, data);

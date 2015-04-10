@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Item;
 import ru.neverdark.photohunt.utils.Log;
 
-public class MyItemsAdapter extends ArrayAdapter<RestService.Item>{
+public class MyItemsAdapter extends ArrayAdapter<Item>{
     private final Context mContext;
     private final int mResource;
-    private final List<RestService.Item> mObjects;
+    private final List<Item> mObjects;
 
-    public MyItemsAdapter(Context context, int resource, List<RestService.Item> items) {
+    public MyItemsAdapter(Context context, int resource, List<Item> items) {
         super(context, resource, items);
         mContext = context;
         mResource = resource;
@@ -57,7 +57,7 @@ public class MyItemsAdapter extends ArrayAdapter<RestService.Item>{
         }
 
 
-        RestService.Item item = getItem(position);
+        Item item = getItem(position);
         String count = String.format(Locale.US, "%d %s", item.count, mContext.getString(R.string.brief_count));
 
         holder.mMyItemsName.setText(item.name);
@@ -72,7 +72,7 @@ public class MyItemsAdapter extends ArrayAdapter<RestService.Item>{
      * @param serviceName значение поля service_name
      * @return возвращает объект типа RestService.Item, либо null если объект не найден
      */
-    public RestService.Item getItemByServiceName(String serviceName) {
+    public Item getItemByServiceName(String serviceName) {
         Log.enter();
         Log.variable("size", String.valueOf(mObjects.size()));
 

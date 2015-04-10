@@ -24,6 +24,7 @@ import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.User;
 import ru.neverdark.photohunt.utils.ButtonBGOnTouchListener;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Settings;
@@ -34,7 +35,7 @@ import ru.neverdark.photohunt.utils.ToastException;
  */
 public class EditProfileFragment extends UfoFragment{
 
-    private RestService.User mUserData;
+    private User mUserData;
     private View mView;
     private Context mContext;
 
@@ -59,7 +60,7 @@ public class EditProfileFragment extends UfoFragment{
         mRemoveButton.setOnClickListener(new RemoveProfileListener());
     }
 
-    public static EditProfileFragment getInstance(RestService.User userData) {
+    public static EditProfileFragment getInstance(User userData) {
         EditProfileFragment fragment = new EditProfileFragment();
         fragment.mUserData = userData;
         return fragment;
@@ -120,7 +121,7 @@ public class EditProfileFragment extends UfoFragment{
                 password = null;
             }
 
-            RestService.User sendData = new RestService.User();
+            User sendData = new User();
             sendData.display_name = displayName;
             sendData.insta = insta;
             sendData.password = password;
@@ -180,9 +181,9 @@ public class EditProfileFragment extends UfoFragment{
             /**
              * Обработчик удаления пользователя
              */
-            private class DeleteUserListener implements Callback<RestService.User> {
+            private class DeleteUserListener implements Callback<User> {
                 @Override
-                public void success(RestService.User user, Response response) {
+                public void success(User user, Response response) {
                     SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.clear();

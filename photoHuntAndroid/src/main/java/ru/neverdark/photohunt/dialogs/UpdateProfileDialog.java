@@ -8,8 +8,7 @@ import android.widget.EditText;
 import ru.neverdark.abs.CancelClickListener;
 import ru.neverdark.abs.UfoDialogFragment;
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService.User;
-import ru.neverdark.photohunt.utils.Log;
+import ru.neverdark.photohunt.rest.data.User;
 
 public class UpdateProfileDialog extends UfoDialogFragment {
     @Override

@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Goods;
 import ru.neverdark.photohunt.utils.Common;
 
-public class GoodsAdapter extends ArrayAdapter<RestService.Goods> {
+public class GoodsAdapter extends ArrayAdapter<Goods> {
     private final Context mContext;
     private final int mResource;
 
-    public GoodsAdapter(Context context, int resource, List<RestService.Goods> goods) {
+    public GoodsAdapter(Context context, int resource, List<Goods> goods) {
         super(context, resource, goods);
         mContext = context;
         mResource = resource;
@@ -49,7 +49,7 @@ public class GoodsAdapter extends ArrayAdapter<RestService.Goods> {
         }
 
 
-        RestService.Goods goods = getItem(position);
+        Goods goods = getItem(position);
         String price = String.format(Locale.US, "%d %s", goods.price_money, Common.declensionByNumber(goods.price_money, mContext.getResources().getStringArray(R.array.money)));
 
         holder.mGoodsName.setText(goods.name);

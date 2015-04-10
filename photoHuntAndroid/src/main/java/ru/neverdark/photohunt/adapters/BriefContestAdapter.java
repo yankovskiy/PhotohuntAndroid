@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
 import ru.neverdark.photohunt.utils.ImageOnTouchListener;
 
-public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
+public class BriefContestAdapter extends ArrayAdapter<Contest>{
 
     private final Context mContext;
-    private final List<RestService.Contest> mObjects;
+    private final List<Contest> mObjects;
     private final int mResource;
     private OnBriefCardClickListener mCallback;
 
@@ -36,18 +36,18 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
 
     public interface OnBriefCardClickListener {
         public void enterToContest(long contestId);
-        public void onMoreButton(RestService.Contest contest);
+        public void onMoreButton(Contest contest);
     }
 
     public void setCallback(OnBriefCardClickListener callback) {
         mCallback = callback;
     }
 
-    public BriefContestAdapter(Context context, List<RestService.Contest> contests) {
+    public BriefContestAdapter(Context context, List<Contest> contests) {
         this(context, R.layout.brief_contest_list_item, contests);
     }
 
-    private BriefContestAdapter(Context context, int resource, List<RestService.Contest> contests) {
+    private BriefContestAdapter(Context context, int resource, List<Contest> contests) {
         super(context, resource, contests);
         mContext = context;
         mObjects = contests;
@@ -78,7 +78,7 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
             holder = (RowHolder) row.getTag();
         }
 
-        RestService.Contest contest = getItem(position);
+        Contest contest = getItem(position);
         String subject = contest.subject;
         String author = String.format("%s: %s", mContext.getString(R.string.author), contest.display_name);
         String openDate = String.format("%s: %s", mContext.getString(R.string.open_date), contest.open_date);
@@ -95,13 +95,13 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
 
         String enterText = null;
         switch (contest.status) {
-            case RestService.Contest.STATUS_OPEN:
+            case Contest.STATUS_OPEN:
                 enterText = mContext.getString(R.string.take_part);
                 break;
-            case RestService.Contest.STATUS_VOTES:
+            case Contest.STATUS_VOTES:
                 enterText = mContext.getString(R.string.vote);
                 break;
-            case RestService.Contest.STATUS_CLOSE:
+            case Contest.STATUS_CLOSE:
                 enterText = mContext.getString(R.string.view);
         }
 
@@ -118,13 +118,13 @@ public class BriefContestAdapter extends ArrayAdapter<RestService.Contest>{
     private class ButtonClickListener implements View.OnClickListener {
 
         private final long mId;
-        private RestService.Contest mContest;
+        private Contest mContest;
 
         public ButtonClickListener(long id) {
             mId = id;
         }
 
-        public ButtonClickListener(RestService.Contest contest) {mId = 0L; mContest = contest;}
+        public ButtonClickListener(Contest contest) {mId = 0L; mContest = contest;}
 
         @Override
         public void onClick(View v) {

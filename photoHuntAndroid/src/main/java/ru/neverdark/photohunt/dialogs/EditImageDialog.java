@@ -8,13 +8,12 @@ import android.widget.EditText;
 import ru.neverdark.abs.CancelClickListener;
 import ru.neverdark.abs.UfoDialogFragment;
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.utils.Log;
+import ru.neverdark.photohunt.rest.data.Image;
 import ru.neverdark.photohunt.utils.ToastException;
 
 public class EditImageDialog extends UfoDialogFragment {
     private EditText mSubject;
-    private RestService.Image mImage;
+    private Image mImage;
 
     private class PositiveClickListener implements DialogInterface.OnClickListener {
 
@@ -38,7 +37,7 @@ public class EditImageDialog extends UfoDialogFragment {
     }
 
     public interface OnPositiveClickListener {
-        public void onPositiveClickHandler(RestService.Image image);
+        public void onPositiveClickHandler(Image image);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class EditImageDialog extends UfoDialogFragment {
         mSubject.setText(mImage.subject);
     }
 
-    public void setImage(RestService.Image image) {
+    public void setImage(Image image) {
         mImage = image;
     }
 

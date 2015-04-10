@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Stats;
 
 /**
  * Адаптер для статистики по очкам
@@ -20,7 +20,7 @@ public class UserStatsAdapter extends BaseAdapter {
     private final List<UserStatsItem> mItems;
     private final Context mContext;
 
-    public UserStatsAdapter(Context context, RestService.Stats data) {
+    public UserStatsAdapter(Context context, Stats data) {
         mItems = new ArrayList<>();
         mContext = context;
 

@@ -25,6 +25,9 @@ import ru.neverdark.photohunt.adapters.MyItemsAdapter;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Goods;
+import ru.neverdark.photohunt.rest.data.Item;
+import ru.neverdark.photohunt.rest.data.ShopData;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
@@ -105,7 +108,7 @@ public class ShopFragment extends UfoFragment {
             switch (parent.getId()) {
                 case R.id.shop_shop_tab:
                     // TODO сделать проверку на баланс, отображать диалог подтверждения только если денег достаточно
-                    RestService.Goods goods = (RestService.Goods) mShopList.getAdapter().getItem(position);
+                    Goods goods = (Goods) mShopList.getAdapter().getItem(position);
                     ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
                     dialog.setTitle(R.string.confirm_buy_title);
                     dialog.setMessage(goods.name);
@@ -113,7 +116,7 @@ public class ShopFragment extends UfoFragment {
                     dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
                     break;
                 case R.id.shop_myitems_tab:
-                    RestService.Item item = (RestService.Item) mMyItemsList.getAdapter().getItem(position);
+                    Item item = (Item) mMyItemsList.getAdapter().getItem(position);
                     // TODO что делать с выбранными предметами в своих покупках
                     break;
             }
@@ -140,7 +143,7 @@ public class ShopFragment extends UfoFragment {
         }
     }
 
-    private class GetShopListener extends CallbackHandler<RestService.ShopData> {
+    private class GetShopListener extends CallbackHandler<ShopData> {
         public GetShopListener(View view) {
             super(view, R.id.shop_hide_when_loading, R.id.shop_loading_progress);
         }
@@ -170,7 +173,7 @@ public class ShopFragment extends UfoFragment {
         }
 
         @Override
-        public void success(RestService.ShopData data, Response response) {
+        public void success(ShopData data, Response response) {
             if (data != null) {
                 if (data.shop_items != null) {
                     GoodsAdapter goodsAdapter = new GoodsAdapter(mContext, R.layout.shop_goods_list_item, data.shop_items);
@@ -192,9 +195,9 @@ public class ShopFragment extends UfoFragment {
 
     private class ConfirmPurchaseListener implements OnCallback, ConfirmDialog.OnPositiveClickListener {
 
-        private final RestService.Goods mGoods;
+        private final Goods mGoods;
 
-        public ConfirmPurchaseListener(RestService.Goods goods) {
+        public ConfirmPurchaseListener(Goods goods) {
             this.mGoods = goods;
         }
         @Override
@@ -219,24 +222,24 @@ public class ShopFragment extends UfoFragment {
     }
 
     private class BuyItemListener implements Callback<Void> {
-        private final RestService.Goods mGoods;
+        private final Goods mGoods;
 
-        public BuyItemListener(RestService.Goods goods) {
+        public BuyItemListener(Goods goods) {
             this.mGoods = goods;
         }
 
         @Override
         public void success(Void data, Response response) {
-            RestService.Item item = new RestService.Item(this.mGoods);
+            Item item = new Item(this.mGoods);
             MyItemsAdapter adapter = (MyItemsAdapter) mMyItemsList.getAdapter();
             if (adapter == null) {
-                List<RestService.Item> items = new ArrayList<>();
+                List<Item> items = new ArrayList<>();
                 items.add(item);
                 adapter = new MyItemsAdapter(mContext, R.layout.shop_myitems_list_item, items);
                 mMyItemsList.setAdapter(adapter);
             } else {
                 // Если уже есть купленный предмет, увеличиваем количество
-                RestService.Item item1 = adapter.getItemByServiceName(this.mGoods.service_name);
+                Item item1 = adapter.getItemByServiceName(this.mGoods.service_name);
                 if (item1 != null) {
                     item1.count++;
                 } else {
@@ -248,7 +251,7 @@ public class ShopFragment extends UfoFragment {
 
             // если купили аватар
             // аватар вечный, вторая покупка не требуется, убираем из списка магазина
-            if (this.mGoods.service_name.equals(RestService.Item.AVATAR)) {
+            if (this.mGoods.service_name.equals(Item.AVATAR)) {
                 GoodsAdapter goodsAdapter = (GoodsAdapter) mShopList.getAdapter();
                 goodsAdapter.remove(this.mGoods);
                 goodsAdapter.notifyDataSetChanged();

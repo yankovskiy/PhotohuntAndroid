@@ -23,6 +23,7 @@ import ru.neverdark.photohunt.adapters.HeaderItem;
 import ru.neverdark.photohunt.adapters.HeadersArrayAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.FavoriteUser;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
@@ -130,7 +131,7 @@ public class FavoritesUsersFragment extends UfoFragment {
                     break;
                 case ACTION_SEND_MESSAGE:
                     HeadersArrayAdapter adapter = (HeadersArrayAdapter) mFavoritesList.getAdapter();
-                    sendMessageToUser((RestService.FavoriteUser) adapter.getItem(position).getObject());
+                    sendMessageToUser((FavoriteUser) adapter.getItem(position).getObject());
                     break;
             }
         }
@@ -140,7 +141,7 @@ public class FavoritesUsersFragment extends UfoFragment {
          *
          * @param user данные о пользователе для отправки сообщения
          */
-        private void sendMessageToUser(RestService.FavoriteUser user) {
+        private void sendMessageToUser(FavoriteUser user) {
             SendMessageFragment fragment = SendMessageFragment.getInstance(user, TAG);
             openFragment(fragment, true);
         }
@@ -159,7 +160,7 @@ public class FavoritesUsersFragment extends UfoFragment {
     /**
      * Обработчик полученного списка избранных пользователей
      */
-    private class GetFavoritesUsersListener extends CallbackHandler<List<RestService.FavoriteUser>> {
+    private class GetFavoritesUsersListener extends CallbackHandler<List<FavoriteUser>> {
         public GetFavoritesUsersListener(View view) {
             super(view, R.id.favorites_users_hide_when_loading, R.id.favorites_users_loading_progress);
         }
@@ -187,16 +188,16 @@ public class FavoritesUsersFragment extends UfoFragment {
         }
 
         @Override
-        public void success(List<RestService.FavoriteUser> data, Response response) {
+        public void success(List<FavoriteUser> data, Response response) {
             if (data != null) {
                 List<Item> items = new ArrayList<>();
 
                 if (mAction == ACTION_SEND_MESSAGE) {
-                    items.add(new FavoriteUserItem(mContext, new RestService.FavoriteUser(1L, getString(R.string.system_user), null)));
+                    items.add(new FavoriteUserItem(mContext, new FavoriteUser(1L, getString(R.string.system_user), null)));
                     items.add(new HeaderItem(getString(R.string.favorite_users)));
                 }
 
-                for (RestService.FavoriteUser user : data) {
+                for (FavoriteUser user : data) {
                     items.add(new FavoriteUserItem(mContext, user));
                 }
 

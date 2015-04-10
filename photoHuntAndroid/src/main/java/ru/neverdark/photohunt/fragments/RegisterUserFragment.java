@@ -21,13 +21,14 @@ import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.dialogs.UProgressDialog;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.User;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ToastException;
 
 public class RegisterUserFragment extends UfoFragment {
     private boolean mIsLogin = false;
 
-    private class AddUserHandler implements Callback<RestService.User> {
+    private class AddUserHandler implements Callback<User> {
         private UProgressDialog mDialog;
 
         public AddUserHandler() {
@@ -56,7 +57,7 @@ public class RegisterUserFragment extends UfoFragment {
         }
 
         @Override
-        public void success(RestService.User user, Response response) {
+        public void success(User user, Response response) {
             mDialog.dismiss();
 
             SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
@@ -159,7 +160,7 @@ public class RegisterUserFragment extends UfoFragment {
             ((MainActivity) getActivity()).hideKeyboard();
 
             RestService restService = new RestService();
-            RestService.User user = new RestService.User();
+            User user = new User();
             user.display_name = displayName;
             user.user_id = userId;
             user.password = password;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
 import android.widget.EditText;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -12,8 +13,7 @@ import ru.neverdark.abs.CancelClickListener;
 import ru.neverdark.abs.UfoDialogFragment;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.RestService.User;
-import ru.neverdark.photohunt.rest.RestService.UserApi;
+import ru.neverdark.photohunt.rest.data.User;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ToastException;
 
@@ -66,7 +66,7 @@ public class ResetPasswordDialog extends UfoDialogFragment {
                 }
                 
                 RestService service = new RestService();
-                RestService.User user = new RestService.User();
+                User user = new User();
                 user.user_id = userId;
                 service.getUserApi().generateHash(user, new GenerateHashHandler());
             } catch (ToastException e) {

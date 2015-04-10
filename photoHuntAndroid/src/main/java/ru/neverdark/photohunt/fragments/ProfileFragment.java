@@ -40,6 +40,8 @@ import ru.neverdark.photohunt.dialogs.ConfirmDialog;
 import ru.neverdark.photohunt.dialogs.UploadAvatarDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.FavoriteUser;
+import ru.neverdark.photohunt.rest.data.User;
 import ru.neverdark.photohunt.utils.ButtonBGOnTouchListener;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ImageOutput;
@@ -74,7 +76,7 @@ public class ProfileFragment extends UfoFragment {
 
     private boolean mIsSelf;
     private long mUserId;
-    private RestService.User mUserData;
+    private User mUserData;
     private TextView mTitle;
     private ImageView mAvatar;
     private TextView mBalanceCountText;
@@ -310,7 +312,7 @@ public class ProfileFragment extends UfoFragment {
      *
      * @param user объект содержащий информацию о пользователе полученную от сервера
      */
-    private void updateProfileInfo(RestService.User user) {
+    private void updateProfileInfo(User user) {
 
         mTitle.setText(user.display_name);
         mBalance.setText(String.valueOf(user.balance));
@@ -475,7 +477,7 @@ public class ProfileFragment extends UfoFragment {
     /**
      * Обработчик получения профиля пользователя
      */
-    private class GetUserListener extends CallbackHandler<RestService.User> {
+    private class GetUserListener extends CallbackHandler<User> {
         public GetUserListener(View mView) {
             super(mView, R.id.profile_hide_when_loading, R.id.profile_loading_progress);
         }
@@ -502,7 +504,7 @@ public class ProfileFragment extends UfoFragment {
         }
 
         @Override
-        public void success(RestService.User user, Response response) {
+        public void success(User user, Response response) {
             Log.enter();
 
             mIsSelf = user.user_id != null && (user.user_id.equals(Settings.getUserId(mContext)));
@@ -587,7 +589,7 @@ public class ProfileFragment extends UfoFragment {
      * Открыть фрагмент для отправки сообщения
      */
     private void openSendMessageFragment() {
-        RestService.FavoriteUser user = new RestService.FavoriteUser();
+        FavoriteUser user = new FavoriteUser();
         user.fid = mUserData.id;
         user.display_name = mUserData.display_name;
         user.avatar = mUserData.avatar;

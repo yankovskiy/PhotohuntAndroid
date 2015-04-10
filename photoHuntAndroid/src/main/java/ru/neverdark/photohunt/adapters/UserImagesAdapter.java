@@ -12,13 +12,14 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Image;
 import ru.neverdark.photohunt.utils.SquaredImageView;
 
 public class UserImagesAdapter extends BaseAdapter {
-    private final List<RestService.Image> mObjects;
+    private final List<Image> mObjects;
     private final Context mContext;
 
-    public UserImagesAdapter(Context context, List<RestService.Image> images) {
+    public UserImagesAdapter(Context context, List<Image> images) {
         mContext = context;
         mObjects = images;
     }
@@ -46,7 +47,7 @@ public class UserImagesAdapter extends BaseAdapter {
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
 
-        RestService.Image image = (RestService.Image) getItem(position);
+        Image image = (Image) getItem(position);
 
         String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.getRestUrl(), image.id);
         Picasso.with(mContext).load(url).fit().tag(mContext).into(view);

@@ -24,6 +24,8 @@ import ru.neverdark.photohunt.adapters.MessagesAdapter;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Message;
+import ru.neverdark.photohunt.rest.data.Messages;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
@@ -190,7 +192,7 @@ public class MessagesFragment extends UfoFragment {
     /**
      * Обработчик загрузки сообщений с сервера
      */
-    private class GetMessagesListener extends CallbackHandler<RestService.Messages> {
+    private class GetMessagesListener extends CallbackHandler<Messages> {
         public GetMessagesListener(View view) {
             super(view, R.id.messages_hide_when_loading, R.id.messages_loading_progress);
         }
@@ -218,7 +220,7 @@ public class MessagesFragment extends UfoFragment {
         }
 
         @Override
-        public void success(RestService.Messages data, Response response) {
+        public void success(Messages data, Response response) {
             if (data != null) {
                 if (isAdded()) {
                     updateList(data);
@@ -248,7 +250,7 @@ public class MessagesFragment extends UfoFragment {
          *
          * @param data полученный список сообщений
          */
-        private void updateList(RestService.Messages data) {
+        private void updateList(Messages data) {
             MessagesAdapter inboxAdapter = new MessagesAdapter(mContext, R.layout.messages_list_item, data.inbox, true);
             mInboxList.setAdapter(inboxAdapter);
             MessagesAdapter outboxAdapter = new MessagesAdapter(mContext, R.layout.messages_list_item, data.outbox, false);
@@ -309,8 +311,8 @@ public class MessagesFragment extends UfoFragment {
                 adapter = (MessagesAdapter) mInboxList.getAdapter();
                 for (int i = adapter.getCount() - 1; i >= 0 ; i--) {
                     Log.variable("i", String.valueOf(i));
-                    RestService.Message message = adapter.getItem(i);
-                    if (message.status == RestService.Message.READ) {
+                    Message message = adapter.getItem(i);
+                    if (message.status == Message.READ) {
                         adapter.remove(message);
                     }
                 }

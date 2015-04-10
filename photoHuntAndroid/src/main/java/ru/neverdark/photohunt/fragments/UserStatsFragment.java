@@ -15,6 +15,7 @@ import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.UserStatsAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Stats;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
 
@@ -90,7 +91,7 @@ public class UserStatsFragment extends UfoFragment {
         }
     }
 
-    private class GetUserStatsListener extends CallbackHandler<RestService.Stats> {
+    private class GetUserStatsListener extends CallbackHandler<Stats> {
         public GetUserStatsListener(View view) {
             super(view, R.id.user_stats_hide_when_loading, R.id.user_stats_loading_progress);
         }
@@ -122,7 +123,7 @@ public class UserStatsFragment extends UfoFragment {
         }
 
         @Override
-        public void success(RestService.Stats data, Response response) {
+        public void success(Stats data, Response response) {
             mIsDataLoaded = true;
             bindLoadedData(data);
             super.success(data, response);
@@ -131,7 +132,7 @@ public class UserStatsFragment extends UfoFragment {
         /**
          * Маппинг загруженных данных в список
          */
-        private void bindLoadedData(RestService.Stats data) {
+        private void bindLoadedData(Stats data) {
             UserStatsAdapter adapter = new UserStatsAdapter(mContext, data);
             mStatsList.setAdapter(adapter);
         }

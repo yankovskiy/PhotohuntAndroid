@@ -1,12 +1,5 @@
 package ru.neverdark.photohunt.adapters;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import ru.neverdark.photohunt.R;
-import ru.neverdark.photohunt.rest.RestService;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +7,13 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import ru.neverdark.photohunt.R;
+import ru.neverdark.photohunt.rest.data.Contest;
 
 public class StatsAdapter extends BaseExpandableListAdapter {
     public static class ChildRecord {
@@ -146,7 +146,7 @@ public class StatsAdapter extends BaseExpandableListAdapter {
         holder.mRewards.setText(String.valueOf(record.getReward()));
         holder.mWorks.setText(String.valueOf(record.getWorks()));
 
-        if (record.getStatus() == RestService.Contest.STATUS_CLOSE) {
+        if (record.getStatus() == Contest.STATUS_CLOSE) {
             holder.mStatus.setImageResource(R.drawable.ic_lock_outline_grey600_24dp);
         } else {
             holder.mStatus.setImageResource(R.drawable.ic_lock_open_grey600_24dp);

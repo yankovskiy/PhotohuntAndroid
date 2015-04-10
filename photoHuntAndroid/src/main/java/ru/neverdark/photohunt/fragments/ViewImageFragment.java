@@ -23,6 +23,7 @@ import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Image;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ImageOnTouchListener;
 import ru.neverdark.photohunt.utils.Log;
@@ -37,10 +38,10 @@ public class ViewImageFragment extends UfoFragment {
     private TextView mContestSubject;
     private View mView;
     private Context mContext;
-    private RestService.Image mImageData;
+    private Image mImageData;
     private String mDisplayName;
 
-    public static ViewImageFragment getInstance(String displayName, RestService.Image image) {
+    public static ViewImageFragment getInstance(String displayName, Image image) {
         ViewImageFragment fragment = new ViewImageFragment();
         Bundle args = new Bundle();
         args.putSerializable(IMAGE, image);
@@ -110,7 +111,7 @@ public class ViewImageFragment extends UfoFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mImageData = (RestService.Image) getArguments().getSerializable(IMAGE);
+            mImageData = (Image) getArguments().getSerializable(IMAGE);
             mDisplayName = getArguments().getString(DISPLAY_NAME);
         }
     }
