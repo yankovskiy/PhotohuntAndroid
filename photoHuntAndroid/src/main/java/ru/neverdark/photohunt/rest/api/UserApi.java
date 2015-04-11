@@ -15,6 +15,7 @@ import retrofit.mime.TypedOutput;
 import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.rest.data.FavoriteUser;
 import ru.neverdark.photohunt.rest.data.Image;
+import ru.neverdark.photohunt.rest.data.Rating;
 import ru.neverdark.photohunt.rest.data.Stats;
 import ru.neverdark.photohunt.rest.data.User;
 
@@ -64,5 +65,5 @@ public interface UserApi {
     public Void updateUser(@Path("id") String userId, @Body User user);
 
     @GET("/user")
-    public void getRating(Callback<List<User>> callback);
+    public void getRating(Callback<Rating> callback);
 }

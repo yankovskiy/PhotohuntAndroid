@@ -11,22 +11,33 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
         android:textSize="48sp"
         android:textStyle="bold" />
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/rating_avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/rating_position"
+        android:background="@drawable/avatar_border"
+        android:src="@drawable/no_avatar" />
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="32dp">
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/rating_avatar">
 
         <TextView
             android:id="@+id/rating_list_item_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/rating_list_item_balance"

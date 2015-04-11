@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-
-import java.util.List;
+import android.widget.TabHost;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -20,7 +19,7 @@ import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.RatingAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
-import ru.neverdark.photohunt.rest.data.User;
+import ru.neverdark.photohunt.rest.data.Rating;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
@@ -30,25 +29,37 @@ public class RatingFragment extends UfoFragment {
 
     private View mView;
     private Context mContext;
-    private ListView mRatingList;
-    private Parcelable mRatingListState = null;
+    private ListView mRatingTop10List;
+    private ListView mRatingQuartList;
+    private Parcelable mRatingTop10ListState = null;
+    private Parcelable mRatingQuartListState = null;
     private boolean mIsLoaded = false;
+    private TabHost mTabHost;
+    private int mTabPosition;
+
+    public static RatingFragment getInstance() {
+        RatingFragment fragment = new RatingFragment();
+        return fragment;
+    }
 
     @Override
     public void onDestroyView() {
-        mRatingListState = mRatingList.onSaveInstanceState();
+        mTabPosition = mTabHost.getCurrentTab();
+        mRatingTop10ListState = mRatingTop10List.onSaveInstanceState();
+        mRatingQuartListState = mRatingQuartList.onSaveInstanceState();
         super.onDestroyView();
     }
 
     @Override
     public void bindObjects() {
-        mRatingList = (ListView) mView.findViewById(R.id.rating_list);
+        mRatingTop10List = (ListView) mView.findViewById(R.id.rating_top10_tab);
+        mRatingQuartList = (ListView) mView.findViewById(R.id.rating_quart_tab);
     }
 
     @Override
     public void setListeners() {
-        // TODO: вернуть отображения диалога с пользователем
-        mRatingList.setOnItemClickListener(new RatingItemClickListener());
+        mRatingTop10List.setOnItemClickListener(new RatingItemClickListener());
+        mRatingQuartList.setOnItemClickListener(new RatingItemClickListener());
     }
 
     @Override
@@ -58,7 +69,25 @@ public class RatingFragment extends UfoFragment {
         bindObjects();
         setListeners();
         getActivity().setTitle(R.string.rating);
+        initTabs();
         return mView;
+    }
+
+    private void initTabs() {
+        mTabHost = (TabHost) mView.findViewById(R.id.rating_tabHost);
+        mTabHost.setup();
+
+        TabHost.TabSpec tabSpec;
+
+        tabSpec = mTabHost.newTabSpec("quart");
+        tabSpec.setIndicator(getString(R.string.quart));
+        tabSpec.setContent(R.id.rating_quart_tab);
+        mTabHost.addTab(tabSpec);
+
+        tabSpec = mTabHost.newTabSpec("top10");
+        tabSpec.setIndicator(getString(R.string.global));
+        tabSpec.setContent(R.id.rating_top10_tab);
+        mTabHost.addTab(tabSpec);
     }
 
     @Override
@@ -73,12 +102,7 @@ public class RatingFragment extends UfoFragment {
         }
     }
 
-    public static RatingFragment getInstance() {
-        RatingFragment fragment = new RatingFragment();
-        return fragment;
-    }
-
-    private class GetRatingHandler extends CallbackHandler<List<User>> {
+    private class GetRatingHandler extends CallbackHandler<Rating> {
 
         public GetRatingHandler(View view) {
             super(view, R.id.rating_hide_when_loading, R.id.rating_loading_progress);
@@ -104,13 +128,28 @@ public class RatingFragment extends UfoFragment {
         }
 
         @Override
-        public void success(List<User> data, Response response) {
+        public void success(Rating data, Response response) {
             Log.enter();
             if (data != null) {
-                RatingAdapter adapter = new RatingAdapter(mContext, R.layout.rating_list_item, data);
-                mRatingList.setAdapter(adapter);
-                if (mRatingListState != null) {
-                    mRatingList.onRestoreInstanceState(mRatingListState);
+                if (data.top10 != null) {
+                    RatingAdapter top10adapter = new RatingAdapter(mContext, R.layout.rating_list_item, data.top10);
+                    mRatingTop10List.setAdapter(top10adapter);
+                    if (mRatingTop10ListState != null) {
+                        mRatingTop10List.onRestoreInstanceState(mRatingTop10ListState);
+                    }
+                }
+
+                if (data.quart != null) {
+                    RatingAdapter quartadapter = new RatingAdapter(mContext, R.layout.rating_list_item, data.quart);
+                    mRatingQuartList.setAdapter(quartadapter);
+
+                    if (mRatingQuartListState != null) {
+                        mRatingQuartList.onRestoreInstanceState(mRatingQuartListState);
+                    }
+                }
+
+                if (mTabPosition != 0) {
+                    mTabHost.setCurrentTab(mTabPosition);
                 }
             } else {
                 Common.showMessage(mContext, R.string.empty_rating);

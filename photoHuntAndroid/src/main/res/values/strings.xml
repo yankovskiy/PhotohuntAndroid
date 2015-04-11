@@ -82,8 +82,9 @@
     <string name="subject_help_message">Если вы победите в текущем конкурсе, то станете автором следующего. Укажите его тему:</string>
     <string name="hint">Подсказка</string>
     <string name="user_profile">Профиль пользователя</string>
-    <string name="top10">Tоп 10</string>
-    <string name="rating_count">Количество очков</string>
+    <string name="global">Глобальный</string>
+    <string name="quart">Квартальный</string>
+    <string name="rating_count">Очков</string>
     <string name="in_social">Мы в соцсетях</string>
     <string name="edit_image_subject_title">Новая тема</string>
     <string name="subject_changed">Тема изменена</string>

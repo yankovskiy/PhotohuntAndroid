@@ -4,19 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/rating_title"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/gray_bg"
-        android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:text="@string/top10"
-        android:textColor="@color/material_grey_50"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
     <RelativeLayout
         android:id="@+id/rating_loading_progress"
         android:layout_width="match_parent"
@@ -35,10 +22,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/rating_list"
+        <TabHost
+            android:id="@+id/rating_tabHost"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/gray_bg"
+                    android:showDividers="none"></TabWidget>
+
+                <FrameLayout
+                    android:id="@android:id/tabcontent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ListView
+                        android:id="@+id/rating_quart_tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/light_grey" />
+
+                    <ListView
+                        android:id="@+id/rating_top10_tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/light_grey" />
+
+                </FrameLayout>
+            </LinearLayout>
+        </TabHost>
+
     </RelativeLayout>
 
 </LinearLayout>
