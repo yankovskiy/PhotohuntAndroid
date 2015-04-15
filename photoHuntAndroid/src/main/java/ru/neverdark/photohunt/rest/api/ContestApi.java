@@ -14,6 +14,7 @@ import retrofit.http.Path;
 import retrofit.mime.TypedOutput;
 import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.rest.data.ContestDetail;
+import ru.neverdark.photohunt.rest.data.Exif;
 import ru.neverdark.photohunt.rest.data.Image;
 
 public interface ContestApi {
@@ -35,7 +36,10 @@ public interface ContestApi {
     @Multipart
     @POST("/contest/{id}")
     public void addImageToContest(@Path("id") long id, @Part("subject") String subject,
-                                  @Part("image") TypedOutput image, Callback<Void> callback);
+                                  @Part("image") TypedOutput image,
+                                  @Part("exif") Exif exif,
+                                  @Part("description") String description,
+                                  Callback<Void> callback);
 
     @PUT("/contest/{id}")
     public void voteForContest(@Path("id") long id, @Body Image image, Callback<Void> callback);
