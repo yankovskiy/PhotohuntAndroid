@@ -72,7 +72,7 @@
     <string name="insta">Instagram</string>
     <string name="rate">Оценить приложение</string>
     <string name="feedback">Обратная связь</string>
-    <string name="send_mail">Отправить Email</string>
+    <string name="send_mail">Написать письмо автору</string>
     <string name="author_email">artemyankovskiy@gmail.com</string>
     <string name="choose_email_app">Выберите приложение для отправки Email</string>
     <string name="hidden">Скрыто</string>
@@ -157,4 +157,9 @@
     <string name="remove_messages">Удалить сообщения</string>
     <string name="remove_inbox_messages_confirm">Удалить прочитанные сообщения?</string>
     <string name="remove_outbox_messages_confirm">Очистить папку \"Исходящие\"?</string>
+    <string name="information">Информация</string>
+    <string name="version">Версия</string>
+    <string name="licenses">Лицензии</string>
+    <string name="last_changes">Последние изменения</string>
+    <string name="rate_on_market">Оставить отзыв в Google Play</string>
 </resources>
