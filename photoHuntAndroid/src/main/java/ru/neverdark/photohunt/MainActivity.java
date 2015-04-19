@@ -27,6 +27,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
 
+import retrofit.RetrofitError;
 import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
@@ -185,10 +186,14 @@ public class MainActivity extends UfoFragmentActivity {
 
                     mRegid = mGcm.register(SENDER_ID);
 
-                    sendRegistrationIdToServer();
+                    try {
+                        sendRegistrationIdToServer();
 
-                    // Persist the regID - no need to register again.
-                    Settings.storeRegistrationId(mContext, mRegid);
+                        // Persist the regID - no need to register again.
+                        Settings.storeRegistrationId(mContext, mRegid);
+                    } catch (RetrofitError e) {
+                        Log.message(e.getMessage());
+                    }
                 } catch (IOException ex) {
                     Log.message(ex.getMessage());
                 }
