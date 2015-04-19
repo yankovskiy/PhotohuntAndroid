@@ -12,6 +12,7 @@ public class BasicInterceptor implements RequestInterceptor {
     @Override
     public void intercept(RequestFacade requestFacade) {
         Log.enter();
+        requestFacade.addHeader("User-Agent", SingletonHelper.getInstance().getUserAgent());
         requestFacade.addHeader("Content-Version", String.valueOf(SingletonHelper.getInstance().getVersion()));
     }
 }
