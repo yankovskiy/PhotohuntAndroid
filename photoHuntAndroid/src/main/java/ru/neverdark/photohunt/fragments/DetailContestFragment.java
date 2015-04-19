@@ -360,7 +360,7 @@ public class DetailContestFragment extends UfoFragment {
             galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
 
             // Chooser of filesystem options.
-            final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+            final Intent chooserIntent = Intent.createChooser(galleryIntent, getString(R.string.choose_source));
 
             // Add the camera options.
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));

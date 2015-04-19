@@ -1,8 +1,6 @@
 package ru.neverdark.photohunt.utils;
 
-import android.content.Context;
 import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Build;
 
 import java.io.IOException;
@@ -13,32 +11,10 @@ import ru.neverdark.photohunt.rest.data.Exif;
  * Класс для чтения EXIF-информации из фотографий
  */
 public class ExifReader {
-    private final Context mContext;
     private final String mFileName;
 
-    public ExifReader(Context context, Uri uri) {
-        mContext = context;
-        mFileName = uriToFilename(uri);
-    }
-
-    public ExifReader(Context context, String fileName) {
-        mContext = context;
+    public ExifReader(String fileName) {
         mFileName = fileName;
-    }
-
-    private String uriToFilename(Uri uri) {
-        String path = null;
-
-        if (Build.VERSION.SDK_INT < 11) {
-            path = RealPathUtil.getRealPathFromURI_BelowAPI11(mContext, uri);
-        } else if (Build.VERSION.SDK_INT < 19) {
-            path = RealPathUtil.getRealPathFromURI_API11to18(mContext, uri);
-        } else {
-            path = RealPathUtil.getRealPathFromURI_API19(mContext, uri);
-        }
-
-        Log.variable("path", path);
-        return path;
     }
 
     public Exif getMetadata() {

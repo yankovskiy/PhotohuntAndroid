@@ -46,6 +46,7 @@ public class UploadImageFragment extends UfoFragment {
     private EditText mNewSubject;
     private Uri mOutputFileUri;
     private String mFileName;
+    private Exif mExif;
 
     public UploadImageFragment(Uri uri, long contestId) {
         mUri = uri;
@@ -72,6 +73,23 @@ public class UploadImageFragment extends UfoFragment {
 
     private void loadImage() {
         try {
+            File file = new File(mFileName);
+            if (!file.exists()) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+
+                InputStream in = mContext.getContentResolver().openInputStream(mUri);
+                OutputStream out = new FileOutputStream(file);
+
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+
+                in.close();
+                out.close();
+            }
+
+            mExif = new ExifReader(mFileName).getMetadata();
             Bitmap bitmap = Common.resizeBitmap(Common.decodeSampledBitmapFromUri(mContext, mUri, 1024), 1024);
 
             int pixels = (int) (mContext.getResources().getDisplayMetrics().density * 32);
@@ -81,7 +99,6 @@ public class UploadImageFragment extends UfoFragment {
 
             mImage.setImageBitmap(Common.resizeBitmap(Common.decodeSampledBitmapFromUri(mContext, mUri, width), width));
 
-            File file = new File(mFileName);
             mOutputFileUri = Uri.fromFile(file);
             OutputStream outStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outStream);
@@ -135,12 +152,11 @@ public class UploadImageFragment extends UfoFragment {
             String description = null;
 
             try {
-                Exif exif = new ExifReader(mContext, mUri).getMetadata();
                 String user = Settings.getUserId(mContext);
                 String pass = Settings.getPassword(mContext);
                 RestService service = new RestService(user, pass);
                 Output image = new Output(mContext, mOutputFileUri);
-                service.getContestApi().addImageToContest(mContestId, newSubject, image, exif, description,
+                service.getContestApi().addImageToContest(mContestId, newSubject, image, mExif, description,
                         new ConfirmImageHandler(mView));
             } catch (IOException e) {
                 // TODO Auto-generated catch block
