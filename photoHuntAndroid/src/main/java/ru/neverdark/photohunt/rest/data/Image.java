@@ -16,6 +16,9 @@ public class Image implements Serializable {
     public boolean is_editable;
     public boolean is_voted;
     public String contest_subject;
+    public Exif exif;
+    public String avatar;
+    public String description;
 
     @Override
     public String toString() {

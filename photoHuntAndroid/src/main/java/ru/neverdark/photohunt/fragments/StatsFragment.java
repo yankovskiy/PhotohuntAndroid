@@ -68,7 +68,7 @@ public class StatsFragment extends UfoFragment {
             getActivity().setTitle(R.string.stats);
         } else {
             getActivity().setTitle(R.string.wins_list);
-            ((MainActivity)getActivity()).getSupportActionBar().setSubtitle(mDisplayName);
+            ((MainActivity) getActivity()).getSupportActionBar().setSubtitle(mDisplayName);
         }
         return mView;
     }
@@ -94,7 +94,7 @@ public class StatsFragment extends UfoFragment {
     @Override
     public void onDetach() {
         if (mUserId != 0L) {
-            ((MainActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+            ((MainActivity) getActivity()).getSupportActionBar().setSubtitle(null);
         }
         super.onDetach();
     }
@@ -126,7 +126,7 @@ public class StatsFragment extends UfoFragment {
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                     int childPosition, long id) {
-            DetailContestFragment fragment = new DetailContestFragment(id);
+            Detail2ContestFragment fragment = Detail2ContestFragment.getInstance(id);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager()
                     .beginTransaction();
             transaction.replace(R.id.main_container, fragment);

@@ -6,6 +6,7 @@ import java.util.Locale;
 * Created by ufo on 10.04.15.
 */
 public class Contest {
+    public final static int MAX_VOTE_COUNT = 3;
     public final static int STATUS_CLOSE = 0;
     public final static int STATUS_OPEN = 1;
     public final static int STATUS_VOTES = 2;
@@ -20,6 +21,7 @@ public class Contest {
     public String display_name;
     public int works;
     public long prev_id;
+    public String avatar;
 
     @Override
     public String toString() {

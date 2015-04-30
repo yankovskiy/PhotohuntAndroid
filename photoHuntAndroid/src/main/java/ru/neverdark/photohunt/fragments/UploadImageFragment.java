@@ -1,6 +1,5 @@
 package ru.neverdark.photohunt.fragments;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,9 +25,11 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.mime.TypedOutput;
 import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.rest.data.Exif;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ExifReader;
@@ -35,22 +37,29 @@ import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.ToastException;
 
-@SuppressLint("ValidFragment")
 public class UploadImageFragment extends UfoFragment {
 
     private View mView;
     private Context mContext;
     private Uri mUri;
-    private ImageView mImage;
-    private long mContestId;
     private EditText mNewSubject;
     private Uri mOutputFileUri;
     private String mFileName;
     private Exif mExif;
+    private Contest mContest;
+    private EditText mDescription;
 
-    public UploadImageFragment(Uri uri, long contestId) {
-        mUri = uri;
-        mContestId = contestId;
+    public static UploadImageFragment getInstance(Uri uri, Contest contest) {
+        UploadImageFragment fragment = new UploadImageFragment();
+        fragment.mUri = uri;
+        fragment.mContest = contest;
+        return fragment;
+    }
+
+    @Override
+    public void onDestroyView() {
+        ((MainActivity) getActivity()).getActionBarLayout(false);
+        super.onDestroyView();
     }
 
     /*
@@ -67,11 +76,23 @@ public class UploadImageFragment extends UfoFragment {
         setHasOptionsMenu(true);
         bindObjects();
         setListeners();
-        loadImage();
+        updateActionBar(loadImage());
         return mView;
     }
 
-    private void loadImage() {
+    private void updateActionBar(Bitmap image) {
+        View view = ((MainActivity) getActivity()).getActionBarLayout(true);
+        TextView title = (TextView) view.findViewById(R.id.custom_actionbar_title);
+        TextView contestSubject = (TextView) view.findViewById(R.id.custom_actionbar_subtitle);
+        ImageView imageThumb = (ImageView) view.findViewById(R.id.custom_actionbar_image);
+
+        title.setText(R.string.image_upload);
+        contestSubject.setText(mContest.subject);
+        imageThumb.setImageBitmap(image);
+    }
+
+    private Bitmap loadImage() {
+        Bitmap bmp = null;
         try {
             File file = new File(mFileName);
             if (!file.exists()) {
@@ -94,10 +115,10 @@ public class UploadImageFragment extends UfoFragment {
 
             int pixels = (int) (mContext.getResources().getDisplayMetrics().density * 32);
             Log.variable("pixels", String.valueOf(pixels));
-            int width = mContext.getResources().getDisplayMetrics().widthPixels - pixels;
+            int width = (int) mContext.getResources().getDimension(R.dimen.min_avatar_size);
             Log.variable("width", String.valueOf(width));
 
-            mImage.setImageBitmap(Common.resizeBitmap(Common.decodeSampledBitmapFromUri(mContext, mUri, width), width));
+            bmp = Common.resizeBitmap(Common.decodeSampledBitmapFromUri(mContext, mUri, width), width);
 
             mOutputFileUri = Uri.fromFile(file);
             OutputStream outStream = new FileOutputStream(file);
@@ -112,12 +133,14 @@ public class UploadImageFragment extends UfoFragment {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        return bmp;
     }
 
     @Override
     public void bindObjects() {
-        mImage = (ImageView) mView.findViewById(R.id.upload_image);
         mNewSubject = (EditText) mView.findViewById(R.id.upload_new_subject);
+        mDescription = (EditText) mView.findViewById(R.id.upload_image_description);
     }
 
     @Override
@@ -148,15 +171,14 @@ public class UploadImageFragment extends UfoFragment {
                 throw new ToastException(R.string.error_empty_subject);
             }
 
-            // TODO
-            String description = null;
+            String description = mDescription.getText().toString();
 
             try {
                 String user = Settings.getUserId(mContext);
                 String pass = Settings.getPassword(mContext);
                 RestService service = new RestService(user, pass);
                 Output image = new Output(mContext, mOutputFileUri);
-                service.getContestApi().addImageToContest(mContestId, newSubject, image, mExif, description,
+                service.getContestApi().addImageToContest(mContest.id, newSubject, image, mExif, description,
                         new ConfirmImageHandler(mView));
             } catch (IOException e) {
                 // TODO Auto-generated catch block

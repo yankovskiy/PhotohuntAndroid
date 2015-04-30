@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
+    <RelativeLayout
+        android:id="@+id/detail2_contest_loading_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/detail2_contest_hide_when_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/detail2_contest_bottom"
+        android:padding="4dp">
+
+        <GridView
+            android:id="@+id/detail2_contest_images_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:horizontalSpacing="4dp"
+            android:listSelector="@null"
+            android:numColumns="@integer/column_count"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="none"
+            android:verticalSpacing="4dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/detail2_contest_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/material_blue_grey_500"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/detail2_contest_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/grey500_button"
+            android:padding="4dp"
+            android:src="@drawable/ic_camera_alt_white_36dp" />
+    </RelativeLayout>
+</RelativeLayout>

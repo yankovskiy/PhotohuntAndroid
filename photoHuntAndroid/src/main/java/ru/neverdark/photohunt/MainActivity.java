@@ -164,9 +164,17 @@ public class MainActivity extends UfoFragmentActivity {
         }
         getSupportFragmentManager().addOnBackStackChangedListener(new BackStackChangedListener());
         getSupportActionBar().setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setCustomView(R.layout.progress);
-        ProgressBar progressBar = (ProgressBar) getSupportActionBar().getCustomView();
-        progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+    }
+
+    public View getActionBarLayout(boolean enabled) {
+        View view = null;
+        getSupportActionBar().setCustomView(null);
+        if (enabled) {
+            getSupportActionBar().setCustomView(R.layout.custom_actionbar);
+            view = getSupportActionBar().getCustomView();
+        }
+
+        return view;
     }
 
     /**
@@ -224,7 +232,13 @@ public class MainActivity extends UfoFragmentActivity {
 
     @Override
     public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
-        getSupportActionBar().getCustomView().setVisibility(visible ? View.VISIBLE : View.GONE);
+        if (visible) {
+            getSupportActionBar().setCustomView(R.layout.progress);
+            ProgressBar progressBar = (ProgressBar) getSupportActionBar().getCustomView();
+            progressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        } else {
+            getSupportActionBar().setCustomView(null);
+        }
     }
 
     /**

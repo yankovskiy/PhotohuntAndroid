@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/detail_contest_refresh"
-        android:icon="@drawable/ic_autorenew_white_24dp"
-        app:showAsAction="ifRoom|collapseActionView"
-        android:title="@string/refresh">
-    </item>
-
+        android:id="@+id/view_prev_contest"
+        android:title="@string/prev_contest"
+        app:showAsAction="never" />
 </menu>

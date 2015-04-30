@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.data.Image;
+import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.SquaredImageView;
 
 public class UserImagesAdapter extends BaseAdapter {

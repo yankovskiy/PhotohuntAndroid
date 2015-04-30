@@ -58,16 +58,23 @@
                 android:layout_height="wrap_content"
                 android:text="@string/upload_image_attention"
                 android:textSize="12sp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp" />
 
         </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/upload_image"
+        <EditText
+            android:gravity="top"
+            android:hint="@string/photo_description"
+            android:id="@+id/upload_image_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/upload_subject_block"
-            android:layout_marginTop="16dp" />
+            android:inputType="textLongMessage|textMultiLine"
+            android:paddingBottom="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="16dp"
+            android:textSize="14sp" />
     </RelativeLayout>
 
 </LinearLayout>

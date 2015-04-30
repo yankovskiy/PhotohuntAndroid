@@ -101,7 +101,7 @@ public class BriefContestFragment extends UfoFragment {
     }
 
     private void showContest(long contestId) {
-        DetailContestFragment fragment = new DetailContestFragment(contestId);
+        Detail2ContestFragment fragment = Detail2ContestFragment.getInstance(contestId);
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);

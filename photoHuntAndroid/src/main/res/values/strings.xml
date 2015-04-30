@@ -14,7 +14,7 @@
     <string name="lost_password">ЗАБЫЛИ ПАРОЛЬ?</string>
     <string name="registering">Регистрация…</string>
     <string name="please_wait">Пожалуйста подождите…</string>
-    <string name="image_removed">Изображение удалено</string>
+    <string name="image_removed">Фотография удалена</string>
     <string name="error_user_already_exists">Пользователь с таким email уже есть</string>
     <string name="error_network_problem">Проблема с сетью</string>
     <string name="error_unexpected_error">Непредвиденная ошибка</string>
@@ -75,7 +75,7 @@
     <string name="send_mail">Написать письмо автору</string>
     <string name="author_email">artemyankovskiy@gmail.com</string>
     <string name="choose_email_app">Выберите приложение для отправки Email</string>
-    <string name="hidden">Скрыто</string>
+    <string name="hidden">*****</string>
     <string name="refresh">Обновить</string>
     <string name="remaining_votes">Осталось голосов</string>
     <string name="empty_rating">Рейтинг пуст</string>
@@ -162,4 +162,9 @@
     <string name="licenses">Лицензии</string>
     <string name="last_changes">Последние изменения</string>
     <string name="rate_on_market">Оставить отзыв в Google Play</string>
+    <string name="view_image_info">Информация о снимке</string>
+    <string name="edit_image_subject">Изменить тему конкурса</string>
+    <string name="remove_image">Удалить фотографию</string>
+    <string name="image_upload">Загрузка фотографии</string>
+    <string name="photo_description">Описание снимка (не обязательно)</string>
 </resources>

@@ -109,7 +109,7 @@ public class DetailContestFragment extends UfoFragment {
                 }
 
                 Log.variable("uri", selectedImageUri.getPath());
-                UploadImageFragment fragment = new UploadImageFragment(selectedImageUri, mContestId);
+                UploadImageFragment fragment = UploadImageFragment.getInstance(selectedImageUri, mContest);
                 fragment.setFileName(outputFileUri.getPath());
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_container, fragment);
@@ -149,9 +149,7 @@ public class DetailContestFragment extends UfoFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.detail_contest_refresh:
-                refresh();
-                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
