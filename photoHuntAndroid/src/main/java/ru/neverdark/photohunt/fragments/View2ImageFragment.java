@@ -35,6 +35,7 @@ import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.rest.data.Image;
 import ru.neverdark.photohunt.utils.Common;
+import ru.neverdark.photohunt.utils.CustomViewPager;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 
@@ -42,12 +43,13 @@ public class View2ImageFragment extends UfoFragment {
     private Image mImage;
     private View mView;
     private Context mContext;
-    private ViewPager mViewPager;
+    private CustomViewPager mViewPager;
     private Data mData;
 
     public static View2ImageFragment getInstance(Data data) {
         View2ImageFragment fragment = new View2ImageFragment();
         fragment.mData = data;
+
         return fragment;
     }
 
@@ -91,7 +93,7 @@ public class View2ImageFragment extends UfoFragment {
 
     @Override
     public void bindObjects() {
-        mViewPager = (ViewPager) mView.findViewById(R.id.pager);
+        mViewPager = (CustomViewPager) mView.findViewById(R.id.pager);
         mViewPager.setAdapter(new PhotoPagerAdapter(getChildFragmentManager()));
     }
 
@@ -212,7 +214,7 @@ public class View2ImageFragment extends UfoFragment {
         @Override
         public Fragment getItem(int position) {
             ViewSingleImageFragment fragment = ViewSingleImageFragment.getInstance(mData.getImage(position), mData.getContestStatus());
-            fragment.setCallback(new VoteClickListener());
+            fragment.setCallback(new ButtonsClickListener());
             return fragment;
         }
 
@@ -221,7 +223,7 @@ public class View2ImageFragment extends UfoFragment {
             return mData.getImages().size();
         }
 
-        private class VoteClickListener implements ViewSingleImageFragment.OnVoteListener {
+        private class ButtonsClickListener implements ViewSingleImageFragment.OnButtonsClickListener {
             @Override
             public void incVote() {
                 mData.incVoteCount();
@@ -232,6 +234,11 @@ public class View2ImageFragment extends UfoFragment {
             public void decVote() {
                 mData.decVoteCount();
                 updateVoteCount();
+            }
+
+            @Override
+            public void setPagingEnabled(boolean enabled) {
+                mViewPager.setPagingEnabled(enabled);
             }
 
             private void updateVoteCount() {

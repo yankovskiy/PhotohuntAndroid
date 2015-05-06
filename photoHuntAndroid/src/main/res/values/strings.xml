@@ -167,4 +167,13 @@
     <string name="remove_image">Удалить фотографию</string>
     <string name="image_upload">Загрузка фотографии</string>
     <string name="photo_description">Описание снимка (не обязательно)</string>
+    <string name="about_image">О снимке</string>
+    <string name="image_description">О фотографии</string>
+    <string name="exif">Exif</string>
+    <string name="camera_model">Камера</string>
+    <string name="focal_length">Фокусное\nрасстояние</string>
+    <string name="shutter_speed">Выдержка</string>
+    <string name="iso">ISO</string>
+    <string name="shutter_date">Дата съемки</string>
+    <string name="aperture">Диафрагма</string>
 </resources>
