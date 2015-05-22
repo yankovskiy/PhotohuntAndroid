@@ -2,6 +2,7 @@ package ru.neverdark.photohunt.rest;
 
 import retrofit.RestAdapter;
 import ru.neverdark.photohunt.BuildConfig;
+import ru.neverdark.photohunt.rest.api.CommentApi;
 import ru.neverdark.photohunt.rest.api.ContestApi;
 import ru.neverdark.photohunt.rest.api.MessagesApi;
 import ru.neverdark.photohunt.rest.api.ShopApi;
@@ -15,6 +16,7 @@ public class RestService {
     private final ContestApi mContestApi;
     private final ShopApi mShopApi;
     private final MessagesApi mMessagesApi;
+    private final CommentApi mCommentApi;
 
     public RestService() {
         BasicInterceptor interceptor = new BasicInterceptor();
@@ -25,6 +27,7 @@ public class RestService {
         mContestApi = mRestAdapter.create(ContestApi.class);
         mShopApi = mRestAdapter.create(ShopApi.class);
         mMessagesApi = mRestAdapter.create(MessagesApi.class);
+        mCommentApi = mRestAdapter.create(CommentApi.class);
     }
 
     public RestService(String user, String password) {
@@ -37,6 +40,7 @@ public class RestService {
         mContestApi = mRestAdapter.create(ContestApi.class);
         mShopApi = mRestAdapter.create(ShopApi.class);
         mMessagesApi = mRestAdapter.create(MessagesApi.class);
+        mCommentApi = mRestAdapter.create(CommentApi.class);
     }
 
     public static String getRestUrl() {
@@ -45,6 +49,10 @@ public class RestService {
         } else {
             return RELEASE_REST_URL;
         }
+    }
+
+    public CommentApi getCommentApi() {
+        return mCommentApi;
     }
 
     public ContestApi getContestApi() {

@@ -43,4 +43,7 @@ public interface ContestApi {
 
     @PUT("/contest/{id}")
     public void voteForContest(@Path("id") long id, @Body Image image, Callback<Void> callback);
+
+    @GET("/image/{id}")
+    public void getImageById(@Path("id") long imageId, Callback<Image> callback);
 }

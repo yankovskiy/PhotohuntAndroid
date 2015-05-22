@@ -335,6 +335,10 @@ public class ProfileFragment extends UfoFragment {
 
             adapter.add(menuItem);
 
+            if (user.unread_comments > 0) {
+                adapter.add(new UfoMenuItem(mContext, R.drawable.ic_chat_grey600_24dp, R.string.comments, user.unread_comments));
+            }
+
             if (user.is_have_favorites) {
                 adapter.add(new UfoMenuItem(mContext, R.drawable.ic_group_grey600_24dp, R.string.favorite_users));
             }
@@ -374,6 +378,32 @@ public class ProfileFragment extends UfoFragment {
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    private void openUnreadComments() {
+        UnreadCommentsFragment fragment = UnreadCommentsFragment.getInstance();
+        Common.openFragment(this, fragment, true);
+    }
+
+    /**
+     * Открыть фрагмент для отправки сообщения
+     */
+    private void openSendMessageFragment() {
+        FavoriteUser user = new FavoriteUser();
+        user.fid = mUserData.id;
+        user.display_name = mUserData.display_name;
+        user.avatar = mUserData.avatar;
+
+        SendMessageFragment fragment = SendMessageFragment.getInstance(user, null);
+        Common.openFragment(this, fragment, true);
+    }
+
+    /**
+     * Открывает фрагмент со списком избранных авторов
+     */
+    private void openFavoritesUsersFragment() {
+        FavoritesUsersFragment fragment = FavoritesUsersFragment.getInstance(mUserData.id, FavoritesUsersFragment.ACTION_OPEN_PROFILE);
+        Common.openFragment(this, fragment, true);
     }
 
     /**
@@ -537,6 +567,8 @@ public class ProfileFragment extends UfoFragment {
                 openFavoritesUsersFragment();
             } else if (id == R.string.write_message) {
                 openSendMessageFragment();
+            } else if (id == R.string.comments) {
+                openUnreadComments();
             }
         }
 
@@ -583,28 +615,6 @@ public class ProfileFragment extends UfoFragment {
             List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
             return list.size() > 0;
         }
-    }
-
-    /**
-     * Открыть фрагмент для отправки сообщения
-     */
-    private void openSendMessageFragment() {
-        FavoriteUser user = new FavoriteUser();
-        user.fid = mUserData.id;
-        user.display_name = mUserData.display_name;
-        user.avatar = mUserData.avatar;
-
-        SendMessageFragment fragment = SendMessageFragment.getInstance(user, null);
-        Common.openFragment(this, fragment, true);
-    }
-
-
-    /**
-     * Открывает фрагмент со списком избранных авторов
-     */
-    private void openFavoritesUsersFragment() {
-        FavoritesUsersFragment fragment = FavoritesUsersFragment.getInstance(mUserData.id, FavoritesUsersFragment.ACTION_OPEN_PROFILE);
-        Common.openFragment(this, fragment, true);
     }
 
     /**

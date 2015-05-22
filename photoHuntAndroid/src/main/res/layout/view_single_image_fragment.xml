@@ -11,11 +11,55 @@
         android:layout_above="@+id/view_single_image_bottom"
         android:layout_alignParentTop="true" />
 
+    <RelativeLayout
+        android:id="@+id/view_single_image_comments_block"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/view_single_image_bottom"
+        android:background="@color/material_grey_50"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/view_single_image_comments_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/view_single_image_comment"
+            android:divider="@null" />
+
+        <EditText
+            android:id="@+id/view_single_image_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_toLeftOf="@+id/view_single_image_send_comment_button"
+            android:hint="@string/comment"
+            android:inputType="textCapSentences"
+            android:paddingBottom="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/view_single_image_send_comment_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_send_grey600_24dp" />
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/view_single_image_info_block"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/view_single_image_bottom"
+        android:background="@color/material_grey_50"
         android:orientation="vertical"
         android:padding="@dimen/default_padding"
         android:visibility="gone">
@@ -24,14 +68,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/image_description"
-            android:textColor="@color/material_grey_500"
+            android:textColor="@color/grey505050"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/view_single_image_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/material_grey_50"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -50,12 +93,11 @@
 
                 <TextView
                     android:text="@string/camera_model"
-                    android:textColor="@color/material_grey_500"
+                    android:textColor="@color/grey505050"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/view_single_image_camera"
-                    android:textColor="@color/material_grey_50"
                     android:textSize="14sp" />
             </TableRow>
 
@@ -65,12 +107,11 @@
 
                 <TextView
                     android:text="@string/focal_length"
-                    android:textColor="@color/material_grey_500"
+                    android:textColor="@color/grey505050"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/view_single_image_focal"
-                    android:textColor="@color/material_grey_50"
                     android:textSize="14sp" />
             </TableRow>
 
@@ -80,12 +121,11 @@
 
                 <TextView
                     android:text="@string/aperture"
-                    android:textColor="@color/material_grey_500"
+                    android:textColor="@color/grey505050"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/view_single_image_aperture"
-                    android:textColor="@color/material_grey_50"
                     android:textSize="14sp" />
             </TableRow>
 
@@ -95,12 +135,11 @@
 
                 <TextView
                     android:text="@string/shutter_speed"
-                    android:textColor="@color/material_grey_500"
+                    android:textColor="@color/grey505050"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/view_single_image_shutter"
-                    android:textColor="@color/material_grey_50"
                     android:textSize="14sp" />
             </TableRow>
 
@@ -110,12 +149,11 @@
 
                 <TextView
                     android:text="@string/iso"
-                    android:textColor="@color/material_grey_500"
+                    android:textColor="@color/grey505050"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/view_single_image_iso"
-                    android:textColor="@color/material_grey_50"
                     android:textSize="14sp" />
             </TableRow>
 
@@ -125,13 +163,13 @@
 
                 <TextView
                     android:text="@string/shutter_date"
-                    android:textColor="@color/material_grey_500"
+                    android:textColor="@color/grey505050"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/view_single_image_datetime"
-                    android:textColor="@color/material_grey_50"
                     android:textSize="14sp" />
+
             </TableRow>
 
         </TableLayout>

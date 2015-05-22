@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/comments_list_item_datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:textSize="12sp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/comment_list_item_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/comments_list_item_datetime"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/comment_list_item_avatar"
+        android:textColor="@color/grey505050"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/comment_list_item_avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/comment_list_item_author"
+        android:background="@drawable/avatar_border" />
+
+    <TextView
+        android:id="@+id/comment_list_item_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/comment_list_item_author"
+        android:layout_below="@+id/comment_list_item_author"
+        android:textSize="14sp" />
+
+</RelativeLayout>

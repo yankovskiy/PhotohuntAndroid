@@ -24,4 +24,5 @@ public class User {
     public int client_version;
     public boolean is_bookmarked;
     public boolean is_have_favorites;
+    public int unread_comments;
 }

@@ -176,4 +176,11 @@
     <string name="iso">ISO</string>
     <string name="shutter_date">Дата съемки</string>
     <string name="aperture">Диафрагма</string>
+    <string name="comment">Комментарий</string>
+    <string name="photo_author">Автор снимка</string>
+    <string name="enter_comment">Напишите комментарий</string>
+    <string name="remove_comment">Удалить комментарий</string>
+    <string name="comment_removed">Комментарий удален</string>
+    <string name="new_comment">Новый комментарий</string>
+    <string name="comments">Комментарии</string>
 </resources>

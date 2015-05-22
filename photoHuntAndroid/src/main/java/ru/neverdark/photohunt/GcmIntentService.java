@@ -18,7 +18,6 @@ import ru.neverdark.photohunt.utils.Settings;
 public class GcmIntentService extends IntentService {
     public static final String OPEN_PROFILE_ACTION = "ru.neverdark.photohunt.openprofile";
     public static final int NOTIFICATION_ID = 1;
-    private NotificationManager mNotificationManager;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -46,8 +45,12 @@ public class GcmIntentService extends IntentService {
                 String authedUserId = Settings.getUserId(getApplicationContext());
                 String collapseKey = extras.getString("collapse_key");
 
-                if (userId.equals(authedUserId) && collapseKey.equals("message")) {
-                    sendNotification();
+                if (userId.equals(authedUserId)) {
+                    if (collapseKey.equals("message")) {
+                        sendNotification(OPEN_PROFILE_ACTION, getString(R.string.new_message));
+                    } else if (collapseKey.equals("comment")) {
+                        sendNotification(OPEN_PROFILE_ACTION, getString(R.string.new_comment));
+                    }
                 } else {
                     Log.message("Bad login: " + userId);
                 }
@@ -60,11 +63,12 @@ public class GcmIntentService extends IntentService {
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification() {
-        mNotificationManager = (NotificationManager)
+    private void sendNotification(String action, String contentText) {
+
+        NotificationManager notificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent openProfile = new Intent(this, MainActivity.class);
-        openProfile.setAction(OPEN_PROFILE_ACTION);
+        openProfile.setAction(action);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 openProfile, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -75,10 +79,11 @@ public class GcmIntentService extends IntentService {
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
                         .setContentTitle(getString(R.string.app_name))
                         .setAutoCancel(true)
-                        .setContentText(getString(R.string.new_message));
+                        .setContentText(contentText);
 
         mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+
     }
 
     private int getSmallIcon() {

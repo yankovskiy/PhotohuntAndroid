@@ -19,6 +19,8 @@ public class Image implements Serializable {
     public Exif exif;
     public String avatar;
     public String description;
+    public int comments_count;
+    public int contest_status;
 
     @Override
     public String toString() {
