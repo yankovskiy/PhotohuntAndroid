@@ -42,6 +42,11 @@ public class ShopFragment extends UfoFragment {
     private int mUserMoney;
     private int mUserDc;
 
+    public static ShopFragment getInstance() {
+        ShopFragment fragment = new ShopFragment();
+        return fragment;
+    }
+
     @Override
     public void bindObjects() {
         mShopList = (ListView) mView.findViewById(R.id.shop_shop_tab);
@@ -96,33 +101,6 @@ public class ShopFragment extends UfoFragment {
         tabHost.addTab(tabSpec);
     }
 
-    public static ShopFragment getInstance() {
-        ShopFragment fragment = new ShopFragment();
-        return fragment;
-    }
-
-    private class ListItemClickListener implements android.widget.AdapterView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.enter();
-            switch (parent.getId()) {
-                case R.id.shop_shop_tab:
-                    // TODO сделать проверку на баланс, отображать диалог подтверждения только если денег достаточно
-                    Goods goods = (Goods) mShopList.getAdapter().getItem(position);
-                    ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
-                    dialog.setTitle(R.string.confirm_buy_title);
-                    dialog.setMessage(goods.name);
-                    dialog.setCallback(new ConfirmPurchaseListener(goods));
-                    dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
-                    break;
-                case R.id.shop_myitems_tab:
-                    Item item = (Item) mMyItemsList.getAdapter().getItem(position);
-                    // TODO что делать с выбранными предметами в своих покупках
-                    break;
-            }
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -139,6 +117,27 @@ public class ShopFragment extends UfoFragment {
                 service.getShopApi().getShop(new GetShopListener(mView));
             } catch (ToastException e) {
                 e.show(mContext);
+            }
+        }
+    }
+
+    private class ListItemClickListener implements android.widget.AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Log.enter();
+            switch (parent.getId()) {
+                case R.id.shop_shop_tab:
+                    Goods goods = (Goods) mShopList.getAdapter().getItem(position);
+                    ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
+                    dialog.setTitle(R.string.confirm_buy_title);
+                    dialog.setMessage(goods.name);
+                    dialog.setCallback(new ConfirmPurchaseListener(goods));
+                    dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
+                    break;
+                case R.id.shop_myitems_tab:
+                    Item item = (Item) mMyItemsList.getAdapter().getItem(position);
+                    // TODO что делать с выбранными предметами в своих покупках
+                    break;
             }
         }
     }

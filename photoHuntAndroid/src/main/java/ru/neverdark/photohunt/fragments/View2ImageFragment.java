@@ -45,11 +45,18 @@ public class View2ImageFragment extends UfoFragment {
     private Context mContext;
     private CustomViewPager mViewPager;
     private Data mData;
+    private boolean mIsHideActionBar = false;
 
     public static View2ImageFragment getInstance(Data data) {
         View2ImageFragment fragment = new View2ImageFragment();
         fragment.mData = data;
 
+        return fragment;
+    }
+
+    public static View2ImageFragment getInstance(Data data, boolean isHideActionBar) {
+        View2ImageFragment fragment = getInstance(data);
+        fragment.mIsHideActionBar = isHideActionBar;
         return fragment;
     }
 
@@ -83,10 +90,12 @@ public class View2ImageFragment extends UfoFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.enter();
-        inflater.inflate(R.menu.view_single_image, menu);
-        if (mImage.is_editable) {
-            menu.findItem(R.id.edit_image).setVisible(true);
-            menu.findItem(R.id.remove_image).setVisible(true);
+        if (!mIsHideActionBar) {
+            inflater.inflate(R.menu.view_single_image, menu);
+            if (mImage.is_editable) {
+                menu.findItem(R.id.edit_image).setVisible(true);
+                menu.findItem(R.id.remove_image).setVisible(true);
+            }
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -110,7 +119,9 @@ public class View2ImageFragment extends UfoFragment {
         bindObjects();
         setListeners();
         mViewPager.setCurrentItem(mData.getPosition());
-        updateActionBar(mData.getPosition());
+        if (!mIsHideActionBar) {
+            updateActionBar(mData.getPosition());
+        }
         setHasOptionsMenu(true);
         return mView;
     }
@@ -138,7 +149,7 @@ public class View2ImageFragment extends UfoFragment {
 
         if (mImage.subject != null) {
             subject.setText(mImage.subject);
-        } else if (mData.getContestStatus() == Contest.STATUS_VOTES) {
+        } else if (mImage.contest_status == Contest.STATUS_VOTES) {
             String voteCount = String.format(Locale.US, "%s: %d", getString(R.string.remaining_votes), mData.getVoteCount());
             subject.setText(voteCount);
         } else {
@@ -162,13 +173,11 @@ public class View2ImageFragment extends UfoFragment {
 
     public static class Data {
         private final List<Image> mImages;
-        private final int mContestStatus;
         private final int mPosition;
         private int mVoteCount;
 
-        public Data(List<Image> images, int contestStatus, int voteCount, int position) {
+        public Data(List<Image> images, int voteCount, int position) {
             mImages = images;
-            mContestStatus = contestStatus;
             mVoteCount = voteCount;
             mPosition = position;
         }
@@ -183,10 +192,6 @@ public class View2ImageFragment extends UfoFragment {
 
         public Image getImage(int position) {
             return mImages.get(position);
-        }
-
-        public int getContestStatus() {
-            return mContestStatus;
         }
 
         public int getVoteCount() {
@@ -213,7 +218,7 @@ public class View2ImageFragment extends UfoFragment {
 
         @Override
         public Fragment getItem(int position) {
-            ViewSingleImageFragment fragment = ViewSingleImageFragment.getInstance(mData.getImage(position), mData.getContestStatus());
+            ViewSingleImageFragment fragment = ViewSingleImageFragment.getInstance(mData.getImage(position));
             fragment.setCallback(new ButtonsClickListener());
             return fragment;
         }
@@ -272,8 +277,10 @@ public class View2ImageFragment extends UfoFragment {
 
         @Override
         public void onPageSelected(int position) {
-            updateActionBar(position);
-            getActivity().supportInvalidateOptionsMenu();
+            if (!mIsHideActionBar) {
+                updateActionBar(position);
+                getActivity().supportInvalidateOptionsMenu();
+            }
         }
 
         @Override

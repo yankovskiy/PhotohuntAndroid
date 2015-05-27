@@ -37,6 +37,7 @@ public class UserImagesFragment extends UfoFragment {
     private Parcelable mGridState = null;
     private boolean mIsDataLoaded;
     private String mDisplayName;
+    private List<Image> mImages;
 
     public static UserImagesFragment getInstance(long userId, String displayName) {
         UserImagesFragment fragment = new UserImagesFragment();
@@ -118,8 +119,8 @@ public class UserImagesFragment extends UfoFragment {
     private class GridItemClickListener implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Image image = (Image) mGrid.getAdapter().getItem(position);
-            ViewImageFragment fragment = ViewImageFragment.getInstance(mDisplayName, image);
+
+            View2ImageFragment fragment = View2ImageFragment.getInstance(new View2ImageFragment.Data(mImages, 0, position), true);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
             transaction.addToBackStack(null);
@@ -159,6 +160,7 @@ public class UserImagesFragment extends UfoFragment {
             if (data != null) {
                 UserImagesAdapter adapter = new UserImagesAdapter(mContext, data);
                 mGrid.setAdapter(adapter);
+                mImages = data;
                 if (mGridState != null) {
                     mGrid.onRestoreInstanceState(mGridState);
                 }

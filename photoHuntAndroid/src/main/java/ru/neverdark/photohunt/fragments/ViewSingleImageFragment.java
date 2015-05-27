@@ -47,7 +47,6 @@ public class ViewSingleImageFragment extends UfoFragment {
     private View mView;
     private Context mContext;
     private ImageView mSingleImage;
-    private int mContestStatus;
 
     private View mInfoButton;
     private View mCommentButton;
@@ -71,10 +70,9 @@ public class ViewSingleImageFragment extends UfoFragment {
     private View mSendCommentButton;
     private Comment mComment;
 
-    public static ViewSingleImageFragment getInstance(Image image, int contestStatus) {
+    public static ViewSingleImageFragment getInstance(Image image) {
         ViewSingleImageFragment fragment = new ViewSingleImageFragment();
         fragment.mImage = image;
-        fragment.mContestStatus = contestStatus;
         return fragment;
     }
 
@@ -119,7 +117,7 @@ public class ViewSingleImageFragment extends UfoFragment {
         mSendCommentButton.setOnClickListener(new ButtonClickListener());
         mSendCommentButton.setOnTouchListener(new ImageOnTouchListener(false));
 
-        if (mContestStatus == Contest.STATUS_VOTES) {
+        if (mImage.contest_status == Contest.STATUS_VOTES) {
             mVoteButton.setOnClickListener(new ButtonClickListener());
             mVoteButton.setOnTouchListener(new ButtonBGOnTouchListener());
         }
@@ -224,13 +222,13 @@ public class ViewSingleImageFragment extends UfoFragment {
     }
 
     private void updateActionBar() {
-        boolean isCanVote = (mContestStatus == Contest.STATUS_VOTES && mImage.user_id == 0L);
-        if (mContestStatus != Contest.STATUS_OPEN) {
-            if (isCanVote || mContestStatus == Contest.STATUS_CLOSE) {
+        boolean isCanVote = (mImage.contest_status == Contest.STATUS_VOTES && mImage.user_id == 0L);
+        if (mImage.contest_status != Contest.STATUS_OPEN) {
+            if (isCanVote || mImage.contest_status == Contest.STATUS_CLOSE) {
                 mVoteButton.setVisibility(View.VISIBLE);
             }
 
-            if (mContestStatus == Contest.STATUS_CLOSE) {
+            if (mImage.contest_status == Contest.STATUS_CLOSE) {
                 mVoteImg.setImageResource(R.drawable.ic_favorite_white_24dp);
                 mVotesCount.setVisibility(View.VISIBLE);
                 mVotesCount.setText(String.valueOf(mImage.vote_count));

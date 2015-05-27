@@ -61,7 +61,7 @@ public class UnreadCommentsFragment extends UfoFragment {
 
     private void openViewImageFragment(Image image) {
         Log.enter();
-        ViewSingleImageFragment fragment = ViewSingleImageFragment.getInstance(image, image.contest_status);
+        ViewSingleImageFragment fragment = ViewSingleImageFragment.getInstance(image);
         Common.openFragment(this, fragment, true);
     }
 

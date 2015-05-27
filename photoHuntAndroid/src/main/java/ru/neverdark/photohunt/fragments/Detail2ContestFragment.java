@@ -96,7 +96,7 @@ public class Detail2ContestFragment extends UfoFragment {
     }
 
     private void openViewImageFragment(int position) {
-        View2ImageFragment fragment = View2ImageFragment.getInstance(new View2ImageFragment.Data(mImages, mContestStatus, mVoteCount, position));
+        View2ImageFragment fragment = View2ImageFragment.getInstance(new View2ImageFragment.Data(mImages, mVoteCount, position));
         Common.openFragment(this, fragment, true);
     }
 
