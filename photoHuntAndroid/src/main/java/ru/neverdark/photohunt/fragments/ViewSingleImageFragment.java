@@ -265,9 +265,11 @@ public class ViewSingleImageFragment extends UfoFragment {
             mSingleImage.setVisibility(View.GONE);
             mCommentsBlock.setVisibility(View.GONE);
             mImageInfoBlock.setVisibility(View.VISIBLE);
+            ((MainActivity) getActivity()).bindSingleImageFragment(this);
         } else {
             mImageInfoBlock.setVisibility(View.GONE);
             mSingleImage.setVisibility(View.VISIBLE);
+            ((MainActivity) getActivity()).bindSingleImageFragment(null);
         }
 
         if (mCallback != null) {
@@ -295,13 +297,27 @@ public class ViewSingleImageFragment extends UfoFragment {
             mSingleImage.setVisibility(View.GONE);
             mImageInfoBlock.setVisibility(View.GONE);
             mCommentsBlock.setVisibility(View.VISIBLE);
+            ((MainActivity) getActivity()).bindSingleImageFragment(this);
         } else {
             mCommentsBlock.setVisibility(View.GONE);
             mSingleImage.setVisibility(View.VISIBLE);
+            ((MainActivity) getActivity()).bindSingleImageFragment(null);
         }
 
         if (mCallback != null) {
             mCallback.setPagingEnabled(isPressed);
+        }
+    }
+
+    public void backPressed() {
+        pressButton(mCommentButton, false);
+        pressButton(mInfoButton, false);
+        mCommentsBlock.setVisibility(View.GONE);
+        mImageInfoBlock.setVisibility(View.GONE);
+        mSingleImage.setVisibility(View.VISIBLE);
+        ((MainActivity) getActivity()).bindSingleImageFragment(null);
+        if (mCallback != null) {
+            mCallback.setPagingEnabled(true);
         }
     }
 

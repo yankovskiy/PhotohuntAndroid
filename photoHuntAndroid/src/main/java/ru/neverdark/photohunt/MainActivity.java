@@ -39,6 +39,7 @@ import ru.neverdark.photohunt.fragments.ProfileFragment;
 import ru.neverdark.photohunt.fragments.RatingFragment;
 import ru.neverdark.photohunt.fragments.ShopFragment;
 import ru.neverdark.photohunt.fragments.StatsFragment;
+import ru.neverdark.photohunt.fragments.ViewSingleImageFragment;
 import ru.neverdark.photohunt.fragments.WelcomeFragment;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.data.User;
@@ -58,6 +59,11 @@ public class MainActivity extends UfoFragmentActivity {
     private GoogleCloudMessaging mGcm;
     private String mRegid;
     private ListView mLeftMenu;
+    private ViewSingleImageFragment mSingleImageFragment;
+
+    public void bindSingleImageFragment(ViewSingleImageFragment fragment) {
+        mSingleImageFragment = fragment;
+    }
 
     private void exitApp() {
         ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
@@ -283,6 +289,8 @@ public class MainActivity extends UfoFragmentActivity {
     public void onBackPressed() {
         if (getDrawerLayout().isDrawerOpen(mLeftMenu)) {
             getDrawerLayout().closeDrawer(mLeftMenu);
+        } else if (mSingleImageFragment != null) {
+            mSingleImageFragment.backPressed();
         } else if (mIsBackToContest) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             if (fragmentManager.getBackStackEntryCount() == 0) {
@@ -308,6 +316,8 @@ public class MainActivity extends UfoFragmentActivity {
                     } else {
                         getDrawerLayout().openDrawer(mLeftMenu);
                     }
+                } else if (mSingleImageFragment != null) {
+                    mSingleImageFragment.backPressed();
                 } else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                     getSupportFragmentManager().popBackStack();
                 }
