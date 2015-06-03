@@ -174,7 +174,7 @@ public class ViewSingleImageFragment extends UfoFragment {
     private void loadData() {
         String url = String.format(Locale.US, "%s/images/%d.jpg?size=full", RestService.getRestUrl(), mImage.id);
         Log.variable("url", url);
-        Picasso.with(mContext).load(url).transform(new Transform(mSingleImage)).tag(mContext).into(mSingleImage);
+        Picasso.with(mContext).load(url).placeholder(R.drawable.placeholder).transform(new Transform(mSingleImage)).tag(mContext).into(mSingleImage);
 
         if (mImage.description != null) {
             mImageDescription.setVisibility(View.VISIBLE);

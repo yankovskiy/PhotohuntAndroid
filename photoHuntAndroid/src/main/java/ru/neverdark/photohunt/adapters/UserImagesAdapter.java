@@ -11,9 +11,9 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Locale;
 
+import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.data.Image;
-import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.SquaredImageView;
 
 public class UserImagesAdapter extends BaseAdapter {
@@ -51,7 +51,7 @@ public class UserImagesAdapter extends BaseAdapter {
         Image image = (Image) getItem(position);
 
         String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.getRestUrl(), image.id);
-        Picasso.with(mContext).load(url).fit().tag(mContext).into(view);
+        Picasso.with(mContext).load(url).placeholder(R.drawable.placeholder).fit().tag(mContext).into(view);
 
         return view;
     }

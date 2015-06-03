@@ -67,7 +67,7 @@ public class UnreadCommentsAdapter extends ArrayAdapter<UnreadComment> {
         }
 
         String url = String.format(Locale.US, "%s/images/%d.jpg?size=48dp", RestService.getRestUrl(), comment.image_id);
-        Picasso.with(mContext).load(url).transform(new Transform()).tag(mContext).into(holder.mImage);
+        Picasso.with(mContext).load(url).placeholder(R.drawable.placeholder).transform(new Transform()).tag(mContext).into(holder.mImage);
 
         return row;
     }
