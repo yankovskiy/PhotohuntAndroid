@@ -9,12 +9,28 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp"
         android:drawableLeft="@drawable/ic_whatshot_grey600_18dp"
         android:drawablePadding="8dp"
         android:hint="@string/new_subject"
+        android:inputType="text"
         android:paddingBottom="16dp"
         android:paddingTop="16dp"
-        android:inputType="text"
         android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/edit_image_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_image_subject"
+        android:gravity="top"
+        android:hint="@string/photo_description"
+        android:inputType="textLongMessage|textMultiLine"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="16dp"
+        android:textSize="14sp" />
+
 
 </RelativeLayout>

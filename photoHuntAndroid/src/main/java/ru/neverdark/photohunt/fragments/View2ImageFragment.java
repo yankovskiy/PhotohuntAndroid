@@ -312,11 +312,12 @@ public class View2ImageFragment extends UfoFragment {
         private class RestEditImageListener implements Callback<Void> {
             @Override
             public void success(Void data, Response response) {
-                Common.showMessage(mContext, R.string.subject_changed);
+                Common.showMessage(mContext, R.string.information_chanded);
                 View view = ((MainActivity) getActivity()).getSupportActionBar().getCustomView();
                 TextView subtitle = (TextView) view.findViewById(R.id.custom_actionbar_subtitle);
                 subtitle.setText(mTempImage.subject);
                 mImage.subject = mTempImage.subject;
+                mImage.description = mTempImage.description;
             }
 
             @Override

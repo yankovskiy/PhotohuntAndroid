@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/edit_image"
-        android:title="@string/edit_image_subject"
+        android:title="@string/edit_image_information"
         android:visible="false"
         app:showAsAction="never"></item>
 

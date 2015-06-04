@@ -12,8 +12,45 @@ import ru.neverdark.photohunt.rest.data.Image;
 import ru.neverdark.photohunt.utils.ToastException;
 
 public class EditImageDialog extends UfoDialogFragment {
+    public static final String DIALOG_ID = "editImageDialog";
     private EditText mSubject;
+    private EditText mDescription;
     private Image mImage;
+
+    public static EditImageDialog getInstance(Context context) {
+        EditImageDialog dialog = new EditImageDialog();
+        dialog.setContext(context);
+        return dialog;
+    }
+
+    @Override
+    public void setListeners() {
+        getAlertDialog().setPositiveButton(R.string.dialog_ok, new PositiveClickListener());
+        getAlertDialog().setNegativeButton(R.string.dialog_cancel, new CancelClickListener());
+    }
+
+    @Override
+    public void bindObjects() {
+        setDialogView(View.inflate(getContext(), R.layout.edit_image_dialog, null));
+        mSubject = (EditText) getDialogView().findViewById(R.id.edit_image_subject);
+        mDescription = (EditText) getDialogView().findViewById(R.id.edit_image_description);
+    }
+
+    @Override
+    protected void createDialog() {
+        super.createDialog();
+        getAlertDialog().setTitle(R.string.view_image_info);
+        mSubject.setText(mImage.subject);
+        mDescription.setText(mImage.description);
+    }
+
+    public void setImage(Image image) {
+        mImage = image;
+    }
+
+    public interface OnPositiveClickListener {
+        public void onPositiveClickHandler(Image image);
+    }
 
     private class PositiveClickListener implements DialogInterface.OnClickListener {
 
@@ -28,47 +65,13 @@ public class EditImageDialog extends UfoDialogFragment {
                 OnPositiveClickListener callback = (OnPositiveClickListener) getCallback();
                 if (callback != null) {
                     mImage.subject = newSubject;
+                    mImage.description = mDescription.getText().toString().trim();
                     callback.onPositiveClickHandler(mImage);
                 }
             } catch (ToastException e) {
                 e.show(getContext());
             }
         }
-    }
-
-    public interface OnPositiveClickListener {
-        public void onPositiveClickHandler(Image image);
-    }
-
-    @Override
-    public void setListeners() {
-        getAlertDialog().setPositiveButton(R.string.dialog_ok, new PositiveClickListener());
-        getAlertDialog().setNegativeButton(R.string.dialog_cancel, new CancelClickListener());
-    }
-
-    public static final String DIALOG_ID = "editImageDialog";
-
-    @Override
-    public void bindObjects() {
-        setDialogView(View.inflate(getContext(), R.layout.edit_image_dialog, null));
-        mSubject = (EditText) getDialogView().findViewById(R.id.edit_image_subject);
-    }
-
-    public static EditImageDialog getInstance(Context context) {
-        EditImageDialog dialog = new EditImageDialog();
-        dialog.setContext(context);
-        return dialog;
-    }
-
-    @Override
-    protected void createDialog() {
-        super.createDialog();
-        getAlertDialog().setTitle(R.string.edit_image_subject_title);
-        mSubject.setText(mImage.subject);
-    }
-
-    public void setImage(Image image) {
-        mImage = image;
     }
 
 }

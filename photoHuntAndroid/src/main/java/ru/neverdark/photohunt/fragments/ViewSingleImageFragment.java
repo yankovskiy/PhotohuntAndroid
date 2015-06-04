@@ -262,6 +262,7 @@ public class ViewSingleImageFragment extends UfoFragment {
         pressButton(mInfoButton, !isPressed);
         pressButton(mCommentButton, false);
         if (!isPressed) {
+            mImageDescription.setText(mImage.description); // если было обновление информации о изображении
             mSingleImage.setVisibility(View.GONE);
             mCommentsBlock.setVisibility(View.GONE);
             mImageInfoBlock.setVisibility(View.VISIBLE);

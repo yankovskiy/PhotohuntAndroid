@@ -183,4 +183,6 @@
     <string name="comment_removed">Комментарий удален</string>
     <string name="new_comment">Новый комментарий</string>
     <string name="comments">Комментарии</string>
+    <string name="information_chanded">Информация изменена</string>
+    <string name="edit_image_information">Изменить описание снимка</string>
 </resources>
