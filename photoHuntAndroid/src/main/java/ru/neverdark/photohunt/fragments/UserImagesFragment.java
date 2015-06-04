@@ -120,7 +120,7 @@ public class UserImagesFragment extends UfoFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            View2ImageFragment fragment = View2ImageFragment.getInstance(new View2ImageFragment.Data(mImages, 0, position), true);
+            ViewImageFragment fragment = ViewImageFragment.getInstance(new ViewImageFragment.Data(mImages, 0, position), true);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
             transaction.addToBackStack(null);

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:padding="0dp">
 
     <RelativeLayout
-        android:id="@+id/detail_loading_progress"
+        android:id="@+id/detail2_contest_loading_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" >
+        android:gravity="center">
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
@@ -17,92 +18,40 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/detail_hide_when_loading"
+        android:id="@+id/detail2_contest_hide_when_loading"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_above="@+id/detail2_contest_bottom"
+        android:padding="4dp">
 
-        <RelativeLayout
-            android:id="@+id/detail_header"
-            android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:paddingLeft="16dp"
-            android:gravity="center_vertical"
-            android:background="@drawable/gray_bg" >
-
-            <TextView
-                android:layout_marginTop="6dp"
-                android:id="@+id/detail_contest_subject"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:textColor="@color/material_grey_50"
-                android:drawableLeft="@drawable/ic_whatshot_white_24dp"
-                android:drawablePadding="8dp"
-                android:textSize="16sp"
-                android:layout_marginBottom="8dp"
-                android:textStyle="bold"/>
-
-            <ImageView
-                android:layout_marginLeft="8dp"
-                android:padding="6dp"
-                android:src="@drawable/ic_action_overflow_white_24dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:id="@+id/detail_context_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/detail_contest_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/detail_contest_subject"
-                android:textColor="@color/material_grey_50"
-                android:drawableLeft="@drawable/ic_account_box_white_24dp"
-                android:drawablePadding="8dp"
-                android:gravity="center_vertical"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/detail_contest_close_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/detail_contest_subject"
-                android:layout_marginRight="16dp"
-                android:drawablePadding="8dp"
-                android:gravity="center_vertical"
-                android:drawableLeft="@drawable/ic_access_time_white_24dp"
-                android:textColor="@color/material_grey_50"
-                android:textSize="14sp" />
-        </RelativeLayout>
-
-        <ListView
-            android:id="@+id/detail_contest_list"
+        <GridView
+            android:id="@+id/detail2_contest_images_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/detail_contest_bottom"
-            android:layout_below="@+id/detail_header"
-            android:divider="@null">
-        </ListView>
-
-        <RelativeLayout
-            android:background="@color/material_blue_grey_500"
-            android:id="@+id/detail_contest_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true">
-
-            <ImageView
-                android:background="@drawable/grey500_button"
-                android:padding="4dp"
-                android:id="@+id/detail_contest_camera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_camera_alt_white_36dp" />
-        </RelativeLayout>
+            android:layout_alignParentTop="true"
+            android:horizontalSpacing="4dp"
+            android:listSelector="@null"
+            android:numColumns="@integer/column_count"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="none"
+            android:verticalSpacing="4dp" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/detail2_contest_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/material_blue_grey_500"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/detail2_contest_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/grey500_button"
+            android:padding="4dp"
+            android:src="@drawable/ic_camera_alt_white_36dp" />
+    </RelativeLayout>
 </RelativeLayout>

@@ -3,148 +3,266 @@ package ru.neverdark.photohunt.fragments;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.view.ContextMenu;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
+import java.util.List;
 import java.util.Locale;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
-import ru.neverdark.abs.UfoFragmentActivity;
+import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
+import ru.neverdark.photohunt.dialogs.ConfirmDialog;
+import ru.neverdark.photohunt.dialogs.EditImageDialog;
 import ru.neverdark.photohunt.rest.RestService;
+import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.rest.data.Image;
 import ru.neverdark.photohunt.utils.Common;
-import ru.neverdark.photohunt.utils.ImageOnTouchListener;
+import ru.neverdark.photohunt.utils.CustomViewPager;
 import ru.neverdark.photohunt.utils.Log;
+import ru.neverdark.photohunt.utils.Settings;
 
 public class ViewImageFragment extends UfoFragment {
-    private static final String IMAGE = "image";
-    private static final String DISPLAY_NAME = "display_name";
-    private ImageView mImage;
-    private ImageView mContextButton;
-    private TextView mVoteCount;
-    private RelativeLayout mHeader;
-    private TextView mContestSubject;
+    private Image mImage;
     private View mView;
     private Context mContext;
-    private Image mImageData;
-    private String mDisplayName;
+    private CustomViewPager mViewPager;
+    private Data mData;
+    private boolean mIsHideActionBar = false;
+    private PhotoPagerAdapter mAdapter;
 
-    public static ViewImageFragment getInstance(String displayName, Image image) {
+    public static ViewImageFragment getInstance(Data data) {
         ViewImageFragment fragment = new ViewImageFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(IMAGE, image);
-        args.putString(DISPLAY_NAME, displayName);
-        fragment.setArguments(args);
+        fragment.mData = data;
+
+        return fragment;
+    }
+
+    public static ViewImageFragment getInstance(Data data, boolean isHideActionBar) {
+        ViewImageFragment fragment = getInstance(data);
+        fragment.mIsHideActionBar = isHideActionBar;
         return fragment;
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.edit_image:
+                showEditImageDialog();
+                break;
+            case R.id.remove_image:
+                showRemoveDialog();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showEditImageDialog() {
+        EditImageDialog dialog = EditImageDialog.getInstance(mContext);
+        dialog.setImage(mImage);
+        dialog.setCallback(new EditImageDialogListener());
+        dialog.show(getFragmentManager(), EditImageDialog.DIALOG_ID);
+    }
+
+    private void showRemoveDialog() {
+        ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
+        dialog.setMessages(R.string.delete_confirmation_title, R.string.image_delete_confirmation_message);
+        dialog.setCallback(new RemoveConfirmationListener());
+        dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.enter();
+        if (!mIsHideActionBar) {
+            inflater.inflate(R.menu.view_single_image, menu);
+            if (mImage.is_editable) {
+                menu.findItem(R.id.edit_image).setVisible(true);
+                menu.findItem(R.id.remove_image).setVisible(true);
+            }
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void bindObjects() {
-        mImage = (ImageView) mView.findViewById(R.id.view_image);
-        mContextButton = (ImageView) mView.findViewById(R.id.view_image_context_button);
-        mVoteCount = (TextView) mView.findViewById(R.id.view_image_vote_count);
-        mContestSubject = (TextView) mView.findViewById(R.id.view_image_contest_subject);
-        mHeader = (RelativeLayout) mView.findViewById(R.id.view_image_header);
+        mViewPager = (CustomViewPager) mView.findViewById(R.id.pager);
+        mAdapter = new PhotoPagerAdapter(getChildFragmentManager());
+        mViewPager.setAdapter(mAdapter);
     }
 
     @Override
     public void setListeners() {
-        registerForContextMenu(mHeader);
-        mContextButton.setOnTouchListener(new ImageOnTouchListener(false));
-        mContextButton.setOnClickListener(new MoreButtonClickListener());
+        mViewPager.setOnPageChangeListener(new PhotoPageChangeListener());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
+        Log.enter();
         mView = inflater.inflate(R.layout.view_image_fragment, container, false);
         mContext = mView.getContext();
         bindObjects();
         setListeners();
-        loadData();
-        getActivity().setTitle(R.string.user_album);
+        mViewPager.setCurrentItem(mData.getPosition());
+        if (!mIsHideActionBar) {
+            updateActionBar(mData.getPosition());
+        }
+        setHasOptionsMenu(true);
         return mView;
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        Log.enter();
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.view_image, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        Log.enter();
-
-        switch (item.getItemId()) {
-            case R.id.view_image_contest:
-                showContest(mImageData.contest_id);
-                return true;
-        }
-
-        return super.onContextItemSelected(item);
-    }
-
-    private void showContest(long contestId) {
-        DetailContestFragment fragment = new DetailContestFragment(contestId);
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mImageData = (Image) getArguments().getSerializable(IMAGE);
-            mDisplayName = getArguments().getString(DISPLAY_NAME);
-        }
-    }
-
-    private void loadData() {
-        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(mDisplayName);
-        String url = String.format(Locale.US, "%s/images/%d.jpg", RestService.getRestUrl(), mImageData.id);
-        String voteCount = String.format(Locale.US, "%s: %d", getString(R.string.vote_count), mImageData.vote_count);
-
-        Picasso.with(mContext).load(url).transform(new Transform(mImage)).tag(mContext).into(mImage);
-        mContestSubject.setText(mImageData.contest_subject);
-        mVoteCount.setText(voteCount);
-    }
-
-    @Override
     public void onDestroyView() {
-        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+        ((MainActivity) getActivity()).getActionBarLayout(false);
         super.onDestroyView();
     }
 
-    private class Transform implements Transformation {
+    private void updateActionBar(int imagePosition) {
+        View view = ((MainActivity) getActivity()).getActionBarLayout(true);
+        TextView author = (TextView) view.findViewById(R.id.custom_actionbar_title);
+        TextView subject = (TextView) view.findViewById(R.id.custom_actionbar_subtitle);
+        ImageView avatar = (ImageView) view.findViewById(R.id.custom_actionbar_image);
 
-        private ImageView mImage;
+        mImage = mData.getImage(imagePosition);
+        if (mImage.display_name != null) {
+            author.setText(mImage.display_name);
+            author.setOnClickListener(new UserClickListener());
+            avatar.setOnClickListener(new UserClickListener());
+        } else {
+            author.setText(R.string.hidden);
+        }
 
-        public Transform(ImageView image) {
-            this.mImage = image;
+        if (mImage.subject != null) {
+            subject.setText(mImage.subject);
+        } else if (mImage.contest_status == Contest.STATUS_VOTES) {
+            String voteCount = String.format(Locale.US, "%s: %d", getString(R.string.remaining_votes), mData.getVoteCount());
+            subject.setText(voteCount);
+        } else {
+            subject.setText(R.string.hidden);
+        }
+
+        if (mImage.user_id == 1L) { // System
+            avatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.system_avatar_48dp));
+        } else if (mImage.avatar != null && mImage.avatar.trim().length() > 0) {
+            String url = String.format(Locale.US, "%s/avatars/%s.jpg?size=48dp", RestService.getRestUrl(), mImage.avatar);
+            Picasso.with(mContext).load(url).transform(new TransformAvatar()).placeholder(R.drawable.no_avatar).tag(mContext).into(avatar);
+        } else {
+            avatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.no_avatar));
+        }
+    }
+
+    private void openProfileFragment(long userId) {
+        ProfileFragment fragment = ProfileFragment.getInstance(userId);
+        Common.openFragment(this, fragment, true);
+    }
+
+    public static class Data {
+        private final List<Image> mImages;
+        private final int mPosition;
+        private int mVoteCount;
+
+        public Data(List<Image> images, int voteCount, int position) {
+            mImages = images;
+            mVoteCount = voteCount;
+            mPosition = position;
+        }
+
+        public int getPosition() {
+            return mPosition;
+        }
+
+        public List<Image> getImages() {
+            return mImages;
+        }
+
+        public Image getImage(int position) {
+            return mImages.get(position);
+        }
+
+        public int getVoteCount() {
+            return mVoteCount;
+        }
+
+        public void incVoteCount() {
+            if (mVoteCount < Contest.MAX_VOTE_COUNT) {
+                mVoteCount++;
+            }
+        }
+
+        public void decVoteCount() {
+            if (mVoteCount > 0) {
+                mVoteCount--;
+            }
+        }
+    }
+
+    public class PhotoPagerAdapter extends FragmentPagerAdapter {
+        public PhotoPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
         @Override
-        public Bitmap transform(Bitmap source) {
-            int targetWidth = this.mImage.getWidth();
+        public Fragment getItem(int position) {
+            ViewSingleImageFragment fragment = ViewSingleImageFragment.getInstance(mData.getImage(position));
+            fragment.setCallback(new ButtonsClickListener());
+            return fragment;
+        }
 
-            return Common.resizeBitmap(source, targetWidth);
+        @Override
+        public int getCount() {
+            return mData.getImages().size();
+        }
+
+        private class ButtonsClickListener implements ViewSingleImageFragment.OnButtonsClickListener {
+            @Override
+            public void incVote() {
+                mData.incVoteCount();
+                updateVoteCount();
+            }
+
+            @Override
+            public void decVote() {
+                mData.decVoteCount();
+                updateVoteCount();
+            }
+
+            @Override
+            public void setPagingEnabled(boolean enabled) {
+                mViewPager.setPagingEnabled(enabled);
+            }
+
+            private void updateVoteCount() {
+                View view = ((MainActivity) getActivity()).getSupportActionBar().getCustomView();
+                TextView subtitle = (TextView) view.findViewById(R.id.custom_actionbar_subtitle);
+                String voteCount = String.format(Locale.US, "%s: %d", getString(R.string.remaining_votes), mData.getVoteCount());
+                subtitle.setText(voteCount);
+            }
+        }
+    }
+
+
+    private class TransformAvatar implements Transformation {
+        @Override
+        public Bitmap transform(Bitmap source) {
+            int targetWidth = (int) mContext.getResources().getDimension(R.dimen.min_avatar_size);
+            return Common.resizeBitmap(source, targetWidth, targetWidth);
         }
 
         @Override
@@ -153,10 +271,88 @@ public class ViewImageFragment extends UfoFragment {
         }
     }
 
-    private class MoreButtonClickListener implements View.OnClickListener {
+    private class PhotoPageChangeListener implements ViewPager.OnPageChangeListener {
         @Override
-        public void onClick(View v) {
-            getActivity().openContextMenu(mHeader);
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            if (!mIsHideActionBar) {
+                updateActionBar(position);
+
+                getActivity().supportInvalidateOptionsMenu();
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    }
+
+    private class UserClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            openProfileFragment(mImage.user_id);
+        }
+    }
+
+    private class EditImageDialogListener implements EditImageDialog.OnPositiveClickListener, OnCallback {
+        private Image mTempImage;
+
+        @Override
+        public void onPositiveClickHandler(Image image) {
+            String user = Settings.getUserId(mContext);
+            String pass = Settings.getPassword(mContext);
+            Log.variable("image", image.toString());
+            mTempImage = image;
+            RestService service = new RestService(user, pass);
+            service.getContestApi().updateImage(image.id, image, new RestEditImageListener());
+        }
+
+        private class RestEditImageListener implements Callback<Void> {
+            @Override
+            public void success(Void data, Response response) {
+                Common.showMessage(mContext, R.string.information_chanded);
+                View view = ((MainActivity) getActivity()).getSupportActionBar().getCustomView();
+                TextView subtitle = (TextView) view.findViewById(R.id.custom_actionbar_subtitle);
+                subtitle.setText(mTempImage.subject);
+                mImage.subject = mTempImage.subject;
+                mImage.description = mTempImage.description;
+                ((MainActivity) getActivity()).updateImageInfo(mImage.description);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+                Common.showMessage(mContext, err.error);
+            }
+        }
+    }
+
+    private class RemoveConfirmationListener implements ConfirmDialog.OnPositiveClickListener, OnCallback {
+        @Override
+        public void onPositiveClickHandler() {
+            String user = Settings.getUserId(mContext);
+            String pass = Settings.getPassword(mContext);
+            RestService service = new RestService(user, pass);
+            service.getContestApi().deleteImage(mImage.id, new RemoveImageListener());
+        }
+
+        private class RemoveImageListener implements Callback<Void> {
+            @Override
+            public void success(Void aVoid, Response response) {
+                getFragmentManager().popBackStack();
+                Common.showMessage(mContext, R.string.image_removed);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+                Common.showMessage(mContext, err.error);
+            }
         }
     }
 }

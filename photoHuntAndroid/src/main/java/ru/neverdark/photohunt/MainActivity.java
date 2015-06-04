@@ -343,6 +343,12 @@ public class MainActivity extends UfoFragmentActivity {
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
+    public void updateImageInfo(String description) {
+        if (mSingleImageFragment != null) {
+            mSingleImageFragment.updateLabels(description);
+        }
+    }
+
     /**
      * Обработчик кликов по выдвигающимуся меню
      */

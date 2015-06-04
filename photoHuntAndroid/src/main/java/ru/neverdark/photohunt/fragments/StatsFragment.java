@@ -44,6 +44,13 @@ public class StatsFragment extends UfoFragment {
     private int mListPosition;
     private int mItemPosition;
 
+    public static StatsFragment getInstance(long userId, String displayName) {
+        StatsFragment fragment = new StatsFragment();
+        fragment.mUserId = userId;
+        fragment.mDisplayName = displayName;
+        return fragment;
+    }
+
     @Override
     public void bindObjects() {
         mContestList = (ExpandableListView) mView.findViewById(R.id.stats_contestList);
@@ -114,19 +121,12 @@ public class StatsFragment extends UfoFragment {
         mContestList.setOnChildClickListener(new ContestClickHandler());
     }
 
-    public static StatsFragment getInstance(long userId, String displayName) {
-        StatsFragment fragment = new StatsFragment();
-        fragment.mUserId = userId;
-        fragment.mDisplayName = displayName;
-        return fragment;
-    }
-
     private class ContestClickHandler implements OnChildClickListener {
 
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                     int childPosition, long id) {
-            Detail2ContestFragment fragment = Detail2ContestFragment.getInstance(id);
+            DetailContestFragment fragment = DetailContestFragment.getInstance(id);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager()
                     .beginTransaction();
             transaction.replace(R.id.main_container, fragment);
