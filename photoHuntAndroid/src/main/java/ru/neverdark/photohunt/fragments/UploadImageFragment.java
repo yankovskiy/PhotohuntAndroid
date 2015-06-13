@@ -48,6 +48,7 @@ public class UploadImageFragment extends UfoFragment {
     private Exif mExif;
     private Contest mContest;
     private EditText mDescription;
+    private View mUploadHint;
 
     public static UploadImageFragment getInstance(Uri uri, Contest contest) {
         UploadImageFragment fragment = new UploadImageFragment();
@@ -77,6 +78,7 @@ public class UploadImageFragment extends UfoFragment {
         bindObjects();
         setListeners();
         updateActionBar(loadImage());
+        setVisible(mContest.is_user_contest == 0);
         return mView;
     }
 
@@ -139,6 +141,7 @@ public class UploadImageFragment extends UfoFragment {
 
     @Override
     public void bindObjects() {
+        mUploadHint = mView.findViewById(R.id.upload_hint);
         mNewSubject = (EditText) mView.findViewById(R.id.upload_new_subject);
         mDescription = (EditText) mView.findViewById(R.id.upload_image_description);
     }
@@ -146,6 +149,16 @@ public class UploadImageFragment extends UfoFragment {
     @Override
     public void setListeners() {
 
+    }
+
+    private void setVisible(boolean isVisible) {
+        if (isVisible) {
+            mUploadHint.setVisibility(View.VISIBLE);
+            mNewSubject.setVisibility(View.VISIBLE);
+        } else {
+            mUploadHint.setVisibility(View.GONE);
+            mNewSubject.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -166,9 +179,13 @@ public class UploadImageFragment extends UfoFragment {
 
     private void uploadImage() {
         try {
-            String newSubject = mNewSubject.getText().toString().trim();
-            if (newSubject.length() == 0) {
-                throw new ToastException(R.string.error_empty_subject);
+            String newSubject = "";
+
+            if (mContest.is_user_contest == 0) {
+                newSubject = mNewSubject.getText().toString().trim();
+                if (newSubject.length() == 0) {
+                    throw new ToastException(R.string.error_empty_subject);
+                }
             }
 
             String description = mDescription.getText().toString();

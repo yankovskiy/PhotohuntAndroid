@@ -111,6 +111,7 @@
     <string name="remove_avatar">Удалить аватар</string>
     <string name="goto_shop_title">Перейти в магазин?</string>
     <string name="goto_shop_message">Для публикации аватаров необходимо приобрести соответствующий товар в магазине</string>
+    <string name="goto_shop_message_contest">Для создания конкурса необходимо приобрести соответствующий товар в магазине</string>
     <string name="choose_source">Выберите источник...</string>
     <string name="is_load_avatar">Загрузить аватар?</string>
     <string name="remove_avatar_confirmation_message">Вы действительно хотите удалить свой аватар?</string>
@@ -185,4 +186,6 @@
     <string name="comments">Комментарии</string>
     <string name="information_chanded">Информация изменена</string>
     <string name="edit_image_information">Изменить описание снимка</string>
+    <string name="create_contest">Создать конкурс</string>
+    <string name="error_empty_reward">Укажите награду за победу</string>
 </resources>

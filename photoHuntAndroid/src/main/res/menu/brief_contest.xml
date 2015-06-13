@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/brief_contest_new"
+        android:icon="@drawable/ic_add_white_24dp"
+        android:title="@string/create_contest"
+        app:showAsAction="ifRoom|collapseActionView"></item>
+</menu>

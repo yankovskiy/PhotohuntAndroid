@@ -45,7 +45,7 @@ public class ViewImageFragment extends UfoFragment {
     private Context mContext;
     private CustomViewPager mViewPager;
     private Data mData;
-    private boolean mIsHideActionBar = false;
+    private boolean mIsFromProfile = false;
     private PhotoPagerAdapter mAdapter;
 
     public static ViewImageFragment getInstance(Data data) {
@@ -55,9 +55,9 @@ public class ViewImageFragment extends UfoFragment {
         return fragment;
     }
 
-    public static ViewImageFragment getInstance(Data data, boolean isHideActionBar) {
+    public static ViewImageFragment getInstance(Data data, boolean isFromProfile) {
         ViewImageFragment fragment = getInstance(data);
-        fragment.mIsHideActionBar = isHideActionBar;
+        fragment.mIsFromProfile = isFromProfile;
         return fragment;
     }
 
@@ -70,8 +70,15 @@ public class ViewImageFragment extends UfoFragment {
             case R.id.remove_image:
                 showRemoveDialog();
                 break;
+            case R.id.view_image_contest:
+                showImageContest();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showImageContest() {
+        Common.openFragment(this, DetailContestFragment.getInstance(mImage.contest_id), true);
     }
 
     private void showEditImageDialog() {
@@ -91,12 +98,14 @@ public class ViewImageFragment extends UfoFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.enter();
-        if (!mIsHideActionBar) {
+        if (!mIsFromProfile) {
             inflater.inflate(R.menu.view_single_image, menu);
             if (mImage.is_editable) {
                 menu.findItem(R.id.edit_image).setVisible(true);
                 menu.findItem(R.id.remove_image).setVisible(true);
             }
+        } else {
+            inflater.inflate(R.menu.view_image, menu);
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -121,9 +130,7 @@ public class ViewImageFragment extends UfoFragment {
         bindObjects();
         setListeners();
         mViewPager.setCurrentItem(mData.getPosition());
-        if (!mIsHideActionBar) {
-            updateActionBar(mData.getPosition());
-        }
+        updateActionBar(mData.getPosition());
         setHasOptionsMenu(true);
         return mView;
     }
@@ -135,36 +142,39 @@ public class ViewImageFragment extends UfoFragment {
     }
 
     private void updateActionBar(int imagePosition) {
-        View view = ((MainActivity) getActivity()).getActionBarLayout(true);
-        TextView author = (TextView) view.findViewById(R.id.custom_actionbar_title);
-        TextView subject = (TextView) view.findViewById(R.id.custom_actionbar_subtitle);
-        ImageView avatar = (ImageView) view.findViewById(R.id.custom_actionbar_image);
-
         mImage = mData.getImage(imagePosition);
-        if (mImage.display_name != null) {
-            author.setText(mImage.display_name);
-            author.setOnClickListener(new UserClickListener());
-            avatar.setOnClickListener(new UserClickListener());
-        } else {
-            author.setText(R.string.hidden);
-        }
 
-        if (mImage.subject != null) {
-            subject.setText(mImage.subject);
-        } else if (mImage.contest_status == Contest.STATUS_VOTES) {
-            String voteCount = String.format(Locale.US, "%s: %d", getString(R.string.remaining_votes), mData.getVoteCount());
-            subject.setText(voteCount);
-        } else {
-            subject.setText(R.string.hidden);
-        }
+        if (!mIsFromProfile) {
+            View view = ((MainActivity) getActivity()).getActionBarLayout(true);
+            TextView author = (TextView) view.findViewById(R.id.custom_actionbar_title);
+            TextView subject = (TextView) view.findViewById(R.id.custom_actionbar_subtitle);
+            ImageView avatar = (ImageView) view.findViewById(R.id.custom_actionbar_image);
 
-        if (mImage.user_id == 1L) { // System
-            avatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.system_avatar_48dp));
-        } else if (mImage.avatar != null && mImage.avatar.trim().length() > 0) {
-            String url = String.format(Locale.US, "%s/avatars/%s.jpg?size=48dp", RestService.getRestUrl(), mImage.avatar);
-            Picasso.with(mContext).load(url).transform(new TransformAvatar()).placeholder(R.drawable.no_avatar).tag(mContext).into(avatar);
-        } else {
-            avatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.no_avatar));
+            if (mImage.display_name != null) {
+                author.setText(mImage.display_name);
+                author.setOnClickListener(new UserClickListener());
+                avatar.setOnClickListener(new UserClickListener());
+            } else {
+                author.setText(R.string.hidden);
+            }
+
+            if (mImage.subject != null) {
+                subject.setText(mImage.subject);
+            } else if (mImage.contest_status == Contest.STATUS_VOTES) {
+                String voteCount = String.format(Locale.US, "%s: %d", getString(R.string.remaining_votes), mData.getVoteCount());
+                subject.setText(voteCount);
+            } else {
+                subject.setText(R.string.hidden);
+            }
+
+            if (mImage.user_id == 1L) { // System
+                avatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.system_avatar_48dp));
+            } else if (mImage.avatar != null && mImage.avatar.trim().length() > 0) {
+                String url = String.format(Locale.US, "%s/avatars/%s.jpg?size=48dp", RestService.getRestUrl(), mImage.avatar);
+                Picasso.with(mContext).load(url).transform(new TransformAvatar()).placeholder(R.drawable.no_avatar).tag(mContext).into(avatar);
+            } else {
+                avatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.no_avatar));
+            }
         }
     }
 
@@ -279,11 +289,8 @@ public class ViewImageFragment extends UfoFragment {
 
         @Override
         public void onPageSelected(int position) {
-            if (!mIsHideActionBar) {
-                updateActionBar(position);
-
-                getActivity().supportInvalidateOptionsMenu();
-            }
+            updateActionBar(position);
+            getActivity().supportInvalidateOptionsMenu();
         }
 
         @Override

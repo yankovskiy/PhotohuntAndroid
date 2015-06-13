@@ -1,6 +1,7 @@
 package ru.neverdark.photohunt.adapters;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,26 +24,6 @@ public class BriefContestAdapter extends ArrayAdapter<Contest>{
     private final int mResource;
     private OnBriefCardClickListener mCallback;
 
-    private static class RowHolder {
-        private TextView mEnterButton;
-        private TextView mSubject;
-        private TextView mAuthor;
-        private TextView mRewards;
-        private TextView mOpenDate;
-        private TextView mCloseDate;
-        private TextView mWorks;
-        private ImageView mContextButton;
-    }
-
-    public interface OnBriefCardClickListener {
-        public void enterToContest(long contestId);
-        public void onMoreButton(Contest contest);
-    }
-
-    public void setCallback(OnBriefCardClickListener callback) {
-        mCallback = callback;
-    }
-
     public BriefContestAdapter(Context context, List<Contest> contests) {
         this(context, R.layout.brief_contest_list_item, contests);
     }
@@ -52,6 +33,10 @@ public class BriefContestAdapter extends ArrayAdapter<Contest>{
         mContext = context;
         mObjects = contests;
         mResource = resource;
+    }
+
+    public void setCallback(OnBriefCardClickListener callback) {
+        mCallback = callback;
     }
 
     @Override
@@ -65,6 +50,7 @@ public class BriefContestAdapter extends ArrayAdapter<Contest>{
             row = inflater.inflate(mResource, parent, false);
 
             holder = new RowHolder();
+            holder.mHeader = row.findViewById(R.id.brief_header);
             holder.mEnterButton = (TextView) row.findViewById(R.id.brief_contest_enter);
             holder.mSubject = (TextView) row.findViewById(R.id.brief_contest_subject);
             holder.mAuthor = (TextView) row.findViewById(R.id.brief_contest_author);
@@ -86,6 +72,23 @@ public class BriefContestAdapter extends ArrayAdapter<Contest>{
         String rewards = String.format(Locale.US, "%s: %d", mContext.getString(R.string.reward), contest.rewards);
         String works = String.format("%s: %s", mContext.getString(R.string.works_count), contest.works);
 
+        if (contest.is_user_contest == 0) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                holder.mHeader.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.grey_header));
+            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+                holder.mHeader.setBackground(mContext.getResources().getDrawable(R.drawable.grey_header));
+            } else {
+                holder.mHeader.setBackground(mContext.getDrawable(R.drawable.grey_header));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                holder.mHeader.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.teal_header));
+            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+                holder.mHeader.setBackground(mContext.getResources().getDrawable(R.drawable.teal_header));
+            } else {
+                holder.mHeader.setBackground(mContext.getDrawable(R.drawable.teal_header));
+            }
+        }
         holder.mAuthor.setText(author);
         holder.mSubject.setText(subject);
         holder.mOpenDate.setText(openDate);
@@ -113,6 +116,24 @@ public class BriefContestAdapter extends ArrayAdapter<Contest>{
         holder.mContextButton.setOnClickListener(new ButtonClickListener(contest));
 
         return row;
+    }
+
+    public interface OnBriefCardClickListener {
+        public void enterToContest(long contestId);
+
+        public void onMoreButton(Contest contest);
+    }
+
+    private static class RowHolder {
+        private TextView mEnterButton;
+        private TextView mSubject;
+        private TextView mAuthor;
+        private TextView mRewards;
+        private TextView mOpenDate;
+        private TextView mCloseDate;
+        private TextView mWorks;
+        private ImageView mContextButton;
+        private View mHeader;
     }
 
     private class ButtonClickListener implements View.OnClickListener {

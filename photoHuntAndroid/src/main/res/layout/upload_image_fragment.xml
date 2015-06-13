@@ -32,43 +32,45 @@
 
             <TextView
                 android:id="@+id/upload_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/subject_help_message"
                 android:textSize="12sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:visibility="gone" />
 
             <EditText
-                android:layout_below="@+id/upload_hint"
                 android:id="@+id/upload_new_subject"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:inputType="textCapSentences"
+                android:layout_below="@+id/upload_hint"
                 android:drawableLeft="@drawable/ic_whatshot_grey600_18dp"
                 android:drawablePadding="8dp"
                 android:hint="@string/new_subject"
+                android:inputType="textCapSentences"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:visibility="gone" />
 
 
             <TextView
-                android:layout_below="@+id/upload_new_subject"
                 android:id="@+id/upload_image_attention"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/upload_new_subject"
+                android:layout_marginBottom="16dp"
                 android:text="@string/upload_image_attention"
-                android:textSize="12sp"
-                android:layout_marginBottom="16dp" />
+                android:textSize="12sp" />
 
         </RelativeLayout>
 
         <EditText
-            android:gravity="top"
-            android:hint="@string/photo_description"
             android:id="@+id/upload_image_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/upload_subject_block"
+            android:gravity="top"
+            android:hint="@string/photo_description"
             android:inputType="textLongMessage|textMultiLine"
             android:paddingBottom="16dp"
             android:paddingLeft="8dp"

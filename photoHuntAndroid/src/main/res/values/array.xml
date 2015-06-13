@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="rewards">
+        <item>Выберите награду</item>
+        <item>1 очко рейтинга</item>
+        <item>2 очка рейтинга</item>
+        <item>3 очка рейтинга</item>
+        <item>4 очка рейтинга</item>
+        <item>5 очков рейтинга</item>
+        <item>6 очков рейтинга</item>
+        <item>7 очков рейтинга</item>
+        <item>8 очков рейтинга</item>
+        <item>9 очков рейтинга</item>
+        <item>10 очков рейтинга</item>
+    </string-array>
+
     <string-array name="months">
         <item >Январь</item>
         <item >Февраль</item>

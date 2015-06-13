@@ -22,6 +22,7 @@ public class Contest {
     public int works;
     public long prev_id;
     public String avatar;
+    public int is_user_contest;
 
     @Override
     public String toString() {

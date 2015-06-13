@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,16 +14,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.List;
-
+import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import ru.neverdark.abs.OnCallback;
 import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.BriefContestAdapter;
+import ru.neverdark.photohunt.dialogs.ConfirmDialog;
+import ru.neverdark.photohunt.dialogs.NewContestDialog;
 import ru.neverdark.photohunt.rest.CallbackHandler;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.data.Contest;
+import ru.neverdark.photohunt.rest.data.OpenContests;
 import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
@@ -35,6 +40,7 @@ public class BriefContestFragment extends UfoFragment {
     private ListView mContestList;
     private Contest mSelectedContest;
     private Parcelable mContestListState = null;
+    private OpenContests mData;
 
     /*
      * (non-Javadoc)
@@ -131,15 +137,56 @@ public class BriefContestFragment extends UfoFragment {
     public void onResume() {
         super.onResume();
         if (!mIsDataLoaded) {
-            String user = Settings.getUserId(mContext);
-            String pass = Settings.getPassword(mContext);
-
-            RestService service = new RestService(user, pass);
-            service.getContestApi().getOpenContests(new GetOpenContestsHandler(mView));
+            loadData();
         }
     }
 
-    private class GetOpenContestsHandler extends CallbackHandler<List<Contest>> {
+    private void loadData() {
+        String user = Settings.getUserId(mContext);
+        String pass = Settings.getPassword(mContext);
+
+        RestService service = new RestService(user, pass);
+        service.getContestApi().getOpenContests(new GetOpenContestsHandler(mView));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.brief_contest, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.brief_contest_new:
+                createNewContest();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void createNewContest() {
+        if (mData.is_can_create) {
+            NewContestDialog dialog = NewContestDialog.getInstance(mContext);
+            dialog.setCallback(new NewContestListener());
+            dialog.show(getFragmentManager(), NewContestDialog.DIALOG_ID);
+        } else {
+            showAttentionDialog();
+        }
+    }
+
+    private void showAttentionDialog() {
+        ConfirmDialog dialog = ConfirmDialog.getInstance(mContext);
+        dialog.setMessages(R.string.goto_shop_title, R.string.goto_shop_message_contest);
+        dialog.setCallback(new GotoShopListener());
+        dialog.show(getFragmentManager(), ConfirmDialog.DIALOG_ID);
+    }
+
+    private void openShop() {
+        Common.openFragment(this, ShopFragment.getInstance(), true);
+    }
+
+    private class GetOpenContestsHandler extends CallbackHandler<OpenContests> {
 
         public GetOpenContestsHandler(View view) {
             super(view, R.id.brief_hide_when_loading, R.id.brief_loading_progress);
@@ -150,6 +197,8 @@ public class BriefContestFragment extends UfoFragment {
             super.failure(error);
             Response response = error.getResponse();
             try {
+                setHasOptionsMenu(false);
+
                 if (response == null) {
                     throw new ToastException(R.string.error_network_problem);
                 }
@@ -158,20 +207,19 @@ public class BriefContestFragment extends UfoFragment {
                     throw new ToastException(R.string.error_wrong_password);
                 }
 
-                if (response.getStatus() == 404) {
-                    throw new ToastException(R.string.error_contest_not_found);
-                }
+                RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+                throw new ToastException(err.error);
 
-                throw new ToastException(R.string.error_unexpected_error);
             } catch (ToastException e) {
                 e.show(mContext);
             }
         }
 
         @Override
-        public void success(List<Contest> data, Response response) {
+        public void success(OpenContests data, Response response) {
             if (data != null) {
-                BriefContestAdapter adapter = new BriefContestAdapter(mContext, data);
+                mData = data;
+                BriefContestAdapter adapter = new BriefContestAdapter(mContext, data.contests);
                 adapter.setCallback(new EnterToContestListener());
                 mContestList.setAdapter(adapter);
 
@@ -179,6 +227,7 @@ public class BriefContestFragment extends UfoFragment {
                     mContestList.onRestoreInstanceState(mContestListState);
                 }
                 mIsDataLoaded = true;
+                setHasOptionsMenu(true);
             }
 
             super.success(data, response);
@@ -195,6 +244,53 @@ public class BriefContestFragment extends UfoFragment {
         public void onMoreButton(Contest contest) {
             mSelectedContest = contest;
             getActivity().openContextMenu(mContestList);
+        }
+    }
+
+    private class GotoShopListener implements OnCallback, ConfirmDialog.OnPositiveClickListener {
+        @Override
+        public void onPositiveClickHandler() {
+            openShop();
+        }
+    }
+
+    private class NewContestListener implements OnCallback, NewContestDialog.OnPositiveClickListener {
+        @Override
+        public void onPositiveClickHandler(Contest contest) {
+            RestService service = new RestService(Settings.getUserId(mContext), Settings.getPassword(mContext));
+            setHasOptionsMenu(false);
+            ((UfoFragmentActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
+            service.getContestApi().createNewContest(contest, new CreateNewContestListener());
+        }
+
+        private class CreateNewContestListener implements Callback<Void> {
+            @Override
+            public void success(Void data, Response response) {
+                ((UfoFragmentActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
+                loadData();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Response response = error.getResponse();
+                try {
+                    setHasOptionsMenu(false);
+                    ((UfoFragmentActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
+                    if (response == null) {
+                        throw new ToastException(R.string.error_network_problem);
+                    }
+
+                    if (response.getStatus() == 401) {
+                        throw new ToastException(R.string.error_wrong_password);
+                    }
+
+                    RestService.ErrorData err = (RestService.ErrorData) error.getBodyAs(RestService.ErrorData.class);
+                    throw new ToastException(err.error);
+
+                } catch (ToastException e) {
+                    e.show(mContext);
+                }
+            }
         }
     }
 }

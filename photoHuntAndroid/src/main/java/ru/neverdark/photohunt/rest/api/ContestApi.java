@@ -16,6 +16,7 @@ import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.rest.data.ContestDetail;
 import ru.neverdark.photohunt.rest.data.Exif;
 import ru.neverdark.photohunt.rest.data.Image;
+import ru.neverdark.photohunt.rest.data.OpenContests;
 
 public interface ContestApi {
     @DELETE("/image/{id}")
@@ -28,7 +29,7 @@ public interface ContestApi {
     public void getContests(Callback<List<Contest>> callback);
 
     @GET("/contest")
-    public void getOpenContests(Callback<List<Contest>> callback);
+    public void getOpenContests(Callback<OpenContests> callback);
 
     @GET("/contest/{id}")
     public void getContestDetails(@Path("id") long id, Callback<ContestDetail> callback);
@@ -46,4 +47,7 @@ public interface ContestApi {
 
     @GET("/image/{id}")
     public void getImageById(@Path("id") long imageId, Callback<Image> callback);
+
+    @POST("/contest")
+    public void createNewContest(@Body Contest contest, Callback<Void> callback);
 }
