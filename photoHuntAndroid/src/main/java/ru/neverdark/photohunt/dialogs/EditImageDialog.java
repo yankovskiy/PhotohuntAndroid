@@ -40,7 +40,10 @@ public class EditImageDialog extends UfoDialogFragment {
     protected void createDialog() {
         super.createDialog();
         getAlertDialog().setTitle(R.string.view_image_info);
-        mSubject.setText(mImage.subject);
+        if (mImage.subject != null && mImage.subject.length() > 0) {
+            mSubject.setText(mImage.subject);
+            mSubject.setVisibility(View.VISIBLE);
+        }
         mDescription.setText(mImage.description);
     }
 
@@ -57,11 +60,13 @@ public class EditImageDialog extends UfoDialogFragment {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             try {
-                String newSubject = mSubject.getText().toString().trim();
-                if (newSubject.length() == 0) {
-                    throw new ToastException(R.string.error_empty_subject);
+                String newSubject = null;
+                if (mImage.subject != null && mImage.subject.length() > 0) {
+                    newSubject = mSubject.getText().toString().trim();
+                    if (newSubject.length() == 0) {
+                        throw new ToastException(R.string.error_empty_subject);
+                    }
                 }
-
                 OnPositiveClickListener callback = (OnPositiveClickListener) getCallback();
                 if (callback != null) {
                     mImage.subject = newSubject;
