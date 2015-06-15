@@ -279,9 +279,9 @@ public class ViewSingleImageFragment extends UfoFragment {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         ((MainActivity) getActivity()).bindSingleImageFragment(null);
-        super.onDestroy();
+        super.onDestroyView();
     }
 
     private void loadComments() {
