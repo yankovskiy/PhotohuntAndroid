@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-<style name="AppBaseTheme" parent="Theme.AppCompat.Light">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     <item name="editTextColor">@color/material_blue_grey_700</item>
     <item name="colorPrimary">@color/material_blue_grey_500</item>
     <item name="colorPrimaryDark">@color/material_blue_grey_700</item>
