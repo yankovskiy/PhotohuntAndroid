@@ -195,12 +195,12 @@ public class ViewSingleImageFragment extends UfoFragment {
 
             if (mImage.exif.focal_length != null) {
                 mView.findViewById(R.id.view_single_image_focal_row).setVisibility(View.VISIBLE);
-                mFocalLength.setText(mImage.exif.focal_length);
+                mFocalLength.setText(formatFocalLength(mImage.exif.focal_length));
             }
 
             if (mImage.exif.exposure_time != null) {
                 mView.findViewById(R.id.view_single_image_shutter_row).setVisibility(View.VISIBLE);
-                mShutterSpeed.setText(mImage.exif.exposure_time);
+                mShutterSpeed.setText(formatShutterSpeed(mImage.exif.exposure_time));
             }
 
             if (mImage.exif.iso != null) {
@@ -210,7 +210,7 @@ public class ViewSingleImageFragment extends UfoFragment {
 
             if (mImage.exif.datetime != null) {
                 mView.findViewById(R.id.view_single_image_datetime_row).setVisibility(View.VISIBLE);
-                mShutterDatetime.setText(mImage.exif.datetime);
+                mShutterDatetime.setText(formatDateTime(mImage.exif.datetime));
             }
 
             if (mImage.exif.aperture != null) {
@@ -219,6 +219,69 @@ public class ViewSingleImageFragment extends UfoFragment {
             }
         }
         updateActionBar();
+    }
+
+    private String formatFocalLength(String focalLength) {
+        String result = null;
+
+        try {
+            long focal = Math.round(Double.parseDouble(focalLength));
+            result = String.format("%d %s", focal, getString(R.string.mm));
+        } catch (NumberFormatException e) {
+            result = focalLength;
+        }
+
+        return result;
+    }
+
+
+    private String formatShutterSpeed(String exposureTime) {
+        String result = null;
+        String sec = String.format(" %s", getString(R.string.sec));
+        String min = String.format(" %s", getString(R.string.min));
+        try {
+            double shutterSpeed = Double.parseDouble(exposureTime);
+            if (shutterSpeed < 1.0) {
+                result = new String("1/").concat(cleanNumberToString(1 / shutterSpeed)).concat(sec);
+            } else if (shutterSpeed >= 1.0 && shutterSpeed < 60.0) {
+                result = cleanNumberToString(shutterSpeed).concat(sec);
+            } else {
+                result = cleanNumberToString(shutterSpeed / 60.0).concat(min);
+            }
+        } catch (NumberFormatException e) {
+            result = exposureTime;
+        }
+
+        return result;
+    }
+
+    private String cleanNumberToString(double number) {
+        Double cleanNumber = Math.round(number * 100) / 100.0;
+        String numberToReturn = null;
+
+        if (cleanNumber % 1 == 0) {
+            numberToReturn = String.format("%d", cleanNumber.intValue());
+        } else {
+            numberToReturn = String.format("%s", cleanNumber);
+        }
+
+        return numberToReturn;
+    }
+
+    private String formatDateTime(String dateTime) {
+        String result = null;
+        String[] dateTimeData = dateTime.split(" ");
+
+        if (dateTimeData.length == 2) {
+            String date = Common.parseDate(mContext, dateTimeData[0].replace(":", "-"));
+            String time = dateTimeData[1];
+
+            result = String.format("%s, %s", date, time);
+        } else {
+            result = dateTime;
+        }
+
+        return result;
     }
 
     private void updateActionBar() {

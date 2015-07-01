@@ -188,4 +188,7 @@
     <string name="edit_image_information">Изменить описание снимка</string>
     <string name="create_contest">Создать конкурс</string>
     <string name="error_empty_reward">Укажите награду за победу</string>
+    <string name="sec">сек</string>
+    <string name="min">мин</string>
+    <string name="mm">мм</string>
 </resources>
