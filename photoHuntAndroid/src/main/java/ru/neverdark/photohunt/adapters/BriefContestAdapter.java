@@ -15,6 +15,7 @@ import java.util.Locale;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.rest.data.Contest;
 import ru.neverdark.photohunt.utils.ButtonOnTouchListener;
+import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.ImageOnTouchListener;
 
 public class BriefContestAdapter extends ArrayAdapter<Contest>{
@@ -67,8 +68,8 @@ public class BriefContestAdapter extends ArrayAdapter<Contest>{
         Contest contest = getItem(position);
         String subject = contest.subject;
         String author = String.format("%s: %s", mContext.getString(R.string.author), contest.display_name);
-        String openDate = String.format("%s: %s", mContext.getString(R.string.open_date), contest.open_date);
-        String closeDate = String.format("%s: %s", mContext.getString(R.string.close_date), contest.close_date);
+        String openDate = String.format("%s: %s", mContext.getString(R.string.open_date), Common.parseDate(mContext, contest.open_date));
+        String closeDate = String.format("%s: %s", mContext.getString(R.string.close_date), Common.parseDate(mContext, contest.close_date));
         String rewards = String.format(Locale.US, "%s: %d", mContext.getString(R.string.reward), contest.rewards);
         String works = String.format("%s: %s", mContext.getString(R.string.works_count), contest.works);
 
