@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/stats_loading_progress"
+        android:id="@+id/achievements_users_loading_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center">
@@ -19,14 +18,16 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/stats_hide_when_loading"
+        android:id="@+id/achievements_users_hide_when_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ExpandableListView
-            android:id="@+id/stats_contestList"
+        <ListView
+            android:id="@+id/achievements_users_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ExpandableListView>
+            android:layout_height="match_parent"
+            android:background="@color/light_grey" />
+
     </RelativeLayout>
 
 </LinearLayout>

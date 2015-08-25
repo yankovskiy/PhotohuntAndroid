@@ -191,4 +191,13 @@
     <string name="sec">сек</string>
     <string name="min">мин</string>
     <string name="mm">мм</string>
+    <string name="achievements">Достижения</string>
+    <string name="achievement_on_user" formatted="false">у %d %s</string>
+    <string name="be_the_first">Станьте первым</string>
+    <string name="achievement_gets">Достижение получили</string>
+    <string name="my_achievements">Мои достижения</string>
+    <string name="user_achievements">Достижения пользователя</string>
+    <string name="achieved">Достигнуто</string>
+    <string name="achiev_progress" formatted="false">%d из %d</string>
+    <string name="not_achieved">Не достигнуто</string>
 </resources>

@@ -33,6 +33,7 @@ import ru.neverdark.abs.UfoFragment;
 import ru.neverdark.abs.UfoFragmentActivity;
 import ru.neverdark.photohunt.adapters.MenuAdapter;
 import ru.neverdark.photohunt.dialogs.ConfirmDialog;
+import ru.neverdark.photohunt.fragments.AchievementsFragment;
 import ru.neverdark.photohunt.fragments.BriefContestFragment;
 import ru.neverdark.photohunt.fragments.InformationFragment;
 import ru.neverdark.photohunt.fragments.ProfileFragment;
@@ -89,6 +90,7 @@ public class MainActivity extends UfoFragmentActivity {
 
         UfoMenuItem contestItem = new UfoMenuItem(mContext, R.drawable.ic_whatshot_grey600_24dp, R.string.contests);
         UfoMenuItem statsItem = new UfoMenuItem(mContext, R.drawable.ic_poll_grey600_24dp, R.string.stats);
+        UfoMenuItem achievmentsItems = new UfoMenuItem(mContext, R.drawable.ic_pages_grey600_24dp, R.string.achievements);
         UfoMenuItem shopItem = new UfoMenuItem(mContext, R.drawable.ic_shopping_cart_grey600_24dp, R.string.shop);
         UfoMenuItem profileItem = new UfoMenuItem(mContext, R.drawable.ic_assignment_ind_grey600_24dp, R.string.profile);
         UfoMenuItem ratingItem = new UfoMenuItem(mContext, R.drawable.ic_group_grey600_24dp, R.string.rating);
@@ -97,6 +99,7 @@ public class MainActivity extends UfoFragmentActivity {
 
         menuAdapter.add(contestItem);
         menuAdapter.add(statsItem);
+        menuAdapter.add(achievmentsItems);
         menuAdapter.add(shopItem);
         menuAdapter.add(ratingItem);
         menuAdapter.add(profileItem);
@@ -369,6 +372,10 @@ public class MainActivity extends UfoFragmentActivity {
                 case R.string.stats:
                     mIsBackToContest = true;
                     fragment = StatsFragment.getInstance(0L, null);
+                    break;
+                case R.string.achievements:
+                    mIsBackToContest = true;
+                    fragment = AchievementsFragment.getInstance();
                     break;
                 case R.string.shop:
                     mIsBackToContest = true;
