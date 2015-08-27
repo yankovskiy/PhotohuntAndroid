@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
@@ -18,14 +19,19 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import retrofit.RetrofitError;
 import ru.neverdark.abs.OnCallback;
@@ -44,6 +50,7 @@ import ru.neverdark.photohunt.fragments.ViewSingleImageFragment;
 import ru.neverdark.photohunt.fragments.WelcomeFragment;
 import ru.neverdark.photohunt.rest.RestService;
 import ru.neverdark.photohunt.rest.data.User;
+import ru.neverdark.photohunt.utils.Common;
 import ru.neverdark.photohunt.utils.Log;
 import ru.neverdark.photohunt.utils.Settings;
 import ru.neverdark.photohunt.utils.SingletonHelper;
@@ -184,6 +191,24 @@ public class MainActivity extends UfoFragmentActivity {
         }
 
         return view;
+    }
+
+    public void setActionBarData(String displayName, int titleResId, String avatarName, long userId) {
+        View view = getActionBarLayout(true);
+        TextView author = (TextView) view.findViewById(R.id.custom_actionbar_title);
+        TextView subject = (TextView) view.findViewById(R.id.custom_actionbar_subtitle);
+        ImageView avatar = (ImageView) view.findViewById(R.id.custom_actionbar_image);
+        author.setText(displayName);
+        subject.setText(titleResId);
+
+        if (userId == 1L) { // System
+            avatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.system_avatar_48dp));
+        } else if (avatarName != null && avatarName.trim().length() > 0) {
+            String url = String.format(Locale.US, "%s/avatars/%s.jpg?size=48dp", RestService.getRestUrl(), avatarName);
+            Picasso.with(mContext).load(url).transform(new Transform()).placeholder(R.drawable.no_avatar).tag(mContext).into(avatar);
+        } else {
+            avatar.setImageDrawable(mContext.getResources().getDrawable(R.drawable.no_avatar));
+        }
     }
 
     /**
@@ -352,6 +377,19 @@ public class MainActivity extends UfoFragmentActivity {
         }
     }
 
+    private class Transform implements Transformation {
+        @Override
+        public Bitmap transform(Bitmap source) {
+            int targetWidth = (int) mContext.getResources().getDimension(R.dimen.min_avatar_size);
+            return Common.resizeBitmap(source, targetWidth, targetWidth);
+        }
+
+        @Override
+        public String key() {
+            return "transformation" + " desiredWidth";
+        }
+    }
+
     /**
      * Обработчик кликов по выдвигающимуся меню
      */
@@ -371,7 +409,7 @@ public class MainActivity extends UfoFragmentActivity {
                     break;
                 case R.string.stats:
                     mIsBackToContest = true;
-                    fragment = StatsFragment.getInstance(0L, null);
+                    fragment = StatsFragment.getInstance();
                     break;
                 case R.string.achievements:
                     mIsBackToContest = true;

@@ -6,11 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.UserStatsAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
@@ -27,29 +27,28 @@ public class UserStatsFragment extends UfoFragment {
     private Context mContext;
     private boolean mIsDataLoaded;
     private String mDisplayName;
-    private TextView mTitle;
-    private long mId;
+    private long mUserId;
     private ListView mStatsList;
+    private String mAvatar;
 
     /**
      * Создание экземпляра класса
      *
      * @param userId      id пользователя по которому произвести запрос данных
      * @param displayName отображаемое имя пользователя
+     * @param avatar      название аватар-файла
      * @return объект класса
      */
-    public static UserStatsFragment getInstance(long userId, String displayName) {
+    public static UserStatsFragment getInstance(long userId, String displayName, String avatar) {
         UserStatsFragment fragment = new UserStatsFragment();
         fragment.mDisplayName = displayName;
-        fragment.mId = userId;
+        fragment.mUserId = userId;
+        fragment.mAvatar = avatar;
         return fragment;
     }
 
     @Override
     public void bindObjects() {
-        mTitle = (TextView) mView.findViewById(R.id.user_stats_title);
-        mTitle.setText(mDisplayName);
-
         mStatsList = (ListView) mView.findViewById(R.id.users_stats_list);
     }
 
@@ -66,7 +65,7 @@ public class UserStatsFragment extends UfoFragment {
         mIsDataLoaded = false;
         bindObjects();
         setListeners();
-        getActivity().setTitle(R.string.user_stats_title);
+        getActivity().setTitle(null);
 
         return mView;
     }
@@ -79,7 +78,7 @@ public class UserStatsFragment extends UfoFragment {
         String password = Settings.getPassword(mContext);
 
         RestService service = new RestService(user, password);
-        service.getUserApi().getUserStats(mId, new GetUserStatsListener(mView));
+        service.getUserApi().getUserStats(mUserId, new GetUserStatsListener(mView));
     }
 
     @Override
@@ -89,6 +88,12 @@ public class UserStatsFragment extends UfoFragment {
         if (!mIsDataLoaded) {
             loadData();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        ((MainActivity) getActivity()).getActionBarLayout(false);
+        super.onDestroyView();
     }
 
     private class GetUserStatsListener extends CallbackHandler<Stats> {
@@ -126,6 +131,7 @@ public class UserStatsFragment extends UfoFragment {
         public void success(Stats data, Response response) {
             mIsDataLoaded = true;
             bindLoadedData(data);
+            ((MainActivity) getActivity()).setActionBarData(mDisplayName, R.string.user_stats_title, mAvatar, mUserId);
             super.success(data, response);
         }
 

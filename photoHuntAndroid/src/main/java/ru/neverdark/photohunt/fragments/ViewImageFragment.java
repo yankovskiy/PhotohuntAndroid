@@ -131,6 +131,9 @@ public class ViewImageFragment extends UfoFragment {
         setListeners();
         mViewPager.setCurrentItem(mData.getPosition());
         updateActionBar(mData.getPosition());
+        if (mIsFromProfile) {
+            ((MainActivity) getActivity()).setActionBarData(mData.mDisplayName, mData.mResTitleId, mData.mAvatar, mData.mUserId);
+        }
         setHasOptionsMenu(true);
         return mView;
     }
@@ -187,12 +190,27 @@ public class ViewImageFragment extends UfoFragment {
         private final List<Image> mImages;
         private final int mPosition;
         private int mVoteCount;
+        private String mDisplayName;
+        private int mResTitleId;
+        private String mAvatar;
+        private long mUserId;
+
+        public Data(List<Image> images, int voteCount, int position, String displayName, int resTitleId, String avatar, long userId) {
+            mImages = images;
+            mVoteCount = voteCount;
+            mPosition = position;
+            mDisplayName = displayName;
+            mResTitleId = resTitleId;
+            mAvatar = avatar;
+            mUserId = userId;
+        }
 
         public Data(List<Image> images, int voteCount, int position) {
             mImages = images;
             mVoteCount = voteCount;
             mPosition = position;
         }
+
 
         public int getPosition() {
             return mPosition;

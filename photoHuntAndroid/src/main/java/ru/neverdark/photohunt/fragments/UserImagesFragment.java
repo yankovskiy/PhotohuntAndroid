@@ -15,7 +15,7 @@ import java.util.List;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import ru.neverdark.abs.UfoFragment;
-import ru.neverdark.abs.UfoFragmentActivity;
+import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.UserImagesAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
@@ -38,19 +38,20 @@ public class UserImagesFragment extends UfoFragment {
     private boolean mIsDataLoaded;
     private String mDisplayName;
     private List<Image> mImages;
+    private String mAvatar;
 
-    public static UserImagesFragment getInstance(long userId, String displayName) {
+    public static UserImagesFragment getInstance(long userId, String displayName, String avatar) {
         UserImagesFragment fragment = new UserImagesFragment();
-        Bundle args = new Bundle();
-        args.putLong(USER_ID, userId);
-        args.putString(DISPLAY_NAME, displayName);
-        fragment.setArguments(args);
+        fragment.mDisplayName = displayName;
+        fragment.mUserId = userId;
+        fragment.mAvatar = avatar;
         return fragment;
     }
 
     @Override
     public void onDestroyView() {
         mGridState = mGrid.onSaveInstanceState();
+        ((MainActivity) getActivity()).getActionBarLayout(false);
         super.onDestroyView();
     }
 
@@ -72,24 +73,7 @@ public class UserImagesFragment extends UfoFragment {
         mIsDataLoaded = false;
         bindObjects();
         setListeners();
-        getActivity().setTitle(R.string.user_album);
-        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(mDisplayName);
         return mView;
-    }
-
-    @Override
-    public void onDestroy() {
-        ((UfoFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(null);
-        super.onDestroy();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mUserId = getArguments().getLong(USER_ID);
-            mDisplayName = getArguments().getString(DISPLAY_NAME);
-        }
     }
 
     @Override
@@ -120,7 +104,7 @@ public class UserImagesFragment extends UfoFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            ViewImageFragment fragment = ViewImageFragment.getInstance(new ViewImageFragment.Data(mImages, 0, position), true);
+            ViewImageFragment fragment = ViewImageFragment.getInstance(new ViewImageFragment.Data(mImages, 0, position, mDisplayName, R.string.user_album, mAvatar, mUserId), true);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
             transaction.addToBackStack(null);
@@ -165,6 +149,7 @@ public class UserImagesFragment extends UfoFragment {
                     mGrid.onRestoreInstanceState(mGridState);
                 }
                 mIsDataLoaded = true;
+                ((MainActivity) getActivity()).setActionBarData(mDisplayName, R.string.user_album, mAvatar, mUserId);
             }
 
             super.success(data, response);

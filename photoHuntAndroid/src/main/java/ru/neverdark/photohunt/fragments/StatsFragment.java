@@ -43,11 +43,19 @@ public class StatsFragment extends UfoFragment {
     private String mDisplayName;
     private int mListPosition;
     private int mItemPosition;
+    private String mAvatar;
 
-    public static StatsFragment getInstance(long userId, String displayName) {
+    public static StatsFragment getInstance() {
+        StatsFragment fragment = new StatsFragment();
+        fragment.mUserId = 0L;
+        return fragment;
+    }
+
+    public static StatsFragment getInstance(long userId, String displayName, String avatar) {
         StatsFragment fragment = new StatsFragment();
         fragment.mUserId = userId;
         fragment.mDisplayName = displayName;
+        fragment.mAvatar = avatar;
         return fragment;
     }
 
@@ -75,7 +83,7 @@ public class StatsFragment extends UfoFragment {
             getActivity().setTitle(R.string.stats);
         } else {
             getActivity().setTitle(R.string.wins_list);
-            ((MainActivity) getActivity()).getSupportActionBar().setSubtitle(mDisplayName);
+            ((MainActivity) getActivity()).setActionBarData(mDisplayName, R.string.wins_list, mAvatar, mUserId);
         }
         return mView;
     }
@@ -113,6 +121,7 @@ public class StatsFragment extends UfoFragment {
         mListPosition = mContestList.getFirstVisiblePosition();
         View itemView = mContestList.getChildAt(0);
         mItemPosition = itemView == null ? 0 : itemView.getTop();
+        ((MainActivity) getActivity()).getActionBarLayout(false);
         super.onDestroyView();
     }
 

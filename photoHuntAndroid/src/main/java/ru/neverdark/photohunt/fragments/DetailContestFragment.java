@@ -148,6 +148,7 @@ public class DetailContestFragment extends UfoFragment {
         Common.openFragment(this, fragment, true);
     }
 
+    @Override
     public void onDestroyView() {
         Log.enter();
         ((MainActivity) getActivity()).getActionBarLayout(false);

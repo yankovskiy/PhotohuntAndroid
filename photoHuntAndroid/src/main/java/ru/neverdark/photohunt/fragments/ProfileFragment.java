@@ -471,7 +471,7 @@ public class ProfileFragment extends UfoFragment {
          * Открывает статистику пользователя
          */
         private void openUserStats() {
-            UserStatsFragment fragment = UserStatsFragment.getInstance(mUserData.id, mUserData.display_name);
+            UserStatsFragment fragment = UserStatsFragment.getInstance(mUserData.id, mUserData.display_name, mUserData.avatar);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
             transaction.addToBackStack(null);
@@ -482,7 +482,7 @@ public class ProfileFragment extends UfoFragment {
          * Открывает список конкурсов в которых пользователь победил
          */
         private void openUserWinList() {
-            StatsFragment fragment = StatsFragment.getInstance(mUserData.id, mUserData.display_name);
+            StatsFragment fragment = StatsFragment.getInstance(mUserData.id, mUserData.display_name, mUserData.avatar);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
             transaction.addToBackStack(null);
@@ -506,8 +506,9 @@ public class ProfileFragment extends UfoFragment {
         private void openUserAlbum() {
             long userId = mUserData.id;
             String displayName = mUserData.display_name;
+            String avatar = mUserData.avatar;
 
-            UserImagesFragment fragment = UserImagesFragment.getInstance(userId, displayName);
+            UserImagesFragment fragment = UserImagesFragment.getInstance(userId, displayName, avatar);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.main_container, fragment);
             transaction.addToBackStack(null);
