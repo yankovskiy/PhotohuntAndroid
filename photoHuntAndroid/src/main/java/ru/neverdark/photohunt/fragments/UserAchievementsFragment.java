@@ -14,6 +14,7 @@ import java.util.List;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import ru.neverdark.abs.UfoFragment;
+import ru.neverdark.photohunt.MainActivity;
 import ru.neverdark.photohunt.R;
 import ru.neverdark.photohunt.adapters.UserAchievementsAdapter;
 import ru.neverdark.photohunt.rest.CallbackHandler;
@@ -31,13 +32,15 @@ public class UserAchievementsFragment extends UfoFragment {
     private Context mContext;
     private ListView mAchievementsList;
     private Parcelable mListState = null;
-    private int mCaptionResIds;
     private long mUserId;
+    private String mDisplayName;
+    private String mAvatar;
 
-    public static UserAchievementsFragment getInstance(int captionResId, long userId) {
+    public static UserAchievementsFragment getInstance(String displayName, String avatar, long userId) {
         UserAchievementsFragment fragment = new UserAchievementsFragment();
-        fragment.mCaptionResIds = captionResId;
         fragment.mUserId = userId;
+        fragment.mDisplayName = displayName;
+        fragment.mAvatar = avatar;
         return fragment;
     }
 
@@ -55,6 +58,7 @@ public class UserAchievementsFragment extends UfoFragment {
     public void onDestroyView() {
         Log.enter();
         mListState = mAchievementsList.onSaveInstanceState();
+        ((MainActivity) getActivity()).getActionBarLayout(false);
         super.onDestroyView();
     }
 
@@ -66,7 +70,7 @@ public class UserAchievementsFragment extends UfoFragment {
         bindObjects();
         setListeners();
         loadData();
-        getActivity().setTitle(mCaptionResIds);
+        getActivity().setTitle(null);
         return mView;
     }
 
@@ -98,6 +102,7 @@ public class UserAchievementsFragment extends UfoFragment {
                 }
             }
 
+            ((MainActivity) getActivity()).setActionBarData(mDisplayName, R.string.achievements, mAvatar, mUserId);
             super.success(achievements, response);
         }
 

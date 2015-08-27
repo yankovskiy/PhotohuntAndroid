@@ -324,7 +324,7 @@ public class ProfileFragment extends UfoFragment {
         mWinsCountText.setText(Common.declensionByNumber(user.wins_count, getResources().getStringArray(R.array.contest_wins_count)));
 
         MenuAdapter adapter = new MenuAdapter(mContext, R.layout.profile_menu_item);
-        int achRes = 0;
+
         if (mIsSelf) {
             UfoMenuItem menuItem = null;
 
@@ -344,13 +344,11 @@ public class ProfileFragment extends UfoFragment {
                 adapter.add(new UfoMenuItem(mContext, R.drawable.ic_group_grey600_24dp, R.string.favorite_users));
             }
 
-            achRes = R.string.my_achievements;
         } else {
             adapter.add(new UfoMenuItem(mContext, R.drawable.ic_email_grey600_24dp, R.string.write_message));
-            achRes = R.string.user_achievements;
         }
 
-        adapter.add(new UfoMenuItem(mContext, R.drawable.ic_pages_grey600_24dp, achRes));
+        adapter.add(new UfoMenuItem(mContext, R.drawable.ic_pages_grey600_24dp, R.string.achievements));
 
         if (user.insta != null && user.insta.trim().length() > 0) {
             UfoMenuItem menuItem = new UfoMenuItem(mContext, R.drawable.ic_insta_grey600_24dp, user.insta, INSTAGRAM_MENU_ID);
@@ -412,8 +410,8 @@ public class ProfileFragment extends UfoFragment {
         Common.openFragment(this, fragment, true);
     }
 
-    private void openUserAchievements(long id) {
-        UserAchievementsFragment fragment = UserAchievementsFragment.getInstance((int) id, mUserId);
+    private void openUserAchievements() {
+        UserAchievementsFragment fragment = UserAchievementsFragment.getInstance(mUserData.display_name, mUserData.avatar, mUserData.id);
         Common.openFragment(this, fragment, true);
     }
 
@@ -581,8 +579,8 @@ public class ProfileFragment extends UfoFragment {
                 openSendMessageFragment();
             } else if (id == R.string.comments) {
                 openUnreadComments();
-            } else if (id == R.string.my_achievements || id == R.string.user_achievements) {
-                openUserAchievements(id);
+            } else if (id == R.string.achievements) {
+                openUserAchievements();
             }
         }
 
