@@ -38,6 +38,8 @@ public class ExifReader {
             exif.datetime = exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
             exif.make = exifInterface.getAttribute(ExifInterface.TAG_MAKE);
             exif.model = exifInterface.getAttribute(ExifInterface.TAG_MODEL);
+
+            exif.orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
         } catch (IOException e) {
             e.printStackTrace();
         }

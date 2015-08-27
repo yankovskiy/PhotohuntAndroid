@@ -2,6 +2,8 @@ package ru.neverdark.photohunt.fragments;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -55,6 +57,49 @@ public class UploadImageFragment extends UfoFragment {
         fragment.mUri = uri;
         fragment.mContest = contest;
         return fragment;
+    }
+
+    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return bmRotated;
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -113,7 +158,9 @@ public class UploadImageFragment extends UfoFragment {
             }
 
             mExif = new ExifReader(mFileName).getMetadata();
+
             Bitmap bitmap = Common.resizeBitmap(Common.decodeSampledBitmapFromUri(mContext, mUri, 1024), 1024);
+            bitmap = rotateBitmap(bitmap, mExif.orientation);
 
             int pixels = (int) (mContext.getResources().getDisplayMetrics().density * 32);
             Log.variable("pixels", String.valueOf(pixels));
@@ -121,6 +168,7 @@ public class UploadImageFragment extends UfoFragment {
             Log.variable("width", String.valueOf(width));
 
             bmp = Common.resizeBitmap(Common.decodeSampledBitmapFromUri(mContext, mUri, width), width);
+            bmp = rotateBitmap(bmp, mExif.orientation);
 
             mOutputFileUri = Uri.fromFile(file);
             OutputStream outStream = new FileOutputStream(file);

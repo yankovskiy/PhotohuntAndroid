@@ -8,4 +8,5 @@ public class Exif {
     public String make;
     public String model;
     public String focal_length;
+    public int orientation;
 }
