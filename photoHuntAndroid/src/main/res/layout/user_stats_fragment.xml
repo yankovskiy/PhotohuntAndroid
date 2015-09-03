@@ -19,8 +19,7 @@
     <RelativeLayout
         android:id="@+id/user_stats_hide_when_loading"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/user_stats_title">
+        android:layout_height="match_parent">
 
         <ListView
             android:id="@+id/users_stats_list"
